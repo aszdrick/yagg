@@ -1,0 +1,2 @@
+# promoku
+Pro Gomoku
