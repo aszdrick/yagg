@@ -27,3 +27,8 @@
 *.exe
 *.out
 *.app
+
+# Extra
+bin/
+.deps/
+*.d
