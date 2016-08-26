@@ -4,7 +4,7 @@
 #ifndef GOMOKU_BOT_HPP
 #define GOMOKU_BOT_HPP
 
-#include "Bot.hpp"
+#include "core/Bot.hpp"
 #include "GomokuState.hpp"
 #include <memory>
 

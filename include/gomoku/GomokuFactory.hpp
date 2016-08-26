@@ -5,6 +5,7 @@
 #define GOMOKU_FACTORY_HPP
 
 #include "GomokuGame.hpp"
+#include "core/Bot.hpp"
 
 enum class MatchType { 
     PLAYER_VS_BOT, PLAYERS_ONLY, BOTS_ONLY
