@@ -1,5 +1,5 @@
-/* created by Ghabriel Nunes<ghabriel.nunes@gmail.com> 
-   and Marleson Graf<aszdrick@gmail.com> [2016] */
+/* Copyright 2016 Ghabriel Nunes, Marleson Graf
+   <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
 #include "BaseMatrix.hpp"
 #include <cassert>
