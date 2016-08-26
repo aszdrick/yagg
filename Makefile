@@ -14,14 +14,14 @@ DEPDIR    :=.deps
 # Compiler & linker flags
 LDLIBS    :=-lm
 LDFLAGS   :=
-CXXFLAGS  :=-std=c++11 -Wall
+CXXFLAGS  :=-std=c++14 -Wall
 INCLUDE   :=-I$(HDRDIR)
 # Files
 SRC       :=$(shell find $(SRCDIR) -name '*.cpp')
 DEP       :=$(patsubst %.cpp,$(DEPDIR)/%.d,$(SRC))
 OBJ       :=$(patsubst %.cpp,$(BUILDIR)/%.o,$(SRC))
 MAIN      :=main
-EXEC      :=$(BINDIR)/executable
+EXEC      :=$(BINDIR)/execute_me
 PUREOBJ   :=$(filter-out $(BUILDIR)/$(SRCDIR)/$(MAIN).o,$(OBJ))
 TSTFILE   :=$(shell find $(TESTDIR) -name '*.cpp' 2> /dev/null)
 TSTDEP    :=$(patsubst %.cpp,$(DEPDIR)/%.d,$(TSTFILE))

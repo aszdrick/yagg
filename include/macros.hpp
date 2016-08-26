@@ -2,6 +2,8 @@
 #ifndef UTILS_MACROS_HPP
 #define UTILS_MACROS_HPP
 
+#include <iostream>
+#include <tuple>
 #include <utility>
 
 namespace {

@@ -7,13 +7,13 @@
 #include <vector>
 #include "BaseMatrix.hpp"
 
-template<unsigned N = 3, unsigned M = 3>
-class Matrix : public BaseMatrix {
+template<unsigned N = 3, unsigned M = 3, typename T = unsigned>
+class Matrix : public BaseMatrix<T> {
 public:
-    Matrix() : BaseMatrix(N,M) { }
+    Matrix() : BaseMatrix<T>(N,M) { }
 
     Matrix(const std::initializer_list<std::initializer_list<double>>& matrix)
-    : BaseMatrix(matrix) { }
+    : BaseMatrix<T>(matrix) { }
 
     Matrix<N,M>& operator+=(const Matrix<N,M>& m) {
         return process(m, std::plus<double>());
@@ -63,12 +63,12 @@ private:
         return *this;
     }
 
-    using BaseMatrix::operator+=;
-    using BaseMatrix::operator-=;
-    using BaseMatrix::operator*=;
-    using BaseMatrix::operator*;
-    using BaseMatrix::operator+;
-    using BaseMatrix::operator-;
+    using BaseMatrix<T>::operator+=;
+    using BaseMatrix<T>::operator-=;
+    using BaseMatrix<T>::operator*=;
+    using BaseMatrix<T>::operator*;
+    using BaseMatrix<T>::operator+;
+    using BaseMatrix<T>::operator-;
 };
 
 #endif

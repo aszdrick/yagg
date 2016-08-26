@@ -8,10 +8,16 @@
 #include <vector>
 #include <ostream>
 
-using vector_iterator = typename std::vector<double>::iterator;
-using const_vector_iterator = typename std::vector<double>::const_iterator;
 
+template<typename T>
 class BaseMatrix {
+    using vector_iterator = typename std::vector<T>::iterator;
+    using const_vector_iterator = typename std::vector<T>::const_iterator;
+    template<unsigned N, unsigned M, typename V>
+    friend BaseMatrix<V> make_matrix(const std::vector<V>& list);
+    template<unsigned N, typename V>
+    friend BaseMatrix<V> make_matrix(const std::vector<V>& list);
+
  public:
     struct row {
         row(size_t, vector_iterator);
@@ -19,9 +25,9 @@ class BaseMatrix {
         row& operator--();
         row operator++(int);
         row operator--(int);
-        row& operator=(double);
-        row& operator=(std::initializer_list<double>);
-        double& operator[](size_t);
+        row& operator=(T);
+        row& operator=(std::initializer_list<T>);
+        T& operator[](size_t);
         vector_iterator begin();
         vector_iterator end();
         bool operator==(const row&);
@@ -37,7 +43,7 @@ class BaseMatrix {
         const_row& operator--();
         const_row operator++(int);
         const_row operator--(int);
-        double operator[](size_t) const;
+        T operator[](size_t) const;
         const_vector_iterator begin() const;
         const_vector_iterator end() const;
         bool operator==(const const_row&);
@@ -49,7 +55,7 @@ class BaseMatrix {
 
     BaseMatrix();
     explicit BaseMatrix(size_t, size_t);
-    BaseMatrix(std::initializer_list<std::initializer_list<double>>);
+    BaseMatrix(std::initializer_list<std::initializer_list<T>>);
 
     row operator[](size_t);
     const_row operator[](size_t) const;
@@ -57,45 +63,48 @@ class BaseMatrix {
     size_t rowSize() const { return n_rows; }
     size_t columnSize() const { return n_columns; }
 
-    row begin();
-    row end();
-    const_row begin() const;
-    const_row end() const;
+    vector_iterator begin();
+    vector_iterator end();
+    const_vector_iterator begin() const;
+    const_vector_iterator end() const;
 
-    BaseMatrix& operator+=(const BaseMatrix&);
-    BaseMatrix& operator-=(const BaseMatrix&);
-    BaseMatrix& operator*=(const BaseMatrix&);
-    BaseMatrix operator+(const BaseMatrix&) const;
-    BaseMatrix operator-(const BaseMatrix&) const;
-    BaseMatrix operator*(const BaseMatrix&) const;
+    BaseMatrix<T>& operator+=(const BaseMatrix<T>&);
+    BaseMatrix<T>& operator-=(const BaseMatrix<T>&);
+    BaseMatrix<T>& operator*=(const BaseMatrix<T>&);
+    BaseMatrix<T> operator+(const BaseMatrix<T>&) const;
+    BaseMatrix<T> operator-(const BaseMatrix<T>&) const;
+    BaseMatrix<T> operator*(const BaseMatrix<T>&) const;
 
  private:
     size_t n_rows;
     size_t n_columns;
-    std::vector<double> matrix;
+    std::vector<T> matrix;
 
-    BaseMatrix& process(const BaseMatrix&,
-                        const std::function<double(double,double)>&);
-
- public:
-    template<unsigned N, unsigned M>
-    static BaseMatrix make_matrix(const std::vector<double>& list) {
-        BaseMatrix p;
-        p.matrix = list;
-        p.n_rows = N;
-        p.n_columns = M;
-        return p;
-    }
-    template<unsigned N>
-    static BaseMatrix make_matrix(const std::vector<double>& list) {
-        BaseMatrix p;
-        p.matrix = list;
-        p.n_rows = N;
-        p.n_columns = list.size() / N;
-        return p;
-    }
+    BaseMatrix<T>& process(const BaseMatrix<T>&,
+                        const std::function<T(T,T)>&);
 };
 
-std::ostream& operator<<(std::ostream&, const BaseMatrix&);
+template<unsigned N, unsigned M, typename T = unsigned>
+inline BaseMatrix<T> make_matrix(const std::vector<T>& list) {
+    BaseMatrix<T> p;
+    p.matrix = list;
+    p.n_rows = N;
+    p.n_columns = M;
+    return p;
+}
+
+template<unsigned N, typename T = unsigned>
+inline BaseMatrix<T> make_matrix(const std::vector<T>& list) {
+    BaseMatrix<T> p;
+    p.matrix = list;
+    p.n_rows = N;
+    p.n_columns = list.size() / N;
+    return p;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream&, const BaseMatrix<T>&);
+
+#include "BaseMatrix.ipp"
 
 #endif
