@@ -13,8 +13,8 @@ TESTDIR   :=tests
 DEPDIR    :=.deps
 # Compiler & linker flags
 LDLIBS    :=-lm
-LDFLAGS   :=
-CXXFLAGS  :=-std=c++14 -Wall
+LDFLAGS   :=$$(pkg-config --cflags --libs gtk+-3.0) 
+CXXFLAGS  :=$$(pkg-config --cflags --libs gtk+-3.0) -std=c++14 -Wall
 INCLUDE   :=-I$(HDRDIR)
 # Files
 SRC       :=$(shell find $(SRCDIR) -name '*.cpp')

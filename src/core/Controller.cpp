@@ -4,4 +4,11 @@
 
 #include "core/Controller.hpp"
 
+void Controller::start() {
+    ui.build();
+    ui.start();
+}
 
+void Controller::quit() {
+    ui.quit();
+}
