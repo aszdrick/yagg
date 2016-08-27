@@ -7,13 +7,17 @@
 #include "ui/Interface.hpp"
 #include "macros.hpp"
 
-int main(int argc, char** argv) {
-    Controller controller;
-    signals::init(&argc, &argv);
-    signals::set_controller(&controller);
-    signals::start();
+#include <thread>
+#include "ui/GameEngine.hpp"
 
-    // auto game = GomokuFactory<MatchType::PLAYERS_ONLY>::create();
+int main(int argc, char** argv) {
+    // Controller controller;
+    // signals::init(&argc, &argv);
+    // signals::set_controller(&controller);
+    // signals::start();
+    GameEngine game(800, 600, "Gomoku from hell");
+    
+    game.run();
 
     return 0;
 }

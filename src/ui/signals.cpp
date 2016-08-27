@@ -34,5 +34,6 @@ namespace signals {
 
     void quit() {
         controller->quit();
+        cairo::destroy();
     }
 }

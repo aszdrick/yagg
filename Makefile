@@ -12,7 +12,7 @@ BINDIR    :=bin
 TESTDIR   :=tests
 DEPDIR    :=.deps
 # Compiler & linker flags
-LDLIBS    :=-lm
+LDLIBS    :=-lm -lsfml-graphics -lsfml-window -lsfml-system
 LDFLAGS   :=$$(pkg-config --cflags --libs gtk+-3.0) 
 CXXFLAGS  :=$$(pkg-config --cflags --libs gtk+-3.0) -std=c++14 -Wall
 INCLUDE   :=-I$(HDRDIR)
