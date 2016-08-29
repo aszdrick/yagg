@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     // GameEngine<GomokuGame, GomokuInterface> game(800, 600, "Gomoku from hell");
     auto game = GomokuFactory<MatchType::PLAYER_VS_BOT>::create(GomokuBot());
     GomokuInterface interface;
-    auto engine = make_gomoku(game, interface, 800, 600, "Gomoku from hell");
+    auto engine = make_gomoku(game, interface, 1024, 768, "Gomoku from hell");
 
     engine.run();
 

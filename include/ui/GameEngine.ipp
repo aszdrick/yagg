@@ -73,13 +73,17 @@ void GameEngine<G,I>::resize(double width, double height) {
 
 template<typename G, typename I>
 void GameEngine<G,I>::onMousePressed(const sf::Event& event) {
-    auto action = interface.handleMousePressed(event.mouseButton.x, event.mouseButton.y);
+    auto x = event.mouseButton.x;
+    auto y = event.mouseButton.y;
+    auto action = interface.handleMousePressed(x, y);
     (void) action;
 }
 
 template<typename G, typename I>
 void GameEngine<G,I>::onMouseReleased(const sf::Event& event) {
-    auto action = interface.handleMouseReleased(event.mouseButton.x, event.mouseButton.y);
+    auto x = event.mouseButton.x;
+    auto y = event.mouseButton.y;
+    auto action = interface.handleMouseReleased(x, y);
     (void) action;
 }
 
