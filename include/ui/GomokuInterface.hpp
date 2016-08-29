@@ -6,9 +6,9 @@
 
 class GomokuInterface {
  public:
-    void draw() const;
-    int handleMousePressed(double, double);
-    int handleMouseReleased(double, double);
+    void draw() const {}
+    int handleMousePressed(double, double) { return 0; }
+    int handleMouseReleased(double, double) { return 0; }
 };
 
 #endif /* GOMOKU_INTERFACE_HPP */

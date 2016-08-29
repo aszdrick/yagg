@@ -7,26 +7,28 @@
 #include "GomokuGame.hpp"
 #include "core/Bot.hpp"
 
-enum class MatchType { 
-    PLAYER_VS_BOT, PLAYERS_ONLY, BOTS_ONLY
-};
-
 template<MatchType Type>
 struct GomokuFactory { };
 
 template<>
 struct GomokuFactory<MatchType::PLAYER_VS_BOT> {
-    static GomokuGame create(const Bot<GomokuState>&);
+    static GomokuGame create(const Bot<GomokuState>&) {
+        return GomokuGame();
+    }
 };
 
 template<>
 struct GomokuFactory<MatchType::PLAYERS_ONLY> {
-    static GomokuGame create();
+    static GomokuGame create() {
+        return GomokuGame();
+    }
 };
 
 template<>
 struct GomokuFactory<MatchType::BOTS_ONLY> {
-    static GomokuGame create(const Bot<GomokuState>&, const Bot<GomokuState>&);
+    static GomokuGame create(const Bot<GomokuState>&, const Bot<GomokuState>&) {
+        return GomokuGame();
+    }
 };
 
 #endif /* GOMOKU_FACTORY_HPP */

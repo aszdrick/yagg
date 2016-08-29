@@ -23,8 +23,8 @@ class MiniMaxTree {
 
  private:
     std::unique_ptr<Node> root;
-    const RatingFunction<T>& u_function;
     const RatingFunction<T>& h_function;
+    const RatingFunction<T>& u_function;
 };
 
 template<typename T>
@@ -35,5 +35,7 @@ struct MiniMaxTree<T>::Node {
     double beta;
     std::vector<std::unique_ptr<Node>> children;
 };
+
+#include "MiniMaxTree.ipp"
 
 #endif /* MINI_MAX_TREE_HPP */

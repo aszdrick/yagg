@@ -16,4 +16,6 @@ GomokuBot::GomokuBot()
 
 }
 
-std::unique_ptr<Command<GomokuState>> GomokuBot::play(const GomokuState&) {}
+std::unique_ptr<Command<GomokuState>> GomokuBot::play(const GomokuState&) {
+	return std::unique_ptr<Command<GomokuState>>();
+}
