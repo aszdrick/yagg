@@ -26,6 +26,8 @@ void GameEngine<G,I>::run() {
        
         manageEvents();
 
+        window.clear(sf::Color::Black);
+
         render();
 
         window.display();
@@ -39,7 +41,7 @@ bool GameEngine<G,I>::isRunning() const {
 
 template<typename G, typename I>
 void GameEngine<G,I>::render() const {
-    interface.draw();
+    interface.draw(window);
 }
 
 template<typename G, typename I>
@@ -87,7 +89,7 @@ sf::ContextSettings GameEngine<G,I>::desiredContextSettings() {
     settings.depthBits = 24;
     settings.stencilBits = 8;
     settings.antialiasingLevel = 2;
-    settings.majorVersion = 3;
-    settings.minorVersion = 2;
+    // settings.majorVersion = 3;
+    // settings.minorVersion = 2;
     return settings;
 }

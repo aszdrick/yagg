@@ -4,11 +4,13 @@
 #ifndef GOMOKU_INTERFACE_HPP
 #define GOMOKU_INTERFACE_HPP
 
+#include <SFML/Graphics.hpp>
+
 class GomokuInterface {
  public:
-    void draw() const {}
-    int handleMousePressed(double, double) { return 0; }
-    int handleMouseReleased(double, double) { return 0; }
+    void draw(sf::RenderWindow&) const;
+    int handleMousePressed(double, double);
+    int handleMouseReleased(double, double);
 };
 
 #endif /* GOMOKU_INTERFACE_HPP */
