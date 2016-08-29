@@ -5,6 +5,7 @@
 #define GOMOKU_BOT_HPP
 
 #include "core/Bot.hpp"
+#include "core/MiniMaxTree.hpp"
 #include "GomokuState.hpp"
 #include <memory>
 
@@ -15,6 +16,8 @@ class GomokuBot : public Bot<GomokuState> {
 
  private:
     MiniMaxTree<GomokuState> decisionTree;
+    static RatingFunction<GomokuState> heuristicFn;
+    static RatingFunction<GomokuState> utilityFn;
 };
 
 #endif /* GOMOKU_BOT_HPP */

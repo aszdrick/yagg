@@ -10,19 +10,21 @@
 #include <vector>
 
 template<typename T>
+using RatingFunction = std::function<double(const T&)>;
+
+template<typename T>
 class MiniMaxTree {
-    using RatingFunction = std::function<double(const T&)>;
     struct Node;
     enum class Type { MIN, MAX };
 
  public:
-    MiniMaxTree(const RatingFunction&, const RatingFunction&);
+    MiniMaxTree(const RatingFunction<T>&, const RatingFunction<T>&);
     Command<T> findNextMove(const T&);
 
  private:
     std::unique_ptr<Node> root;
-    const RatingFunction& u_function;
-    const RatingFunction& h_function;
+    const RatingFunction<T>& u_function;
+    const RatingFunction<T>& h_function;
 };
 
 template<typename T>
