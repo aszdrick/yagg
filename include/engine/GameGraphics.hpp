@@ -18,12 +18,6 @@ class GraphicalComponent<GomokuGame, sf::RenderWindow> {
     void update(const GomokuGame&, sf::RenderWindow&);
  
  private:
-    const float BOARD_SIZE = 15;
-    const float SQUARE_SIZE = 48;
-    const float BORDER_WIDTH = SQUARE_SIZE;
-    const static sf::Color WHITE_COLOR;
-    const static sf::Color BLACK_COLOR;
-
     void drawBoard(sf::RenderWindow&) const;
 };
 

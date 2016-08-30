@@ -14,13 +14,7 @@ class GomokuInterface {
     int handleMouseReleased(double, double);
 
  private:
-    const float BOARD_SIZE = 15;
-    const float SQUARE_SIZE = 48;
-    const float BORDER_WIDTH = SQUARE_SIZE;
     std::vector<Stone> stones;
-    const static sf::Color WHITE_COLOR;
-    const static sf::Color BLACK_COLOR;
-
     void drawBoard(sf::RenderWindow&) const;
     void drawBalls(sf::RenderWindow&) const;
 };

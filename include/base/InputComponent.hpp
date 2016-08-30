@@ -4,6 +4,7 @@
 #ifndef INPUT_COMPONENT_HPP
 #define INPUT_COMPONENT_HPP
 
+template<typename>
 class Player;
 
 template<typename Object, typename Provider>
