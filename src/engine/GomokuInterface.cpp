@@ -2,7 +2,7 @@
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
 #include <cassert>
-#include "ui/GomokuInterface.hpp"
+#include "engine/GomokuInterface.hpp"
 
 const sf::Color GomokuInterface::WHITE_COLOR(128, 128, 128);
 const sf::Color GomokuInterface::BLACK_COLOR(102, 51, 0);

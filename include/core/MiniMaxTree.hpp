@@ -4,7 +4,7 @@
 #ifndef MINI_MAX_TREE_HPP
 #define MINI_MAX_TREE_HPP
 
-#include "Command.hpp"
+#include "base/Command.hpp"
 #include <functional>
 #include <memory>
 #include <vector>

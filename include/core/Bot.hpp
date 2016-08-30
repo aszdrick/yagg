@@ -4,7 +4,7 @@
 #ifndef BOT_HPP
 #define BOT_HPP
 
-#include "Command.hpp"
+#include "base/Command.hpp"
 #include <memory>
 
 template<typename T>

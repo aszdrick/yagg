@@ -4,7 +4,7 @@
 #ifndef GOMOKU_COMMAND_HPP
 #define GOMOKU_COMMAND_HPP
 
-#include "core/Command.hpp"
+#include "base/Command.hpp"
 
 template<>
 class Command<GomokuState> {

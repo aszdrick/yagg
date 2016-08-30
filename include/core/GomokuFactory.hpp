@@ -5,7 +5,7 @@
 #define GOMOKU_FACTORY_HPP
 
 #include "GomokuGame.hpp"
-#include "core/Bot.hpp"
+#include "Bot.hpp"
 
 template<MatchType Type>
 struct GomokuFactory { };

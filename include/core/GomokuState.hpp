@@ -4,7 +4,7 @@
 #ifndef GOMOKU_STATE_HPP
 #define GOMOKU_STATE_HPP
 
-#include "core/Matrix.hpp"
+#include "extra/Matrix.hpp"
 
 class GomokuState {
  public:

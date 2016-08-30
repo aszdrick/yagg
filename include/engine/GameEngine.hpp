@@ -10,11 +10,13 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window.hpp>
 #include <thread>
+#include "base/Game.hpp"
 
-template<typename Game, typename UI>
+using SFMLGame = Game<sf::RenderWindow>;
+
 class GameEngine {
  public:
-    GameEngine(Game&, UI&, double = 800, double = 600,
+    GameEngine(SFMLGame&, double = 800, double = 600,
         const std::string& = "SFML Window");
 
     void run();
@@ -27,16 +29,10 @@ class GameEngine {
     const std::string TITLE;
     std::unique_ptr<sf::RenderWindow> windowPtr;
     sf::RenderWindow& window;
-    Game& game;
-    UI& interface;
+    SFMLGame& game;
 
-    void render() const;
     void manageEvents();
-    void onMousePressed(const sf::Event&);
-    void onMouseReleased(const sf::Event&);
     static sf::ContextSettings desiredContextSettings();
 };
-
-#include "GameEngine.ipp"
 
 #endif /* GAME_ENGINE_HPP */

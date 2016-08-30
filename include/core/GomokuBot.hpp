@@ -4,8 +4,8 @@
 #ifndef GOMOKU_BOT_HPP
 #define GOMOKU_BOT_HPP
 
-#include "core/Bot.hpp"
-#include "core/MiniMaxTree.hpp"
+#include "Bot.hpp"
+#include "MiniMaxTree.hpp"
 #include "GomokuState.hpp"
 #include <memory>
 
