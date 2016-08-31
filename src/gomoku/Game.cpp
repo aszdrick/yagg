@@ -8,10 +8,10 @@
 #include "macros.hpp"
 
 namespace gomoku {
-    // Game::Game()
-    //  : mbe::Game(std::unique_ptr<Game::State>(
-    //     new Match(std::unique_ptr<Match::Graphics>(new MatchGraphics()), 
-    //         std::unique_ptr<Match::InputHandler>(new MatchInput())))) { }
+    Game::Game()
+     : mbe::Game(std::unique_ptr<Game::State>(
+        new Match(std::unique_ptr<Match::Graphics>(new MatchGraphics()), 
+            std::unique_ptr<Match::InputHandler>(new MatchInput())))) { }
 
     void Game::update() {
 

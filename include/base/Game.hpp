@@ -22,7 +22,7 @@ class Game {
     void processEvents(EventProvider&);
 
  protected:
-    Game(std::unique_ptr<State>);
+    Game(std::unique_ptr<State>&&);
 
     State& currentState();
 
