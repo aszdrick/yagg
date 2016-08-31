@@ -4,7 +4,6 @@
 #ifndef GOMOKU_GAME_HPP
 #define GOMOKU_GAME_HPP
 
-#include "base/GameState.hpp"
 #include "mbe/Engine.hpp"
 
 enum class MatchType { 
@@ -15,10 +14,10 @@ enum class Team {
     BLACK, WHITE
 };
 
-namespace Gomoku {
+namespace gomoku {
     class Game : public mbe::Game {
      public:
-        Game(State * const);
+        Game();
      private:
         void update() override;
         void updateGraphics(Renderer&) override;

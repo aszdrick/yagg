@@ -2,16 +2,22 @@
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
 #include "gomoku/Game.hpp"
+#include "gomoku/Match.hpp"
 #include "macros.hpp"
 
-void Gomoku::Game::update() {
+namespace gomoku {
+    // Game::Game()
+    //  : mbe::Game(std::move(new Match())) { }
 
-}
+    void Game::update() {
 
-void Gomoku::Game::updateGraphics(Renderer& graphics) {
+    }
 
-}
+    void Game::updateGraphics(Renderer& graphics) {
 
-void Gomoku::Game::processInput(Input& input) {
+    }
 
+    void Game::processInput(Input& input) {
+
+    }
 }

@@ -11,7 +11,6 @@
 
 // Standard Libraries
 #include <string>
-#include <thread>
 
 // Custom classes
 #include "base/Game.hpp"

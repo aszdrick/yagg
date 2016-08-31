@@ -6,11 +6,13 @@
 
 #include "extra/Matrix.hpp"
 
-class GomokuState {
- public:
+namespace gomoku {
+    class State {
+     public:
 
- private:
-    Matrix<15,15> table;
-};
+     private:
+        Matrix<15,15> table;
+    };
+}
 
 #endif /* GOMOKU_STATE_HPP */

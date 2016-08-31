@@ -6,7 +6,9 @@
 
 #include <list>
 #include <memory>
-#include "GameState.hpp"
+
+template<typename R, typename E>
+class GameState;
 
 template <typename Render, typename EventProvider>
 class Game {
@@ -20,7 +22,7 @@ class Game {
     void processEvents(EventProvider&);
 
  protected:
-    Game(State* const);
+    Game(std::unique_ptr<State>);
 
     State& currentState();
 
@@ -28,7 +30,7 @@ class Game {
     void popState();
 
  private:
-    std::list<State> states;
+    std::list<std::unique_ptr<State>> states;
     State& current;
     
     virtual void update() = 0;

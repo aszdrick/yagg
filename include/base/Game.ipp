@@ -1,9 +1,11 @@
 /* Copyright 2016 Ghabriel Nunes, Marleson Graf
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
+#include "GameState.hpp"
+
 template <typename R, typename E>
-Game<R,E>::Game(State* const initial)
- : states{initial}, current(states.front()) { }
+Game<R,E>::Game(std::unique_ptr<State> initial)
+ : states{std::move(initial)}, current(*states.front()) { }
 
 template <typename R, typename E>
 typename Game<R,E>::State& Game<R,E>::currentState() {

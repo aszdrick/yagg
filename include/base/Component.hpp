@@ -7,9 +7,12 @@
 template<typename Object, typename Info>
 class Component {
  public:
+    using Agent = Object;
+    using Element = Info;
+
     void update(const Object&, Info&);
  private:
-    virtual void doUpdate(const Object&, Info&) = 0;
+    virtual void doUpdate(const Agent&, Element&) = 0;
 };
 
 #include "Component.hpp"

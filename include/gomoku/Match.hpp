@@ -7,7 +7,7 @@
 #include "Game.hpp"
 #include "base/Component.hpp"
 
-namespace Gomoku {
+namespace gomoku {
     enum class Team {
         BLACK, WHITE
     };
@@ -20,14 +20,14 @@ namespace Gomoku {
      public:
         using Graphics = Component<Match, Game::Renderer>;
         using InputHandler = Component<Match, Game::Input>; 
-        
-        Match(Graphics* const, InputHandler* const);
+
+        Match(std::unique_ptr<Graphics>, std::unique_ptr<InputHandler>);
 
      private:
         std::unique_ptr<Graphics> graphicsPtr;
         std::unique_ptr<InputHandler> inputPtr;
-        InputHandler& input;
         Graphics& graphics;
+        InputHandler& input;
 
         void update() override;
         void updateGraphics(Game::Renderer&) override;
@@ -40,6 +40,5 @@ namespace Gomoku {
         unsigned column;
     };
 }
-
 
 #endif /* GOMOKU_MATCH_HPP */
