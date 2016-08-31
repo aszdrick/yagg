@@ -36,3 +36,17 @@ namespace gomoku {
     }
 }
 
+// void GomokuInterface::drawBalls(sf::RenderWindow& window) const {
+//     for (auto& stone : stones) {
+//         auto shape = sf::CircleShape(GomokuTraits::STONE_RADIUS);
+//         auto squareSize = GomokuTraits::SQUARE_SIZE;
+//         shape.setPosition(sf::Vector2f(
+//             squareSize + stone.column * squareSize - GomokuTraits::STONE_RADIUS,
+//             squareSize + stone.row * squareSize - GomokuTraits::STONE_RADIUS));
+
+//         auto white = GomokuTraits::WHITE_COLOR;
+//         auto black = GomokuTraits::BLACK_COLOR;
+//         shape.setFillColor(stone.team == Team::WHITE ? white : black);
+//         window.draw(shape);
+//     }
+// }

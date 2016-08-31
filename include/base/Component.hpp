@@ -15,6 +15,6 @@ class Component {
     virtual void doUpdate(const Agent&, Element&) = 0;
 };
 
-#include "Component.hpp"
+#include "Component.ipp"
 
 #endif /* COMPONENT_HPP */
