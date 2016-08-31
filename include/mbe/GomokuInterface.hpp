@@ -5,7 +5,7 @@
 #define GOMOKU_INTERFACE_HPP
 
 #include <SFML/Graphics.hpp>
-#include "core/GomokuGame.hpp"
+#include "gomoku/Game.hpp"
 
 class GomokuInterface {
  public:

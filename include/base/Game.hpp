@@ -4,12 +4,38 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include "Player.hpp"
+#include <list>
+#include <memory>
+#include "GameState.hpp"
 
-template <typename Renderer>
+template <typename Render, typename EventProvider>
 class Game {
  public:
-    virtual void update(Renderer&) = 0;
+    using Renderer = Render;
+    using Input = EventProvider;
+    using State = GameState<Renderer, EventProvider>;
+
+    void updateLogic();
+    void updateRenderer(Render&);
+    void processEvents(EventProvider&);
+
+ protected:
+    Game(State* const);
+
+    State& currentState();
+
+    void pushState(State* const);
+    void popState();
+
+ private:
+    std::list<State> states;
+    State& current;
+    
+    virtual void update() = 0;
+    virtual void updateGraphics(Renderer&) = 0;
+    virtual void processInput(Input&) = 0;
 };
+
+#include "Game.ipp"
 
 #endif /* GAME_HPP */

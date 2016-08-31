@@ -4,19 +4,18 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include "InputComponent.hpp"
+#include "Component.hpp"
 
 template<typename InputProvider>
 class Player {
  public:
+    using Input = Component<Player<InputProvider>, InputProvider>;
+    
     void update(InputProvider& provider) {
         input.update(*this, provider);
     }
  private:
-    InputComponent<Player, InputProvider> input;
+    Component<Player, InputProvider> input;
 };
-
-template<typename Provider>
-using PlayerInput = InputComponent<Player<Provider>, Provider>;
 
 #endif /* PLAYER_HPP */

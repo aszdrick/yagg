@@ -2,7 +2,7 @@
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
 #include <cassert>
-#include "engine/GomokuInterface.hpp"
+#include "mbe/GomokuInterface.hpp"
 #include "GomokuTraits.hpp"
 
 void GomokuInterface::drawBoard(sf::RenderWindow& window) const {

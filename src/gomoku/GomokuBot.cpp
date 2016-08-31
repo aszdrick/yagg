@@ -1,8 +1,8 @@
 /* Copyright 2016 Ghabriel Nunes, Marleson Graf
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
-#include "core/GomokuBot.hpp"
-#include "core/GomokuCommand.hpp"
+#include "gomoku/GomokuBot.hpp"
+#include "gomoku/GomokuCommand.hpp"
 
 RatingFunction<GomokuState> GomokuBot::heuristicFn = [](const GomokuState&) {
     return 0.0;

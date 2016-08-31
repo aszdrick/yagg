@@ -8,7 +8,7 @@ and Marleson Graf<aszdrick@gmail.com> [2016] */
 #include <iostream>
 #include <regex>
 #include <cmath>
-#include "core/Matrix.hpp"
+#include "gomoku/Matrix.hpp"
 
 using color_t = std::tuple<unsigned, unsigned, unsigned, double>;
 

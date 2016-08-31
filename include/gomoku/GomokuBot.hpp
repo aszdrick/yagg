@@ -4,15 +4,15 @@
 #ifndef GOMOKU_BOT_HPP
 #define GOMOKU_BOT_HPP
 
-#include "Bot.hpp"
+#include "base/Command.hpp"
 #include "MiniMaxTree.hpp"
 #include "GomokuState.hpp"
 #include <memory>
 
-class GomokuBot : public Bot<GomokuState> {
+class GomokuBot {
  public:
     GomokuBot();
-    std::unique_ptr<Command<GomokuState>> play(const GomokuState&) override;
+    std::unique_ptr<Command<GomokuState>> play(const GomokuState&);
 
  private:
     MiniMaxTree<GomokuState> decisionTree;
