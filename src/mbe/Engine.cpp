@@ -4,17 +4,16 @@
 #include "mbe/Engine.hpp"
 
 namespace mbe {    
-    Engine::Engine(Game& game, double width, double height,
+    Engine::Engine(Game* const game, double width, double height,
         const std::string& title)
-     : WIDTH(width),
-       HEIGHT(height),
-       TITLE(title),
-       windowPtr(new Game::Renderer(sf::VideoMode(WIDTH, HEIGHT),
-              TITLE,
-              sf::Style::Default,
-              desiredContextSettings())),
+     : WIDTH(width), HEIGHT(height), TITLE(title),
+       windowPtr(new Game::Renderer(
+        sf::VideoMode(WIDTH, HEIGHT),
+        TITLE, sf::Style::Default,
+        desiredContextSettings())),
        window(*windowPtr),
-       game(game) {
+       gamePtr(game), game(*gamePtr) {
+        
         window.setVerticalSyncEnabled(true);
     }
 

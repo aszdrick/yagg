@@ -6,9 +6,8 @@
 #include "gomoku/Match.hpp"
 
 namespace gomoku {
-    Match::Match(std::unique_ptr<Graphics>&& g, std::unique_ptr<InputHandler>&& i)
-    : graphicsPtr(std::forward<std::decay<decltype(g)>::type>(g)),
-      inputPtr(std::forward<std::decay<decltype(i)>::type>(i)),
+    Match::Match(Graphics* const graphics, InputHandler* const input)
+    : graphicsPtr(std::move(graphics)), inputPtr(std::move(input)),
       graphics(*graphicsPtr), input(*inputPtr) { }
 
     void Match::update() {

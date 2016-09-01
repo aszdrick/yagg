@@ -4,9 +4,8 @@
 #include "GameState.hpp"
 
 template <typename R, typename E>
-Game<R,E>::Game(std::unique_ptr<State>&& initial)
- : current(*initial) {
-    states.push_back(std::move(initial));
+Game<R,E>::Game(State* const initial) : current(*initial) {
+    states.emplace_front(std::move(initial));
 }
 
 template <typename R, typename E>
@@ -34,7 +33,7 @@ void Game<R,E>::updateLogic() {
 
 template <typename R, typename E>
 void Game<R,E>::pushState(State* const state) {
-    states.emplace_front(state);
+    states.emplace_front(std::move(state));
 }
 
 template <typename R, typename E>

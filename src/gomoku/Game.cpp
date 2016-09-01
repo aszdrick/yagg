@@ -9,9 +9,9 @@
 
 namespace gomoku {
     Game::Game()
-     : mbe::Game(std::unique_ptr<Game::State>(
-        new Match(std::unique_ptr<Match::Graphics>(new MatchGraphics()), 
-            std::unique_ptr<Match::InputHandler>(new MatchInput())))) { }
+     : mbe::Game(new Match(new MatchGraphics(), new MatchInput())) {
+
+    }
 
     void Game::update() {
 

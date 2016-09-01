@@ -21,7 +21,7 @@ namespace gomoku {
         using Graphics = Component<Match, Game::Renderer>;
         using InputHandler = Component<Match, Game::Input>; 
 
-        Match(std::unique_ptr<Graphics>&&, std::unique_ptr<InputHandler>&&);
+        Match(Graphics* const, InputHandler* const);
 
      private:
         std::unique_ptr<Graphics> graphicsPtr;

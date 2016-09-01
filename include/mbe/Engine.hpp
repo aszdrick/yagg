@@ -20,8 +20,8 @@ namespace mbe {
     
     class Engine {
      public:
-        Engine(Game&, double = 800, double = 600,
-            const std::string& = "SFML Window");
+        Engine(Game* const, double = 800, double = 600,
+            const std::string& = "MBE");
 
         void run();
         void resize(double, double);
@@ -33,6 +33,7 @@ namespace mbe {
         const std::string TITLE;
         std::unique_ptr<Game::Renderer> windowPtr;
         Game::Renderer& window;
+        std::unique_ptr<Game> gamePtr;
         Game& game;
 
         void manageEvents();
