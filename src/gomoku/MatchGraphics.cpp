@@ -6,8 +6,8 @@
 
 namespace gomoku {
 
-    void MatchGraphics::doUpdate(const Agent& agent, Element& element) {
-        drawBoard(element);
+    void MatchGraphics::doUpdate(const Agent& match, Element& window) {
+        drawBoard(window);
     }
 
     void MatchGraphics::drawBoard(Element& window) const {
