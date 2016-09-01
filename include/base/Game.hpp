@@ -17,7 +17,7 @@ class Game {
     using Input = EventProvider;
     using State = GameState<Renderer, EventProvider>;
 
-    void close();
+    bool close();
     bool closed();
     void syncUpdate();
     void updateRenderer(Render&);
@@ -28,14 +28,16 @@ class Game {
 
     State& currentState();
 
-    void pushState(State* const);
     void popState();
+    void pushState(State* const);
+    void replaceState(State* const);
 
  private:
     std::list<std::unique_ptr<State>> states;
     State& current;
     bool _closed;
     
+    virtual bool onClose();
     virtual void update() = 0;
     virtual void updateGraphics(Renderer&) = 0;
     virtual void processInput(Input&) = 0;

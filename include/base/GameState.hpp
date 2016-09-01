@@ -21,7 +21,7 @@ class GameState {
 
 template <typename R, typename E>
 struct GameState<R,E>::Transition {
-    enum class Type { SELF, STASH, REPLACE, RESTORE };
+    enum class Type { SELF, STORE, REPLACE, RESTORE, CLOSE };
     Type type;
     GameState<R,E>* state;
 };

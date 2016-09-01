@@ -44,7 +44,9 @@ namespace mbe {
         while (window.pollEvent(event)) {
             switch(event.type) {
                 case sf::Event::Closed:
-                    window.close();
+                    if (game.close()) {
+                        window.close();
+                    }
                     break;
                 case sf::Event::Resized:
                     resize(event.size.width, event.size.height);

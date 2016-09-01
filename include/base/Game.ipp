@@ -10,9 +10,18 @@ Game<R,E>::Game(State* const initial)
 }
 
 template <typename R, typename E>
-void Game<R,E>::close() {
-    _closed = true;
+bool Game<R,E>::close() {
+    if (!_closed) {
+        _closed = onClose();
+    }
+    return _closed;
 }
+
+template <typename R, typename E>
+bool Game<R,E>::onClose() {
+    return true;
+}
+
 template <typename R, typename E>
 bool Game<R,E>::closed() {
     return _closed;
@@ -36,15 +45,17 @@ void Game<R,E>::processEvents(E& provider) {
     switch(transition.type) {
         case State::Transition::Type::SELF:
             break;
-        case State::Transition::Type::STASH:
+        case State::Transition::Type::STORE:
             pushState(transition.state);
             break;
         case State::Transition::Type::REPLACE:
-            popState();
-            pushState(transition.state);
+            replaceState(transition.state);
             break;
         case State::Transition::Type::RESTORE:
             popState();
+            break;
+        case State::Transition::Type::CLOSE:
+            close();
             break;
     }
 
@@ -71,4 +82,10 @@ void Game<R,E>::popState() {
     } else {
         close();
     }
+}
+
+template<typename R, typename E>
+void Game<R,E>::replaceState(State* const state) {
+    popState();
+    pushState(state);
 }
