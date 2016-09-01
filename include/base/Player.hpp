@@ -4,18 +4,21 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include "Component.hpp"
-
-template<typename InputProvider>
+template<typename Render, typename EventProvider = Render>
 class Player {
  public:
-    using Input = Component<Player<InputProvider>, InputProvider>;
-    
-    void update(InputProvider& provider) {
-        input.update(*this, provider);
-    }
+    using Renderer = Render;
+    using Input = EventProvider;
+
+    void syncUpdate();
+    void updateRenderer(Render&);
+    void processEvents(EventProvider&);
  private:
-    Component<Player, InputProvider> input;
+    virtual void update();
+    virtual void updateGraphics(Renderer&) = 0;
+    virtual void processInput(Input&) = 0;
 };
+
+#include "Player.ipp"
 
 #endif /* PLAYER_HPP */

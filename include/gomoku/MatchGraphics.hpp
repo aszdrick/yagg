@@ -10,7 +10,8 @@ namespace gomoku {
     class MatchGraphics : public Match::Graphics {
      private:
         void drawBoard(Element&) const;
-        void doUpdate(const Agent&, Element&);
+        void drawBalls(Agent&, Element&) const;
+        void doUpdate(Agent&, Element&);
     };
 }
 

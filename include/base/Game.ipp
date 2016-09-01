@@ -34,13 +34,13 @@ typename Game<R,E>::State& Game<R,E>::currentState() {
 
 template <typename R, typename E>
 void Game<R,E>::updateRenderer(R& renderer) {
-    current.updateRenderer(renderer);
+    current.get().updateRenderer(renderer);
     updateGraphics(renderer);
 }
 
 template <typename R, typename E>
 void Game<R,E>::processEvents(E& provider) {
-    auto transition = current.processEvents(provider);
+    auto transition = current.get().processEvents(provider);
     
     switch(transition.type) {
         case State::Transition::Type::SELF:
@@ -64,7 +64,7 @@ void Game<R,E>::processEvents(E& provider) {
 
 template <typename R, typename E>
 void Game<R,E>::syncUpdate() {
-    current.syncUpdate();
+    current.get().syncUpdate();
     update();
 }
 

@@ -10,9 +10,9 @@ class Component {
     using Agent = Object;
     using Element = Info;
 
-    void update(const Object&, Info&);
+    void update(Object&, Info&);
  private:
-    virtual void doUpdate(const Agent&, Element&) = 0;
+    virtual void doUpdate(Agent&, Element&) = 0;
 };
 
 #include "Component.ipp"

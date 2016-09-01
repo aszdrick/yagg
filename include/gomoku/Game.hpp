@@ -4,6 +4,7 @@
 #ifndef GOMOKU_GAME_HPP
 #define GOMOKU_GAME_HPP
 
+#include "base/Player.hpp"
 #include "mbe/Engine.hpp"
 
 enum class MatchType { 
@@ -17,6 +18,9 @@ enum class Team {
 namespace gomoku {
     class Game : public mbe::Game {
      public:
+        using PlayerInput = std::pair<int, int>;
+        using Player = ::Player<Game::Renderer, std::list<PlayerInput>>;
+
         Game();
      private:
         void update() override;

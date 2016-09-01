@@ -34,7 +34,7 @@ class Game {
 
  private:
     std::list<std::unique_ptr<State>> states;
-    State& current;
+    std::reference_wrapper<State> current;
     bool _closed;
     
     virtual bool onClose();
