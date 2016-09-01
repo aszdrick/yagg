@@ -36,7 +36,7 @@ namespace mbe {
         std::unique_ptr<Game> gamePtr;
         Game& game;
 
-        void manageEvents();
+        void processEvents();
         static sf::ContextSettings desiredContextSettings();
     };
 }

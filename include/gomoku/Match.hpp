@@ -31,7 +31,7 @@ namespace gomoku {
 
         void update() override;
         void updateGraphics(Game::Renderer&) override;
-        void processInput(Game::Input&) override;
+        Transition processInput(Game::Input&) override;
     };    
  
     struct Stone {

@@ -19,7 +19,7 @@ class Game {
 
     void close();
     bool closed();
-    void updateLogic();
+    void syncUpdate();
     void updateRenderer(Render&);
     void processEvents(EventProvider&);
 

@@ -7,14 +7,23 @@
 template <typename Renderer, typename EventProvider = Renderer>
 class GameState {
  public:
-    void updateLogic();
+    struct Transition;
+
+    void syncUpdate();
     void updateRenderer(Renderer&);
-    void processEvents(EventProvider&);
+    Transition processEvents(EventProvider&);
 
  private:
     virtual void update() = 0;
     virtual void updateGraphics(Renderer&) = 0;
-    virtual void processInput(EventProvider&) = 0;
+    virtual Transition processInput(EventProvider&) = 0;
+};
+
+template <typename R, typename E>
+struct GameState<R,E>::Transition {
+    enum class Type { SELF, STASH, REPLACE, RESTORE };
+    Type type;
+    GameState<R,E>* state;
 };
 
 #include "GameState.ipp"

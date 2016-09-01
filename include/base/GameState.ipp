@@ -2,7 +2,7 @@
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
 template <typename R, typename E>
-void GameState<R, E>::updateLogic() {
+void GameState<R, E>::syncUpdate() {
     update();    
 }
     
@@ -12,6 +12,6 @@ void GameState<R, E>::updateRenderer(R& renderer) {
 }
     
 template <typename R, typename E>
-void GameState<R, E>::processEvents(E& input) {
-    processInput(input);
+typename GameState<R,E>::Transition GameState<R,E>::processEvents(E& input) {
+    return processInput(input);
 }

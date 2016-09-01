@@ -18,8 +18,9 @@ namespace gomoku {
         graphics.update(*this, render);
     }
 
-    void Match::processInput(Game::Input& in) {
+    Match::Transition Match::processInput(Game::Input& in) {
         input.update(*this, in);
+        return { Transition::Type::SELF, this};
     }
 
 

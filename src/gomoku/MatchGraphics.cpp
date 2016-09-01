@@ -32,6 +32,7 @@ namespace gomoku {
             }
         }
 
+        window.clear(sf::Color::Black);
         window.draw(&lines.front(), 4 * boardDimension, sf::Lines);
     }
 }

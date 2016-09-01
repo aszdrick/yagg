@@ -20,14 +20,13 @@ namespace mbe {
     void Engine::run() {
         window.setActive(true);
 
-        while (window.isOpen()) {    
-           
-            manageEvents();
+        while (window.isOpen()) {               
+            // Process events & update logic
+            processEvents();
+            // Some day this call will become periodic
+            // for some "usefull" stuff like in-game clock
+            game.syncUpdate();
 
-            window.clear(sf::Color::Black);
-
-            // Hu3
-            game.updateLogic();
             game.updateRenderer(window);
 
             window.display();
@@ -38,10 +37,10 @@ namespace mbe {
         return window.isOpen();
     }
 
-    void Engine::manageEvents() {
+    void Engine::processEvents() {
         std::list<sf::Event> list;
         sf::Event event;
-        
+
         while (window.pollEvent(event)) {
             switch(event.type) {
                 case sf::Event::Closed:
@@ -66,20 +65,6 @@ namespace mbe {
     void Engine::resize(double width, double height) {
         window.setSize(sf::Vector2u(width, height));
     }
-
-    // void Engine::onMousePressed(const sf::Event& event) {
-    //     auto x = event.mouseButton.x;
-    //     auto y = event.mouseButton.y;
-    //     auto action = interface.handleMousePressed(x, y);
-    //     (void) action;
-    // }
-
-    // void Engine::onMouseReleased(const sf::Event& event) {
-    //     auto x = event.mouseButton.x;
-    //     auto y = event.mouseButton.y;
-    //     auto action = interface.handleMouseReleased(x, y);
-    //     (void) action;
-    // }
 
     sf::ContextSettings Engine::desiredContextSettings() {
         sf::ContextSettings settings;
