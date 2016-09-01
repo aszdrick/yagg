@@ -10,6 +10,7 @@ namespace gomoku {
     class MatchInput : public Match::InputHandler {
      private:
         void doUpdate(const Agent&, Element&);
+        std::pair<int, int> handleMousePressed(float, float);
     };
 }
 

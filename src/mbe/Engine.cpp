@@ -39,7 +39,9 @@ namespace mbe {
     }
 
     void Engine::manageEvents() {
+        std::list<sf::Event> list;
         sf::Event event;
+        
         while (window.pollEvent(event)) {
             switch(event.type) {
                 case sf::Event::Closed:
@@ -48,14 +50,16 @@ namespace mbe {
                 case sf::Event::Resized:
                     resize(event.size.width, event.size.height);
                     break;
-                case sf::Event::MouseButtonPressed:
-                    //onMousePressed(event);
+                default:
+                    list.push_back(event);
                     break;
-                case sf::Event::MouseButtonReleased:
-                    //onMouseReleased(event);
-                    break;
-                default: break;
             }
+        }
+        
+        game.processEvents(list);
+
+        if (game.closed()) {
+            window.close();
         }
     }
 

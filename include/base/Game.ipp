@@ -4,8 +4,18 @@
 #include "GameState.hpp"
 
 template <typename R, typename E>
-Game<R,E>::Game(State* const initial) : current(*initial) {
+Game<R,E>::Game(State* const initial)
+ : current(*initial), _closed(false) {
     states.emplace_front(std::move(initial));
+}
+
+template <typename R, typename E>
+void Game<R,E>::close() {
+    _closed = true;
+}
+template <typename R, typename E>
+bool Game<R,E>::closed() {
+    return _closed;
 }
 
 template <typename R, typename E>
