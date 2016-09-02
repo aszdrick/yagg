@@ -1,20 +1,26 @@
 /* Copyright 2016 Ghabriel Nunes, Marleson Graf
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
-template<typename R, typename E>
-void base::Player<R,E>::syncUpdate() {
-    update();
+template<typename B, typename R, typename I>
+void base::Player<B,R,I>::periodicUpdate() {
+    onPeriodicUpdate();
 }
 
-template<typename R, typename E>
-void base::Player<R,E>::updateRenderer(R& renderer) {
-    updateGraphics(renderer);
+template<typename B, typename R, typename I>
+void base::Player<B,R,I>::updateRenderer(R& renderer) {
+    onUpdateRenderer(renderer);
 }
 
-template<typename R, typename E>
-void base::Player<R,E>::processEvents(E& events) {
-    processInput(events);
+template<typename B, typename R, typename I>
+typename base::Player<B,R,I>::Move base::Player<B,R,I>::processInput(I& in) {
+    onProcessInput(in);
 }
 
-template<typename R, typename E>
-void base::Player<R,E>::update() { }
+template<typename B, typename R, typename I>
+void base::Player<B,R,I>::onPeriodicUpdate() { }
+
+template<typename B, typename R, typename I>
+void base::Player<B,R,I>::onUpdateRenderer(R&) { }
+
+template<typename B, typename R, typename I>
+typename base::Player<B,R,I>::Move base::Player<B,R,I>::onProcessInput(I&) { }

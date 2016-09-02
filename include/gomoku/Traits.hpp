@@ -1,8 +1,8 @@
 /* Copyright 2016 Ghabriel Nunes, Marleson Graf
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
-#ifndef GOMOKU_TRAITS_HPP
-#define GOMOKU_TRAITS_HPP
+#ifndef TRAITS_HPP
+#define TRAITS_HPP
 
 #include <list>
 #include <SFML/Graphics.hpp>
@@ -10,21 +10,25 @@
 #include "gomoku/CommonTypes.hpp"
 #include "Traits.hpp"
 
-class GomokuGame;
+template<typename T>
+struct Traits;
+
+class Gomoku;
 
 template<>
-struct Traits<GomokuGame> {
+struct Traits<Gomoku> {
     constexpr static unsigned BOARD_DIMENSION = 15;
-    constexpr static go::Position INVALID_POSITION = {
-        BOARD_DIMENSION, BOARD_DIMENSION
-    };
     constexpr static float SQUARE_SIZE = 48;
     constexpr static float BORDER_WIDTH = SQUARE_SIZE;
-    constexpr static unsigned STONE_RADIUS = 24;
+    constexpr static unsigned STONE_RADIUS = 18;
+    constexpr static unsigned STONE_BORDER_WIDTH = 2; 
+    const static go::Position INVALID_POSITION;
     const static sf::Color WHITE_COLOR;
     const static sf::Color BLACK_COLOR;
+    const static sf::Color WHITE_OUTLINE_COLOR;
+    const static sf::Color BLACK_OUTLINE_COLOR;
 };
 
-using GomokuTraits = Traits<GomokuGame>;
+using GomokuTraits = Traits<Gomoku>;
 
-#endif /* GOMOKU_TRAITS_HPP */
+#endif /* TRAITS_HPP */

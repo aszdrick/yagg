@@ -1,10 +1,8 @@
 /* Copyright 2016 Ghabriel Nunes, Marleson Graf
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
-#ifndef TRAITS_HPP
-#define TRAITS_HPP
+#include "gomoku/Command.hpp"
 
-template<typename T>
-struct Traits;
+void base::Command<go::Board>::execute(go::Board& board) {
 
-#endif /* TRAITS_HPP */
+}

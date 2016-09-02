@@ -10,12 +10,14 @@
 
 class Gomoku : public mbe::Game {
  public:
-    using BasePlayer = base::Player<Game::Renderer, std::list<go::Position>>;
+    using PlayerInput = std::list<go::Position>;
+    using BasePlayer = base::Player<go::Board, Game::Renderer, PlayerInput>;
     class Match;
     class Player;
 
     Gomoku();
  private:
+    // void onPeriodicUpdate() override;
     // void onUpdateRenderer(Renderer&) override;
     // void onProcessInput(Input&) override;
 };

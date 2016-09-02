@@ -4,20 +4,23 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
+#include "Command.hpp"
+
 namespace base {
-    template<typename Render, typename EventProvider = Render>
+    template<typename Board, typename Render, typename InputProvider>
     class Player {
      public:
         using Renderer = Render;
-        using Input = EventProvider;
+        using Input = InputProvider;
+        using Move = Command<Board>;
 
-        void syncUpdate();
+        void periodicUpdate();
         void updateRenderer(Render&);
-        void processEvents(EventProvider&);
+        Move processInput(InputProvider&);
      private:
-        virtual void update();
-        virtual void updateGraphics(Renderer&) = 0;
-        virtual void processInput(Input&) = 0;
+        virtual void onPeriodicUpdate();
+        virtual void onUpdateRenderer(Renderer&);
+        virtual Move onProcessInput(Input&);
     };
 }
 

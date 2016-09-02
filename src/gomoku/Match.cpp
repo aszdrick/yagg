@@ -4,8 +4,8 @@
 #include <cmath>
 #include <type_traits>
 #include <utility>
+#include "gomoku/Traits.hpp"
 #include "gomoku/Match.hpp"
-#include "GomokuTraits.hpp"
 #include "extra/macros.hpp"
 
 //------------------------------- Match class -------------------------------//
@@ -17,12 +17,12 @@ Gomoku::Match::Match(Player&& p1, Player&& p2,
   players{std::move(p1), std::move(p2)} { }
 
 void Gomoku::Match::handleEvents(Player::Input& events) {
-    players[currentPlayer].processEvents(events);
-    auto move = players[currentPlayer].pendingMove();
-    if (move.valid) {
-        state.stones.push_back(go::Stone{move.position, team[currentPlayer]});
-        currentPlayer = 1 - currentPlayer;
-    }
+    // players[currentPlayer].processEvents(events);
+    // auto move = players[currentPlayer].pendingMove();
+    // if (move.valid) {
+    //     state.stones.push_back(go::Stone{move.position, team[currentPlayer]});
+    //     currentPlayer = 1 - currentPlayer;
+    // }
 }
 
 void Gomoku::Match::onUpdateRenderer(Renderer& render) {
@@ -106,7 +106,7 @@ go::Position Gomoku::Match::InputHandler::handleMousePressed(float x, float y) {
 
 void Gomoku::Match::Graphics::drawBalls(Agent& match, Element& window) const {
     for (auto& stone : match.state.stones) {
-        auto shape = sf::CircleShape(GomokuTraits::STONE_RADIUS);
+        auto shape = sf::CircleShape(GomokuTraits::STONE_RADIUS, 50);
         auto squareSize = GomokuTraits::SQUARE_SIZE;
         shape.setPosition(sf::Vector2f(
             squareSize + stone.position.column * squareSize 
@@ -116,6 +116,13 @@ void Gomoku::Match::Graphics::drawBalls(Agent& match, Element& window) const {
 
         auto white = GomokuTraits::WHITE_COLOR;
         auto black = GomokuTraits::BLACK_COLOR;
+        auto w_border = GomokuTraits::WHITE_OUTLINE_COLOR;
+        auto b_border = GomokuTraits::BLACK_OUTLINE_COLOR;
+
+        shape.setOutlineThickness(GomokuTraits::STONE_BORDER_WIDTH);
+        
+        shape.setOutlineColor(stone.team == go::Team::WHITE ? w_border : b_border);
+
         shape.setFillColor(stone.team == go::Team::WHITE ? white : black);
         window.draw(shape);
     }

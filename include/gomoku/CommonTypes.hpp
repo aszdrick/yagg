@@ -4,6 +4,8 @@
 #ifndef GO_COMMON_TYPES_HPP
 #define GO_COMMON_TYPES_HPP
 
+#include <list>
+
 namespace go {
     enum class Team {
         BLACK, WHITE

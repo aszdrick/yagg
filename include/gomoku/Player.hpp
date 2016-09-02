@@ -6,6 +6,7 @@
 
 #include <memory>
 #include "base/Component.hpp"
+#include "Command.hpp"
 #include "Gomoku.hpp"
 
 class Gomoku::Player : public BasePlayer {
@@ -15,24 +16,17 @@ class Gomoku::Player : public BasePlayer {
     using GraphicalComponent = base::Component<Player, Renderer>;
     using InputComponent = base::Component<go::Position, Input>;
 
-    struct Move {
-        go::Position position;
-        bool valid;
-    };
-
     Player(Graphics* const = new Graphics(),
            InputHandler* const = new InputHandler());
-    Move pendingMove() const;
 
  private:
     std::unique_ptr<Graphics> graphicsPtr;
     std::unique_ptr<InputHandler> inputPtr;
     Graphics& graphics;
     InputHandler& input;
-    Move lastMove;
 
-    void updateGraphics(Renderer&) override;
-    void processInput(Input&) override;
+    void onUpdateRenderer(Renderer&) override;
+    Move onProcessInput(Input&) override;
 
     class Graphics : public GraphicalComponent {
      private:
