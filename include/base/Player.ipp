@@ -2,19 +2,19 @@
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
 template<typename R, typename E>
-void Player<R,E>::syncUpdate() {
+void base::Player<R,E>::syncUpdate() {
     update();
 }
 
 template<typename R, typename E>
-void Player<R,E>::updateRenderer(R& renderer) {
+void base::Player<R,E>::updateRenderer(R& renderer) {
     updateGraphics(renderer);
 }
 
 template<typename R, typename E>
-void Player<R,E>::processEvents(E& events) {
+void base::Player<R,E>::processEvents(E& events) {
     processInput(events);
 }
 
 template<typename R, typename E>
-void Player<R,E>::update() { }
+void base::Player<R,E>::update() { }

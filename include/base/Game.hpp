@@ -8,38 +8,40 @@
 #include <memory>
 #include "GameState.hpp"
 
-template <typename R, typename I>
-class Game {
- public:
-    using Renderer = R;
-    using Input = I;
-    using State = GameState<R, I>;
+namespace base {
+    template <typename R, typename I>
+    class Game {
+     public:
+        using Renderer = R;
+        using Input = I;
+        using State = GameState<R, I>;
 
-    bool close();
-    bool closed();
-    void periodicUpdate();
-    void updateRenderer(Renderer&);
-    void processInput(Input&);
+        bool close();
+        bool closed();
+        void periodicUpdate();
+        void updateRenderer(Renderer&);
+        void processInput(Input&);
 
- protected:
-    Game(State* const);
+     protected:
+        Game(State* const);
 
-    State& currentState();
+        State& currentState();
 
-    void popState();
-    void pushState(State* const);
-    void replaceState(State* const);
+        void popState();
+        void pushState(State* const);
+        void replaceState(State* const);
 
- private:
-    std::list<std::unique_ptr<State>> states;
-    std::reference_wrapper<State> current;
-    bool _closed;
-    
-    virtual bool onClose();
-    virtual void onPeriodicUpdate();
-    virtual void onUpdateRenderer(Renderer&);
-    virtual void onProcessInput(Input&);
-};
+     private:
+        std::list<std::unique_ptr<State>> states;
+        std::reference_wrapper<State> current;
+        bool _closed;
+        
+        virtual bool onClose();
+        virtual void onPeriodicUpdate();
+        virtual void onUpdateRenderer(Renderer&);
+        virtual void onProcessInput(Input&);
+    };
+}
 
 #include "Game.ipp"
 

@@ -2,13 +2,13 @@
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
 template <typename R, typename I>
-Game<R,I>::Game(State* const initial)
+base::Game<R,I>::Game(State* const initial)
  : current(*initial), _closed(false) {
     states.emplace_front(std::move(initial));
 }
 
 template <typename R, typename I>
-bool Game<R,I>::close() {
+bool base::Game<R,I>::close() {
     if (!_closed) {
         _closed = onClose();
     }
@@ -16,20 +16,20 @@ bool Game<R,I>::close() {
 }
 
 template <typename R, typename I>
-void Game<R,I>::periodicUpdate() {
+void base::Game<R,I>::periodicUpdate() {
     current.get().periodicUpdate();
     onPeriodicUpdate();
 }
 
 template <typename R, typename I>
-void Game<R,I>::updateRenderer(R& renderer) {
+void base::Game<R,I>::updateRenderer(R& renderer) {
     current.get().updateRenderer(renderer);
     onUpdateRenderer(renderer);
 }
 
 
 template <typename R, typename I>
-void Game<R,I>::processInput(I& provider) {
+void base::Game<R,I>::processInput(I& provider) {
     auto transition = current.get().processInput(provider);
     
     switch(transition.type) {
@@ -53,24 +53,24 @@ void Game<R,I>::processInput(I& provider) {
 }
 
 template <typename R, typename I>
-bool Game<R,I>::onClose() { return true; }
+bool base::Game<R,I>::onClose() { return true; }
 
 template <typename R, typename I>
-void Game<R,I>::onPeriodicUpdate() { }
+void base::Game<R,I>::onPeriodicUpdate() { }
 
 template <typename R, typename I>
-void Game<R,I>::onUpdateRenderer(R&) { }
+void base::Game<R,I>::onUpdateRenderer(R&) { }
 
 template <typename R, typename I>
-void Game<R,I>::onProcessInput(I&) { }
+void base::Game<R,I>::onProcessInput(I&) { }
 
 template <typename R, typename I>
-bool Game<R,I>::closed() {
+bool base::Game<R,I>::closed() {
     return _closed;
 }
 
 template <typename R, typename I>
-void Game<R,I>::popState() {
+void base::Game<R,I>::popState() {
     states.pop_front();
     if (!states.empty()) {
         current = *states.front();
@@ -80,13 +80,13 @@ void Game<R,I>::popState() {
 }
 
 template <typename R, typename I>
-void Game<R,I>::pushState(State* const state) {
+void base::Game<R,I>::pushState(State* const state) {
     states.emplace_front(std::move(state));
     current = *states.front();
 }
 
 template<typename R, typename I>
-void Game<R,I>::replaceState(State* const state) {
+void base::Game<R,I>::replaceState(State* const state) {
     popState();
     pushState(state);
 }

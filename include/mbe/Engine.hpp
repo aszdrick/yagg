@@ -16,7 +16,7 @@
 #include "base/Game.hpp"
 
 namespace mbe {
-    using Game = Game<sf::RenderWindow, std::list<sf::Event>>;
+    using Game = base::Game<sf::RenderWindow, std::list<sf::Event>>;
     
     class Engine {
      public:

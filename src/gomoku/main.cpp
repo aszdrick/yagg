@@ -1,11 +1,11 @@
 /* Copyright 2016 Ghabriel Nunes, Marleson Graf
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
-#include "gomoku/Game.hpp"
+#include "gomoku/Gomoku.hpp"
 #include "mbe/Engine.hpp"
 
 int main(int argc, char** argv) {
-    auto engine = mbe::Engine(new gomoku::Game(),
+    auto engine = mbe::Engine(new Gomoku(),
         1024, 768, "Gomoku from hell");
 
     engine.run();

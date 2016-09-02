@@ -10,40 +10,38 @@
 
 //------------------------------- Match class -------------------------------//
 
-gomoku::Match::Match(Player&& p1, Player&& p2,
+Gomoku::Match::Match(Player&& p1, Player&& p2,
         Graphics* const graphics, InputHandler* const input)
 : graphicsPtr(std::move(graphics)), inputPtr(std::move(input)),
   graphics(*graphicsPtr), input(*inputPtr),
   players{std::move(p1), std::move(p2)} { }
 
-void gomoku::Match::handleEvents(Player::Input& events) {
+void Gomoku::Match::handleEvents(Player::Input& events) {
     players[currentPlayer].processEvents(events);
     auto move = players[currentPlayer].pendingMove();
     if (move.valid) {
-        state.stones.push_back(Stone{
-            move.coords.first, move.coords.second, team[currentPlayer]
-        });
+        state.stones.push_back(go::Stone{move.position, team[currentPlayer]});
         currentPlayer = 1 - currentPlayer;
     }
 }
 
-void gomoku::Match::onUpdateRenderer(Renderer& render) {
+void Gomoku::Match::onUpdateRenderer(Renderer& render) {
     graphics.update(*this, render);
 }
 
-gomoku::Match::Transition gomoku::Match::onProcessInput(Input& in) {
+Gomoku::Match::Transition Gomoku::Match::onProcessInput(Input& in) {
     input.update(*this, in);
     return { Transition::Type::SELF, this};
 }
 
 //-------------------------- Match::Graphics class --------------------------//
 
-void gomoku::Match::Graphics::doUpdate(Agent& match, Element& window) {
+void Gomoku::Match::Graphics::doUpdate(Agent& match, Element& window) {
     drawBoard(window);
     drawBalls(match, window);
 }
 
-void gomoku::Match::Graphics::drawBoard(Element& window) const {
+void Gomoku::Match::Graphics::drawBoard(Element& window) const {
     static std::vector<sf::Vertex> lines;
     auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     if (lines.empty()) {
@@ -71,8 +69,8 @@ void gomoku::Match::Graphics::drawBoard(Element& window) const {
 
 //------------------------ Match::InputHandler class ------------------------//
 
-void gomoku::Match::InputHandler::doUpdate(Agent& match, Element& list) {
-    std::list<Game::PlayerInput> inputs;
+void Gomoku::Match::InputHandler::doUpdate(Agent& match, Element& list) {
+    std::list<go::Position> inputs;
     while (!list.empty()) {
         auto event = list.front();
         list.pop_front();
@@ -82,10 +80,10 @@ void gomoku::Match::InputHandler::doUpdate(Agent& match, Element& list) {
                 float x = event.mouseButton.x;
                 float y = event.mouseButton.y;
                 auto pair = handleMousePressed(x, y);
-                int boardDimension = GomokuTraits::BOARD_DIMENSION;
-                if (pair.first >= 0 && pair.second >= 0
-                    && pair.first < boardDimension
-                    && pair.second < boardDimension) {
+                auto boardDimension = GomokuTraits::BOARD_DIMENSION;
+                if (pair.row >= 0 && pair.column >= 0
+                    && pair.row < boardDimension
+                    && pair.column < boardDimension) {
                     
                     inputs.push_back(handleMousePressed(x, y));
                 }
@@ -98,7 +96,7 @@ void gomoku::Match::InputHandler::doUpdate(Agent& match, Element& list) {
     match.handleEvents(inputs);
 }
 
-gomoku::Game::PlayerInput gomoku::Match::InputHandler::handleMousePressed(float x, float y) {
+go::Position Gomoku::Match::InputHandler::handleMousePressed(float x, float y) {
     auto boardStart = GomokuTraits::BORDER_WIDTH;
     auto squareSize = GomokuTraits::SQUARE_SIZE;
     unsigned column = round((x - boardStart) / squareSize);
@@ -106,17 +104,19 @@ gomoku::Game::PlayerInput gomoku::Match::InputHandler::handleMousePressed(float 
     return {row, column};
 }
 
-void gomoku::Match::Graphics::drawBalls(Agent& match, Element& window) const {
+void Gomoku::Match::Graphics::drawBalls(Agent& match, Element& window) const {
     for (auto& stone : match.state.stones) {
         auto shape = sf::CircleShape(GomokuTraits::STONE_RADIUS);
         auto squareSize = GomokuTraits::SQUARE_SIZE;
         shape.setPosition(sf::Vector2f(
-            squareSize + stone.column * squareSize - GomokuTraits::STONE_RADIUS,
-            squareSize + stone.row * squareSize - GomokuTraits::STONE_RADIUS));
+            squareSize + stone.position.column * squareSize 
+            - GomokuTraits::STONE_RADIUS,
+            squareSize + stone.position.row * squareSize 
+            - GomokuTraits::STONE_RADIUS));
 
         auto white = GomokuTraits::WHITE_COLOR;
         auto black = GomokuTraits::BLACK_COLOR;
-        shape.setFillColor(stone.team == Player::Team::WHITE ? white : black);
+        shape.setFillColor(stone.team == go::Team::WHITE ? white : black);
         window.draw(shape);
     }
 }

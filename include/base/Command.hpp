@@ -4,10 +4,13 @@
 #ifndef COMMAND_HPP
 #define COMMAND_HPP
 
-template<typename T, typename V = T>
-class Command {
-  public:
-    T execute(const V&);
-};
+namespace base {
+    template<typename T, typename V = T>
+    class Command {
+      public:
+        T execute(const V&);
+        void execute(const T&);
+    };
+}
 
 #endif /* COMMAND_HPP */

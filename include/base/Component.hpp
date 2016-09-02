@@ -4,16 +4,18 @@
 #ifndef COMPONENT_HPP
 #define COMPONENT_HPP
 
-template<typename Object, typename Info>
-class Component {
- public:
-    using Agent = Object;
-    using Element = Info;
+namespace base {
+    template<typename Object, typename Info>
+    class Component {
+     public:
+        using Agent = Object;
+        using Element = Info;
 
-    void update(Object&, Info&);
- private:
-    virtual void doUpdate(Agent&, Element&) = 0;
-};
+        void update(Object&, Info&);
+     private:
+        virtual void doUpdate(Agent&, Element&) = 0;
+    };    
+}
 
 #include "Component.ipp"
 

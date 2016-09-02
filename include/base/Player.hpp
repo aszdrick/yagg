@@ -4,20 +4,22 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-template<typename Render, typename EventProvider = Render>
-class Player {
- public:
-    using Renderer = Render;
-    using Input = EventProvider;
+namespace base {
+    template<typename Render, typename EventProvider = Render>
+    class Player {
+     public:
+        using Renderer = Render;
+        using Input = EventProvider;
 
-    void syncUpdate();
-    void updateRenderer(Render&);
-    void processEvents(EventProvider&);
- private:
-    virtual void update();
-    virtual void updateGraphics(Renderer&) = 0;
-    virtual void processInput(Input&) = 0;
-};
+        void syncUpdate();
+        void updateRenderer(Render&);
+        void processEvents(EventProvider&);
+     private:
+        virtual void update();
+        virtual void updateGraphics(Renderer&) = 0;
+        virtual void processInput(Input&) = 0;
+    };
+}
 
 #include "Player.ipp"
 
