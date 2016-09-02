@@ -11,17 +11,21 @@
 namespace gomoku {
     using Point = std::pair<unsigned, unsigned>;
 
-    struct Move {
-        Point coords;
-        bool valid;
-    };
-
     class Player : public Game::Player {
         class Graphics;
         class InputHandler;
      public:
         using GraphicalComponent = Component<Player, Renderer>;
-        using InputComponent = Component<Point, Input>; 
+        using InputComponent = Component<Point, Input>;
+
+        enum class Team {
+            BLACK, WHITE
+        };
+
+        struct Move {
+            Point coords;
+            bool valid;
+        };
 
         Player(Graphics* const = new Graphics(),
                InputHandler* const = new InputHandler());

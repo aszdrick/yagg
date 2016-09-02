@@ -2,13 +2,13 @@
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
 #include "gomoku/Player.hpp"
-#include "macros.hpp"
+#include "extra/macros.hpp"
 
 gomoku::Player::Player(Graphics* const graphics, InputHandler* const input)
  : graphicsPtr(std::move(graphics)), inputPtr(std::move(input)),
    graphics(*graphicsPtr), input(*inputPtr) { }
 
-gomoku::Move gomoku::Player::pendingMove() const {
+gomoku::Player::Move gomoku::Player::pendingMove() const {
     return lastMove;
 }
 

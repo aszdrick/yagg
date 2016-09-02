@@ -6,6 +6,7 @@
 #include <utility>
 #include "gomoku/Match.hpp"
 #include "GomokuTraits.hpp"
+#include "extra/macros.hpp"
 
 //------------------------------- Match class -------------------------------//
 
@@ -16,10 +17,12 @@ gomoku::Match::Match(Player&& p1, Player&& p2,
   players{std::move(p1), std::move(p2)} { }
 
 void gomoku::Match::handleEvents(Player::Input& events) {
-    players[0].processEvents(events);
-    auto move = players[0].pendingMove();
+    players[currentPlayer].processEvents(events);
+    auto move = players[currentPlayer].pendingMove();
     if (move.valid) {
-        state.addStone(move.coords, order[currentPlayer]);
+        state.stones.push_back(Stone{
+            move.coords.first, move.coords.second, team[currentPlayer]
+        });
         currentPlayer = 1 - currentPlayer;
     }
 }
@@ -66,22 +69,6 @@ void gomoku::Match::Graphics::drawBoard(Element& window) const {
     window.draw(&lines.front(), 4 * boardDimension, sf::Lines);
 }
 
-void gomoku::Match::Graphics::drawBalls(Agent& match, Element& window) const {
-    auto& stones = match.getState().getStones();
-    for (auto& stone : stones) {
-        auto shape = sf::CircleShape(GomokuTraits::STONE_RADIUS);
-        auto squareSize = GomokuTraits::SQUARE_SIZE;
-        shape.setPosition(sf::Vector2f(
-            squareSize + stone.column * squareSize - GomokuTraits::STONE_RADIUS,
-            squareSize + stone.row * squareSize - GomokuTraits::STONE_RADIUS));
-
-        auto white = GomokuTraits::WHITE_COLOR;
-        auto black = GomokuTraits::BLACK_COLOR;
-        shape.setFillColor(stone.team == Team::WHITE ? white : black);
-        window.draw(shape);
-    }
-}
-
 //------------------------ Match::InputHandler class ------------------------//
 
 void gomoku::Match::InputHandler::doUpdate(Agent& match, Element& list) {
@@ -117,4 +104,19 @@ gomoku::Game::PlayerInput gomoku::Match::InputHandler::handleMousePressed(float 
     unsigned column = round((x - boardStart) / squareSize);
     unsigned row = round((y - boardStart) / squareSize);
     return {row, column};
+}
+
+void gomoku::Match::Graphics::drawBalls(Agent& match, Element& window) const {
+    for (auto& stone : match.state.stones) {
+        auto shape = sf::CircleShape(GomokuTraits::STONE_RADIUS);
+        auto squareSize = GomokuTraits::SQUARE_SIZE;
+        shape.setPosition(sf::Vector2f(
+            squareSize + stone.column * squareSize - GomokuTraits::STONE_RADIUS,
+            squareSize + stone.row * squareSize - GomokuTraits::STONE_RADIUS));
+
+        auto white = GomokuTraits::WHITE_COLOR;
+        auto black = GomokuTraits::BLACK_COLOR;
+        shape.setFillColor(stone.team == Player::Team::WHITE ? white : black);
+        window.draw(shape);
+    }
 }

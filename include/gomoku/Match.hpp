@@ -6,15 +6,10 @@
 
 #include <array>
 #include "base/Component.hpp"
-#include "Game.hpp"
-#include "Player.hpp"
-#include "State.hpp"
+#include "gomoku/Match.hpp"
+#include "gomoku/Player.hpp"
 
 namespace gomoku {
-    enum class MatchType {
-        PLAYER_VS_BOT, PLAYERS_ONLY, BOTS_ONLY
-    };
-
     class Match : public Game::State {
         class Graphics;
         class InputHandler;
@@ -22,15 +17,27 @@ namespace gomoku {
         using GraphicalComponent = Component<Match, Renderer>;
         using InputComponent = Component<Match, Input>;
 
+        enum class Type {
+            PLAYER_VS_BOT, PLAYERS_ONLY, BOTS_ONLY
+        };
+
+        struct Stone {
+            unsigned row;
+            unsigned column;
+            Player::Team team;
+        };
+
+        struct State {
+            std::list<Stone> stones;
+        };
+
+     public:
         Match(Player&&,
               Player&&,
               Graphics* const = new Graphics(),
               InputHandler* const = new InputHandler());
         
         void handleEvents(Player::Input&);
-        const State& getState() const {
-            return state;
-        }
 
      private:
         std::unique_ptr<Graphics> graphicsPtr;
@@ -38,9 +45,11 @@ namespace gomoku {
         GraphicalComponent& graphics;
         InputComponent& input;
         std::array<Player,2> players;
-        const std::array<Team, 2> order = {Team::BLACK, Team::WHITE};
-        State state;
+        const std::array<Player::Team, 2> team = {
+            {Player::Team::BLACK, Player::Team::WHITE}
+        };
         short currentPlayer;
+        State state;
 
         void onUpdateRenderer(Renderer&) override;
         Transition onProcessInput(Input&) override;
@@ -57,7 +66,6 @@ namespace gomoku {
             void doUpdate(Agent&, Element&) override;
             Game::PlayerInput handleMousePressed(float, float);
         };
-
     };
 }
 

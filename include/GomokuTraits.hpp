@@ -21,4 +21,7 @@ struct Traits<GomokuGame> {
 
 using GomokuTraits = Traits<GomokuGame>;
 
+const sf::Color GomokuTraits::WHITE_COLOR(128, 128, 128);
+const sf::Color GomokuTraits::BLACK_COLOR(102, 51, 0);
+
 #endif /* GOMOKU_TRAITS_HPP */
