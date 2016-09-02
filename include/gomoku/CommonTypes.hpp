@@ -21,9 +21,7 @@ namespace go {
         Team team;
     };
 
-    struct Board {
-        std::list<Stone> stones;
-    };
+    class State;
 
     inline bool operator==(const Position& lhs, const Position& rhs) {
         return lhs.row == rhs.row && lhs.column == rhs.column;

@@ -14,12 +14,16 @@ class Gomoku::Player : public BasePlayer {
     class InputHandler;
  public:
     using GraphicalComponent = base::Component<Player, Renderer>;
-    using InputComponent = base::Component<go::Position, Input>;
+    using InputComponent = base::Component<Move, Input>;
 
-    Player(Graphics* const = new Graphics(),
+    Player(go::Team = go::Team::BLACK,
+           Graphics* const = new Graphics(),
            InputHandler* const = new InputHandler());
 
+    void setTeam(go::Team);
+
  private:
+    go::Team team;
     std::unique_ptr<Graphics> graphicsPtr;
     std::unique_ptr<InputHandler> inputPtr;
     Graphics& graphics;

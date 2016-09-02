@@ -20,7 +20,7 @@ namespace base {
      private:
         virtual void onPeriodicUpdate();
         virtual void onUpdateRenderer(Renderer&);
-        virtual Move onProcessInput(Input&);
+        virtual Move onProcessInput(Input&) = 0;
     };
 }
 

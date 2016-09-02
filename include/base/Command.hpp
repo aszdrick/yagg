@@ -5,11 +5,11 @@
 #define COMMAND_HPP
 
 namespace base {
-    template<typename T, typename V = T>
+    template<typename T>
     class Command {
       public:
-        T execute(const V&);
         void execute(const T&);
+        void execute(T&);
     };
 }
 

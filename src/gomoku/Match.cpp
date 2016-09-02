@@ -14,15 +14,14 @@ Gomoku::Match::Match(Player&& p1, Player&& p2,
         Graphics* const graphics, InputHandler* const input)
 : graphicsPtr(std::move(graphics)), inputPtr(std::move(input)),
   graphics(*graphicsPtr), input(*inputPtr),
-  players{std::move(p1), std::move(p2)} { }
+  players{std::move(p1), std::move(p2)} {
+    players[0].setTeam(go::Team::BLACK);
+    players[1].setTeam(go::Team::WHITE);
+}
 
 void Gomoku::Match::handleEvents(Player::Input& events) {
-    // players[currentPlayer].processEvents(events);
-    // auto move = players[currentPlayer].pendingMove();
-    // if (move.valid) {
-    //     state.stones.push_back(go::Stone{move.position, team[currentPlayer]});
-    //     currentPlayer = 1 - currentPlayer;
-    // }
+    auto move = players[state.player].processInput(events);
+    move.execute(state);
 }
 
 void Gomoku::Match::onUpdateRenderer(Renderer& render) {

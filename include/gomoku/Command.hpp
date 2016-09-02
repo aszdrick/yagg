@@ -9,10 +9,16 @@
 
 namespace base {
     template<>
-    class Command<go::Board> {
+    class Command<go::State> {
      public:
-        void execute(go::Board&);
+        Command(go::Team = go::Team::BLACK,
+                const go::Position& = {0, 0},
+                bool = false);
+
+        void setPosition(const go::Position&);
+        void execute(go::State&);
      private:
+        go::Team team;
         go::Position position;
         bool valid;
     };

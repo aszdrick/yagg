@@ -5,34 +5,35 @@
 #include "gomoku/Player.hpp"
 #include "gomoku/Traits.hpp"
 
-Gomoku::Player::Player(Graphics* const graphics, InputHandler* const input)
- : graphicsPtr(std::move(graphics)), inputPtr(std::move(input)),
+Gomoku::Player::Player(go::Team team,
+                       Graphics* const graphics,
+                       InputHandler* const input)
+ : team(team), graphicsPtr(std::move(graphics)), inputPtr(std::move(input)),
    graphics(*graphicsPtr), input(*inputPtr) { }
 
-Gomoku::Player::Move Gomoku::Player::pendingMove() const {
-    return lastMove;
+void Gomoku::Player::setTeam(go::Team t) {
+    team = t;
 }
 
 Gomoku::Player::Move Gomoku::Player::onProcessInput(Input& in) {
-    // lastMove.valid = false;
-    // go::Position move = GomokuTraits::INVALID_POSITION;
-    // input.update(move, in);
-    // if (move != GomokuTraits::INVALID_POSITION){
-    //     lastMove = {move, true};
-    // }
+    Move move(team);
+    input.update(move, in);
+    return move;
 }
 
 void Gomoku::Player::onUpdateRenderer(Renderer& renderer) {
     graphics.update(*this, renderer);
 }
 
-void Gomoku::Player::Graphics::doUpdate(Agent& agent, Element& list) {
+void Gomoku::Player::Graphics::doUpdate(Agent& agent, Element& events) {
 
 }
 
-void Gomoku::Player::InputHandler::doUpdate(Agent& agent, Element& list) {
-    for (auto& event : list) {
-        agent = event;
-        break;
+void Gomoku::Player::InputHandler::doUpdate(Agent& move, Element& events) {
+    for (auto& event : events) {
+        if (event != GomokuTraits::INVALID_POSITION){
+            move.setPosition(event);
+            break;
+        }
     }
 }

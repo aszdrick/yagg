@@ -8,6 +8,7 @@
 #include "base/Component.hpp"
 #include "Gomoku.hpp"
 #include "Player.hpp"
+#include "State.hpp"
 
 class Gomoku::Match : public State {
     class Graphics;
@@ -34,9 +35,8 @@ class Gomoku::Match : public State {
     GraphicalComponent& graphics;
     InputComponent& input;
     std::array<Player,2> players;
-    const std::array<go::Team, 2> team = {{go::Team::BLACK, go::Team::WHITE}};
     short currentPlayer;
-    go::Board state;
+    go::State state;
 
     void onUpdateRenderer(Renderer&) override;
     Transition onProcessInput(Input&) override;
