@@ -5,13 +5,22 @@
 #define GO_STATE_HPP
 
 #include "CommonTypes.hpp"
+#include <functional>
+#include <unordered_map>
 
 class go::State {
  public:
-    short player = 0;
-    std::list<Stone> stones;
-
     void play(const go::Position&, go::Team);
+    void iterate(const std::function<void(const Stone&)>&) const;
+    short currentPlayer() const;
+
+ private:
+    short player = 0;
+    using Board = std::unordered_map<unsigned,
+                    std::unordered_map<unsigned, Stone>>;
+    Board board;
+
+    bool isOccupied(const go::Position&) const;
 };
 
 #endif /* GO_STATE_HPP */

@@ -20,7 +20,7 @@ Gomoku::Match::Match(Player&& p1, Player&& p2,
 }
 
 void Gomoku::Match::handleEvents(Player::Input& events) {
-    auto move = players[state.player].processInput(events);
+    auto move = players[state.currentPlayer()].processInput(events);
     move.execute(state);
 }
 
@@ -104,7 +104,7 @@ go::Position Gomoku::Match::InputHandler::handleMousePressed(float x, float y) {
 }
 
 void Gomoku::Match::Graphics::drawBalls(Agent& match, Element& window) const {
-    for (auto& stone : match.state.stones) {
+    match.state.iterate([&window](auto& stone) {
         auto shape = sf::CircleShape(GomokuTraits::STONE_RADIUS, 50);
         auto squareSize = GomokuTraits::SQUARE_SIZE;
         shape.setPosition(sf::Vector2f(
@@ -124,5 +124,5 @@ void Gomoku::Match::Graphics::drawBalls(Agent& match, Element& window) const {
 
         shape.setFillColor(stone.team == go::Team::WHITE ? white : black);
         window.draw(shape);
-    }
+    });
 }
