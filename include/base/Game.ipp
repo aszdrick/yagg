@@ -1,46 +1,36 @@
 /* Copyright 2016 Ghabriel Nunes, Marleson Graf
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
-#include "GameState.hpp"
-
-template <typename R, typename E>
-Game<R,E>::Game(State* const initial)
+template <typename R, typename I>
+Game<R,I>::Game(State* const initial)
  : current(*initial), _closed(false) {
     states.emplace_front(std::move(initial));
 }
 
-template <typename R, typename E>
-bool Game<R,E>::close() {
+template <typename R, typename I>
+bool Game<R,I>::close() {
     if (!_closed) {
         _closed = onClose();
     }
     return _closed;
 }
 
-template <typename R, typename E>
-bool Game<R,E>::onClose() {
-    return true;
+template <typename R, typename I>
+void Game<R,I>::periodicUpdate() {
+    current.get().periodicUpdate();
+    onPeriodicUpdate();
 }
 
-template <typename R, typename E>
-bool Game<R,E>::closed() {
-    return _closed;
-}
-
-template <typename R, typename E>
-typename Game<R,E>::State& Game<R,E>::currentState() {
-    return states.front();
-}
-
-template <typename R, typename E>
-void Game<R,E>::updateRenderer(R& renderer) {
+template <typename R, typename I>
+void Game<R,I>::updateRenderer(R& renderer) {
     current.get().updateRenderer(renderer);
-    updateGraphics(renderer);
+    onUpdateRenderer(renderer);
 }
 
-template <typename R, typename E>
-void Game<R,E>::processEvents(E& provider) {
-    auto transition = current.get().processEvents(provider);
+
+template <typename R, typename I>
+void Game<R,I>::processInput(I& provider) {
+    auto transition = current.get().processInput(provider);
     
     switch(transition.type) {
         case State::Transition::Type::SELF:
@@ -59,23 +49,28 @@ void Game<R,E>::processEvents(E& provider) {
             break;
     }
 
-    processInput(provider);
+    onProcessInput(provider);
 }
 
-template <typename R, typename E>
-void Game<R,E>::syncUpdate() {
-    current.get().syncUpdate();
-    update();
+template <typename R, typename I>
+bool Game<R,I>::onClose() { return true; }
+
+template <typename R, typename I>
+void Game<R,I>::onPeriodicUpdate() { }
+
+template <typename R, typename I>
+void Game<R,I>::onUpdateRenderer(R&) { }
+
+template <typename R, typename I>
+void Game<R,I>::onProcessInput(I&) { }
+
+template <typename R, typename I>
+bool Game<R,I>::closed() {
+    return _closed;
 }
 
-template <typename R, typename E>
-void Game<R,E>::pushState(State* const state) {
-    states.emplace_front(std::move(state));
-    current = *states.front();
-}
-
-template <typename R, typename E>
-void Game<R,E>::popState() {
+template <typename R, typename I>
+void Game<R,I>::popState() {
     states.pop_front();
     if (!states.empty()) {
         current = *states.front();
@@ -84,8 +79,14 @@ void Game<R,E>::popState() {
     }
 }
 
-template<typename R, typename E>
-void Game<R,E>::replaceState(State* const state) {
+template <typename R, typename I>
+void Game<R,I>::pushState(State* const state) {
+    states.emplace_front(std::move(state));
+    current = *states.front();
+}
+
+template<typename R, typename I>
+void Game<R,I>::replaceState(State* const state) {
     popState();
     pushState(state);
 }

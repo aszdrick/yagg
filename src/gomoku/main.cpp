@@ -3,7 +3,6 @@
 
 #include "gomoku/Game.hpp"
 #include "mbe/Engine.hpp"
-#include "gomoku/MatchGraphics.hpp"
 
 int main(int argc, char** argv) {
     auto engine = mbe::Engine(new gomoku::Game(),

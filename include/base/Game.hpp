@@ -6,22 +6,20 @@
 
 #include <list>
 #include <memory>
+#include "GameState.hpp"
 
-template<typename R, typename E>
-class GameState;
-
-template <typename Render, typename EventProvider>
+template <typename R, typename I>
 class Game {
  public:
-    using Renderer = Render;
-    using Input = EventProvider;
-    using State = GameState<Renderer, EventProvider>;
+    using Renderer = R;
+    using Input = I;
+    using State = GameState<R, I>;
 
     bool close();
     bool closed();
-    void syncUpdate();
-    void updateRenderer(Render&);
-    void processEvents(EventProvider&);
+    void periodicUpdate();
+    void updateRenderer(Renderer&);
+    void processInput(Input&);
 
  protected:
     Game(State* const);
@@ -38,9 +36,9 @@ class Game {
     bool _closed;
     
     virtual bool onClose();
-    virtual void update() = 0;
-    virtual void updateGraphics(Renderer&) = 0;
-    virtual void processInput(Input&) = 0;
+    virtual void onPeriodicUpdate();
+    virtual void onUpdateRenderer(Renderer&);
+    virtual void onProcessInput(Input&);
 };
 
 #include "Game.ipp"

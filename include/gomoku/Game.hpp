@@ -23,9 +23,8 @@ namespace gomoku {
 
         Game();
      private:
-        void update() override;
-        void updateGraphics(Renderer&) override;
-        void processInput(Input&) override;
+        // void onUpdateRenderer(Renderer&) override;
+        // void onProcessInput(Input&) override;
     };    
 }
 

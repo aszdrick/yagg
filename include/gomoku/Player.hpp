@@ -17,11 +17,14 @@ namespace gomoku {
     };
 
     class Player : public Game::Player {
+        class Graphics;
+        class InputHandler;
      public:
-        using Graphics = Component<Player, Renderer>;
-        using InputHandler = Component<Point, Input>; 
+        using GraphicalComponent = Component<Player, Renderer>;
+        using InputComponent = Component<Point, Input>; 
 
-        Player(Graphics* const, InputHandler* const);
+        Player(Graphics* const = new Graphics(),
+               InputHandler* const = new InputHandler());
         Move pendingMove() const;
 
      private:
@@ -33,6 +36,16 @@ namespace gomoku {
 
         void updateGraphics(Renderer&) override;
         void processInput(Input&) override;
+    
+        class Graphics : public GraphicalComponent {
+         private:
+            void doUpdate(Agent&, Element&) override;
+        };
+
+        class InputHandler : public InputComponent {
+         private:
+            void doUpdate(Agent&, Element&) override;
+        };
     };
     
 }

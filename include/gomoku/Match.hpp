@@ -16,11 +16,17 @@ namespace gomoku {
     };
 
     class Match : public Game::State {
+        class Graphics;
+        class InputHandler;
      public:
-        using Graphics = Component<Match, Game::Renderer>;
-        using InputHandler = Component<Match, Game::Input>; 
+        using GraphicalComponent = Component<Match, Renderer>;
+        using InputComponent = Component<Match, Input>;
 
-        Match(Graphics* const, InputHandler* const, Player&&, Player&&);
+        Match(Player&&,
+              Player&&,
+              Graphics* const = new Graphics(),
+              InputHandler* const = new InputHandler());
+        
         void handleEvents(Player::Input&);
         const State& getState() const {
             return state;
@@ -29,16 +35,29 @@ namespace gomoku {
      private:
         std::unique_ptr<Graphics> graphicsPtr;
         std::unique_ptr<InputHandler> inputPtr;
-        Graphics& graphics;
-        InputHandler& input;
+        GraphicalComponent& graphics;
+        InputComponent& input;
         std::array<Player,2> players;
         const std::array<Team, 2> order = {Team::BLACK, Team::WHITE};
         State state;
         short currentPlayer;
 
-        void update() override;
-        void updateGraphics(Game::Renderer&) override;
-        Transition processInput(Game::Input&) override;
+        void onUpdateRenderer(Renderer&) override;
+        Transition onProcessInput(Input&) override;
+
+        class Graphics : public GraphicalComponent {
+         private:
+            void doUpdate(Agent&, Element&) override;
+            void drawBoard(Element&) const;
+            void drawBalls(Agent&, Element&) const;
+        };
+
+        class InputHandler : public InputComponent {
+         private:
+            void doUpdate(Agent&, Element&) override;
+            Game::PlayerInput handleMousePressed(float, float);
+        };
+
     };
 }
 

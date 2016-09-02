@@ -4,26 +4,28 @@
 #ifndef GAME_STATE_HPP
 #define GAME_STATE_HPP
 
-template <typename Renderer, typename EventProvider = Renderer>
+template <typename R, typename I>
 class GameState {
  public:
     struct Transition;
+    using Renderer = R;
+    using Input = I;
 
-    void syncUpdate();
+    void periodicUpdate();
     void updateRenderer(Renderer&);
-    Transition processEvents(EventProvider&);
+    Transition processInput(Input&);
 
  private:
-    virtual void update() = 0;
-    virtual void updateGraphics(Renderer&) = 0;
-    virtual Transition processInput(EventProvider&) = 0;
+    virtual void onPeriodicUpdate();
+    virtual void onUpdateRenderer(Renderer&);
+    virtual Transition onProcessInput(Input&);
 };
 
-template <typename R, typename E>
-struct GameState<R,E>::Transition {
+template <typename R, typename I>
+struct GameState<R,I>::Transition {
     enum class Type { SELF, STORE, REPLACE, RESTORE, CLOSE };
     Type type;
-    GameState<R,E>* state;
+    GameState<R,I>* state;
 };
 
 #include "GameState.ipp"

@@ -24,3 +24,14 @@ void gomoku::Player::processInput(Input& in) {
 void gomoku::Player::updateGraphics(Renderer& renderer) {
     graphics.update(*this, renderer);
 }
+
+void gomoku::Player::Graphics::doUpdate(Agent& agent, Element& list) {
+
+}
+
+void gomoku::Player::InputHandler::doUpdate(Agent& agent, Element& list) {
+    for (auto& event : list) {
+        agent = event;
+        break;
+    }
+}

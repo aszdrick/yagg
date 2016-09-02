@@ -3,78 +3,76 @@
 
 #include "mbe/Engine.hpp"
 
-namespace mbe {    
-    Engine::Engine(Game* const game, double width, double height,
-        const std::string& title)
-     : WIDTH(width), HEIGHT(height), TITLE(title),
-       windowPtr(new Game::Renderer(
-        sf::VideoMode(WIDTH, HEIGHT),
-        TITLE, sf::Style::Default,
-        desiredContextSettings())),
-       window(*windowPtr),
-       gamePtr(game), game(*gamePtr) {
-        
-        window.setVerticalSyncEnabled(true);
+mbe::Engine::Engine(Game* const game, double width, double height,
+    const std::string& title)
+ : WIDTH(width), HEIGHT(height), TITLE(title),
+   windowPtr(new Game::Renderer(
+    sf::VideoMode(WIDTH, HEIGHT),
+    TITLE, sf::Style::Default,
+    desiredContextSettings())),
+   window(*windowPtr),
+   gamePtr(game), game(*gamePtr) {
+    
+    window.setVerticalSyncEnabled(true);
+}
+
+void mbe::Engine::run() {
+    window.setActive(true);
+
+    while (window.isOpen()) {               
+        // Process events & update logic
+        processEvents();
+        // Some day this call will become periodic
+        // for some "usefull" stuff like in-game clock
+        game.periodicUpdate();
+
+        game.updateRenderer(window);
+
+        window.display();
     }
+}
 
-    void Engine::run() {
-        window.setActive(true);
+bool mbe::Engine::isRunning() const {
+    return window.isOpen();
+}
 
-        while (window.isOpen()) {               
-            // Process events & update logic
-            processEvents();
-            // Some day this call will become periodic
-            // for some "usefull" stuff like in-game clock
-            game.syncUpdate();
+void mbe::Engine::processEvents() {
+    std::list<sf::Event> list;
+    sf::Event event;
 
-            game.updateRenderer(window);
-
-            window.display();
+    while (window.pollEvent(event)) {
+        switch(event.type) {
+            case sf::Event::Closed:
+                if (game.close()) {
+                    window.close();
+                }
+                break;
+            case sf::Event::Resized:
+                resize(event.size.width, event.size.height);
+                break;
+            default:
+                list.push_back(event);
+                break;
         }
     }
+    
+    game.processInput(list);
 
-    bool Engine::isRunning() const {
-        return window.isOpen();
+    if (game.closed()) {
+        window.close();
     }
+}
 
-    void Engine::processEvents() {
-        std::list<sf::Event> list;
-        sf::Event event;
+void mbe::Engine::resize(double width, double height) {
+    window.setSize(sf::Vector2u(width, height));
+}
 
-        while (window.pollEvent(event)) {
-            switch(event.type) {
-                case sf::Event::Closed:
-                    if (game.close()) {
-                        window.close();
-                    }
-                    break;
-                case sf::Event::Resized:
-                    resize(event.size.width, event.size.height);
-                    break;
-                default:
-                    list.push_back(event);
-                    break;
-            }
-        }
-        
-        game.processEvents(list);
-
-        if (game.closed()) {
-            window.close();
-        }
-    }
-
-    void Engine::resize(double width, double height) {
-        window.setSize(sf::Vector2u(width, height));
-    }
-
-    sf::ContextSettings Engine::desiredContextSettings() {
-        sf::ContextSettings settings;
-        settings.depthBits = 24;
-        settings.stencilBits = 8;
-        settings.antialiasingLevel = 2;
-        // settings.majorVersion = 3;
-        // settings.minorVersion = 2;
-        return settings;
-    }
+sf::ContextSettings mbe::Engine::desiredContextSettings() {
+    sf::ContextSettings settings;
+    settings.depthBits = 24;
+    settings.stencilBits = 8;
+    settings.antialiasingLevel = 2;
+    // settings.majorVersion = 3;
+    // settings.minorVersion = 2;
+    return settings;
 }
