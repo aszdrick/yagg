@@ -1,5 +1,5 @@
-/* Copyright 2016 Ghabriel Nunes, Marleson Graf
-   <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
+/* Copyright 2016 Marleson Graf <aszdrick@gmail.com>
+   Ghabriel Nunes <ghabriel.nunes@gmail.com> */
 
 template <typename I, typename R>
 base::Game<I,R>::Game(State* const initial)

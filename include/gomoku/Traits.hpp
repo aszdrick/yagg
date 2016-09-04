@@ -1,5 +1,5 @@
-/* Copyright 2016 Ghabriel Nunes, Marleson Graf
-   <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
+/* Copyright 2016 Ghabriel Nunes <ghabriel.nunes@gmail.com>
+                  Marleson Graf <aszdrick@gmail.com> */
 
 #ifndef TRAITS_HPP
 #define TRAITS_HPP
