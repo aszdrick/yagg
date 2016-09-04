@@ -64,7 +64,7 @@ void Gomoku::Match::InputHandler::doUpdate(Agent& match, Element& list) {
 
 bool Gomoku::Match::InputHandler::isInsideBoard(const gm::Pixel& pixel) {
     return pixel >= MatchTraits::INF_BOARD_LIMIAR
-        || pixel <= MatchTraits::SUP_BOARD_LIMIAR;
+        && pixel <= MatchTraits::SUP_BOARD_LIMIAR;
 }
 
 go::Position Gomoku::Match::InputHandler::pixelToPosition(const gm::Pixel& p) {

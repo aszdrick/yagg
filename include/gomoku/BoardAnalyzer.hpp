@@ -40,7 +40,7 @@ class BoardAnalyzer {
 
 struct BoardAnalyzer::Sequence {
     std::vector<go::Stone*> stones;
-    unsigned freeEnds = 0;
+    std::pair<bool, bool> freeEnds = {false, false};
 };
 
 struct BoardAnalyzer::Report {

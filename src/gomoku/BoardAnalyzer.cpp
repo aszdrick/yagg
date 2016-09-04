@@ -67,14 +67,16 @@ void BoardAnalyzer::recalculate(const go::Position& position) {
         &secondaryDiagonals[row + column]
     };
 
-    // std::vector<std::string> labels = {
-    //     "Row: ", "Column: ", "Main diagonal: ",
-    //     "Secondary diagonal: "
-    // };
+    std::vector<std::string> labels = {
+        "Row: ", "Column: ", "Main diagonal: ",
+        "Secondary diagonal: "
+    };
 
-    // int i = 0;
+    ECHO("----------------------");
+    BLANK
+    int i = 0;
     for (StoneGroup* group : groups) {
-        // ECHO(labels[i++]);
+        ECHO(labels[i++]);
         auto report = findSequences(*group);
         sequences[group] = report.sequences;
         hasQuintuple = hasQuintuple || report.foundQuintuple;
@@ -90,11 +92,17 @@ BoardAnalyzer::findSequences(const StoneGroup& group) const {
     Sequence currentSequence;
     go::Stone* lastPtr;
     bool isFirst = true;
+    bool empty = false;
+    bool onHold = false;
 
     auto setFirst = [&](go::Stone* const ptr) {
         currentSequence.stones.push_back(ptr);
+        if (empty) {
+            currentSequence.freeEnds.first = true;
+        }
         lastPtr = ptr;
         isFirst = false;
+        onHold = false;
     };
 
     auto pushSequence = [&]() {
@@ -102,22 +110,27 @@ BoardAnalyzer::findSequences(const StoneGroup& group) const {
         size_t size = currentSequence.stones.size();
         if (size > 1) {
             foundQuintuple = foundQuintuple || (size >= 5);
-            // ECHO("APPEND");
             result.push_back(std::move(currentSequence));
         }
+        onHold = (size > 1);
         currentSequence.stones.clear();
+        currentSequence.freeEnds = {false, false};
         isFirst = true;
     };
 
-    // for (unsigned key : keys) {
     for (unsigned i = 0; i < GomokuTraits::BOARD_DIMENSION; i++) {
         if (!group.count(i)) {
+            empty = true;
+            if (onHold) {
+                result.back().freeEnds.second = true;
+            }
             continue;
         }
         auto& stonePtr = group.at(i);
         // TRACE(currentSequence.stones.size());
         if (isFirst) {
             setFirst(stonePtr);
+            empty = false;
             continue;
         }
 
@@ -125,32 +138,34 @@ BoardAnalyzer::findSequences(const StoneGroup& group) const {
         go::Stone& last = *lastPtr;
         // TRACE(static_cast<int>(stone.team));
         // TRACE(static_cast<int>(last.team));
-        // std::cout << stone << std::endl;
-        // std::cout << last << std::endl;
         unsigned dist = distance(stone.position, last.position);
         if (dist > 1 || stone.team != last.team) {
             // unable to continue the sequence
-            // TRACE(dist);
-            // ECHO("BREAK");
             pushSequence();
             setFirst(stonePtr);
+            empty = false;
             continue;
         }
 
         currentSequence.stones.push_back(stonePtr);
         lastPtr = stonePtr;
+        empty = false;
     }
 
     pushSequence();
+    if (empty && onHold) {
+        result.back().freeEnds.second = true;
+    }
 
     // TRACE(result.size());
-    // for (auto& sequence : result) {
-    //     // TRACE(sequence.stones.size());
-    //     for (auto& stone : sequence.stones) {
-    //         std::cout << *stone << std::endl;
-    //     }
-    //     BLANK
-    // }
+    for (auto& sequence : result) {
+        // TRACE(sequence.stones.size());
+        for (auto& stone : sequence.stones) {
+            std::cout << *stone << std::endl;
+        }
+        TRACE(sequence.freeEnds);
+        BLANK
+    }
     return {result, foundQuintuple};
 }
 
