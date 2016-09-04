@@ -1,22 +1,23 @@
 /* Copyright 2016 Ghabriel Nunes, Marleson Graf
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
-#ifndef COMPONENT_HPP
-#define COMPONENT_HPP
+#ifndef BASE_COMPONENT_HPP
+#define BASE_COMPONENT_HPP
 
 namespace base {
-    template<typename Object, typename Info>
+    template<typename Object, typename Info, typename Return = void>
     class Component {
      public:
         using Agent = Object;
         using Element = Info;
+        using Product = Return;
 
-        void update(Object&, Info&);
+        Return update(Object&, Info&);
      private:
-        virtual void doUpdate(Agent&, Element&) = 0;
+        virtual Return doUpdate(Agent&, Element&) = 0;
     };    
 }
 
 #include "Component.ipp"
 
-#endif /* COMPONENT_HPP */
+#endif /* BASE_COMPONENT_HPP */

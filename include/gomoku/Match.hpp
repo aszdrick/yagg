@@ -27,7 +27,7 @@ class Gomoku::Match : public State {
           Graphics* const = new Graphics(),
           InputHandler* const = new InputHandler());
     
-    void handleEvents(Player::Input&);
+    void updatePlayers(Player::Input&);
 
  private:
     std::unique_ptr<Graphics> graphicsPtr;
@@ -41,6 +41,13 @@ class Gomoku::Match : public State {
     void onUpdateRenderer(Renderer&) override;
     Transition onProcessInput(Input&) override;
 
+    class InputHandler : public InputComponent {
+     private:
+        void doUpdate(Agent&, Element&) override;
+        go::Position pixelToPosition(const gm::Pixel&);
+        bool isInsideBoard(const gm::Pixel&);
+    };
+
     class Graphics : public GraphicalComponent {
      private:
         void doUpdate(Agent&, Element&) override;
@@ -48,11 +55,6 @@ class Gomoku::Match : public State {
         void drawBalls(Agent&, Element&) const;
     };
 
-    class InputHandler : public InputComponent {
-     private:
-        void doUpdate(Agent&, Element&) override;
-        go::Position handleMousePressed(float, float);
-    };
 };
 
 #endif /* GOMOKU_MATCH_HPP */

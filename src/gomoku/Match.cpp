@@ -19,8 +19,8 @@ Gomoku::Match::Match(Player&& p1, Player&& p2,
     players[1].setTeam(go::Team::WHITE);
 }
 
-void Gomoku::Match::handleEvents(Player::Input& events) {
-    auto move = players[state.currentPlayer()].processInput(events);
+void Gomoku::Match::updatePlayers(Player::Input& positions) {
+    auto move = players[state.currentPlayer()].processInput(state, positions);
     move.execute(state);
 }
 
@@ -31,6 +31,48 @@ void Gomoku::Match::onUpdateRenderer(Renderer& render) {
 Gomoku::Match::Transition Gomoku::Match::onProcessInput(Input& in) {
     input.update(*this, in);
     return { Transition::Type::SELF, this};
+}
+
+//------------------------ Match::InputHandler class ------------------------//
+
+void Gomoku::Match::InputHandler::doUpdate(Agent& match, Element& list) {
+    std::list<go::Position> inputs;
+    while (!list.empty()) {
+        auto event = list.front();
+        list.pop_front();
+
+        switch(event.type) {
+            case sf::Event::MouseButtonPressed: {
+                gm::Pixel pixel = {
+                    static_cast<float>(event.mouseButton.x),
+                    static_cast<float>(event.mouseButton.y)
+                };
+                
+                if (isInsideBoard(pixel)) {
+                    auto position = pixelToPosition(pixel);
+                    inputs.push_back(position);                    
+                }
+
+                break;
+            }
+            default:;
+        }
+    }
+
+    match.updatePlayers(inputs);
+}
+
+bool Gomoku::Match::InputHandler::isInsideBoard(const gm::Pixel& pixel) {
+    return pixel >= MatchTraits::INF_BOARD_LIMIAR
+        || pixel <= MatchTraits::SUP_BOARD_LIMIAR;
+}
+
+go::Position Gomoku::Match::InputHandler::pixelToPosition(const gm::Pixel& p) {
+    auto boardStart = MatchTraits::BORDER_WIDTH;
+    auto squareSize = MatchTraits::SQUARE_SIZE;
+    unsigned column = round((p.x - boardStart) / squareSize);
+    unsigned row = round((p.y - boardStart) / squareSize);
+    return {row, column};
 }
 
 //-------------------------- Match::Graphics class --------------------------//
@@ -44,8 +86,8 @@ void Gomoku::Match::Graphics::drawBoard(Element& window) const {
     static std::vector<sf::Vertex> lines;
     auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     if (lines.empty()) {
-        auto squareSize = GomokuTraits::SQUARE_SIZE;
-        auto boardStart = GomokuTraits::BORDER_WIDTH;
+        auto squareSize = MatchTraits::SQUARE_SIZE;
+        auto boardStart = MatchTraits::BORDER_WIDTH;
         auto boardEnd = boardStart + (boardDimension - 1) * squareSize;
         auto offset = [=](unsigned i) {
             return boardStart + i * squareSize;
@@ -66,59 +108,22 @@ void Gomoku::Match::Graphics::drawBoard(Element& window) const {
     window.draw(&lines.front(), 4 * boardDimension, sf::Lines);
 }
 
-//------------------------ Match::InputHandler class ------------------------//
-
-void Gomoku::Match::InputHandler::doUpdate(Agent& match, Element& list) {
-    std::list<go::Position> inputs;
-    while (!list.empty()) {
-        auto event = list.front();
-        list.pop_front();
-
-        switch(event.type) {
-            case sf::Event::MouseButtonPressed: {
-                float x = event.mouseButton.x;
-                float y = event.mouseButton.y;
-                auto pair = handleMousePressed(x, y);
-                auto boardDimension = GomokuTraits::BOARD_DIMENSION;
-                if (pair.row >= 0 && pair.column >= 0
-                    && pair.row < boardDimension
-                    && pair.column < boardDimension) {
-                    
-                    inputs.push_back(handleMousePressed(x, y));
-                }
-                break;
-            }
-            default:;
-        }
-    }
-
-    match.handleEvents(inputs);
-}
-
-go::Position Gomoku::Match::InputHandler::handleMousePressed(float x, float y) {
-    auto boardStart = GomokuTraits::BORDER_WIDTH;
-    auto squareSize = GomokuTraits::SQUARE_SIZE;
-    unsigned column = round((x - boardStart) / squareSize);
-    unsigned row = round((y - boardStart) / squareSize);
-    return {row, column};
-}
-
 void Gomoku::Match::Graphics::drawBalls(Agent& match, Element& window) const {
     match.state.iterate([&window](auto& stone) {
-        auto shape = sf::CircleShape(GomokuTraits::STONE_RADIUS, 50);
-        auto squareSize = GomokuTraits::SQUARE_SIZE;
+        auto shape = sf::CircleShape(MatchTraits::STONE_RADIUS, 50);
+        auto squareSize = MatchTraits::SQUARE_SIZE;
         shape.setPosition(sf::Vector2f(
             squareSize + stone.position.column * squareSize 
-            - GomokuTraits::STONE_RADIUS,
+            - MatchTraits::STONE_RADIUS,
             squareSize + stone.position.row * squareSize 
-            - GomokuTraits::STONE_RADIUS));
+            - MatchTraits::STONE_RADIUS));
 
         auto white = GomokuTraits::WHITE_COLOR;
         auto black = GomokuTraits::BLACK_COLOR;
         auto w_border = GomokuTraits::WHITE_OUTLINE_COLOR;
         auto b_border = GomokuTraits::BLACK_OUTLINE_COLOR;
 
-        shape.setOutlineThickness(GomokuTraits::STONE_BORDER_WIDTH);
+        shape.setOutlineThickness(MatchTraits::STONE_BORDER_WIDTH);
         
         shape.setOutlineColor(stone.team == go::Team::WHITE ? w_border : b_border);
 

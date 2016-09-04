@@ -4,7 +4,6 @@
 #include "gomoku/State.hpp"
 
 void go::State::play(const go::Position& position, go::Team team) {
-    // stones.push_back(go::Stone{position, team});
     if (!isOccupied(position)) {
         board[position.row][position.column] = go::Stone{position, team};
         player = 1 - player;

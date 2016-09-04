@@ -30,7 +30,29 @@ namespace go {
     inline bool operator!=(const Position& lhs, const Position& rhs) {
         return !(lhs == rhs);
     }
+}
 
+namespace gm {
+    struct Pixel {
+        float x;
+        float y;
+    };
+
+    inline bool operator<(const Pixel& lhs, const Pixel& rhs) {
+        return lhs.x < rhs.x || lhs.y < rhs.y;
+    }
+
+    inline bool operator>(const Pixel& lhs, const Pixel& rhs) {
+        return rhs < lhs;
+    }
+
+    inline bool operator<=(const Pixel& lhs, const Pixel& rhs) {
+        return !(lhs > rhs);
+    }
+
+    inline bool operator>=(const Pixel& lhs, const Pixel& rhs) {
+        return !(lhs < rhs);
+    }
 }
 
 #endif /* GO_COMMON_TYPES_HPP */
