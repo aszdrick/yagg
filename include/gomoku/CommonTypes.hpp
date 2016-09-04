@@ -5,6 +5,7 @@
 #define GO_COMMON_TYPES_HPP
 
 #include <list>
+#include <ostream>
 
 namespace go {
     enum class Team {
@@ -30,6 +31,12 @@ namespace go {
     inline bool operator!=(const Position& lhs, const Position& rhs) {
         return !(lhs == rhs);
     }
+}
+
+inline std::ostream& operator<<(std::ostream& stream, const go::Stone& stone) {
+    auto pos = stone.position;
+    return stream << "{" << pos.row << "," << pos.column << "}" << ", "
+           << ((stone.team == go::Team::BLACK) ? "BLACK" : "WHITE");
 }
 
 namespace gm {

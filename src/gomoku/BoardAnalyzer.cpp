@@ -6,7 +6,7 @@
 #include "gomoku/BoardAnalyzer.hpp"
 #include "gomoku/Traits.hpp"
 
-go::BoardAnalyzer::BoardAnalyzer() {
+BoardAnalyzer::BoardAnalyzer() {
     unsigned boardDimension = GomokuTraits::BOARD_DIMENSION;
     std::vector<SequenceGroup*> sequenceGroups = {
         &rows, &columns, &mainDiagonals, &secondaryDiagonals
@@ -24,10 +24,10 @@ go::BoardAnalyzer::BoardAnalyzer() {
     stoneContainer.reserve(boardDimension * boardDimension);
 }
 
-void go::BoardAnalyzer::play(const go::Position& position, go::Team team) {
+void BoardAnalyzer::play(const go::Position& position, go::Team team) {
     // BLANK
     stoneContainer.push_back(go::Stone{position, team});
-    Stone* stone = &stoneContainer.back();
+    go::Stone* stone = &stoneContainer.back();
     // auto p = std::make_pair(stone->position.row, stone->position.column);
     // TRACE(p);
 
@@ -41,23 +41,23 @@ void go::BoardAnalyzer::play(const go::Position& position, go::Team team) {
     recalculate(position);
 }
 
-void go::BoardAnalyzer::iterate(const Callback& fn) const {
+void BoardAnalyzer::iterate(const Callback& fn) const {
     for (auto& stone : stoneContainer) {
         fn(stone);
     }
 }
 
-bool go::BoardAnalyzer::isOccupied(const go::Position& position) const {
+bool BoardAnalyzer::isOccupied(const go::Position& position) const {
     unsigned row = position.row;
     unsigned column = position.column;
     return rows.count(row) && rows.at(row).count(column);
 }
 
-bool go::BoardAnalyzer::isOver() const {
+bool BoardAnalyzer::isOver() const {
     return hasQuintuple;
 }
 
-void go::BoardAnalyzer::recalculate(const go::Position& position) {
+void BoardAnalyzer::recalculate(const go::Position& position) {
     unsigned boardDimension = GomokuTraits::BOARD_DIMENSION;    
     unsigned row = position.row;
     unsigned column = position.column;
@@ -81,17 +81,17 @@ void go::BoardAnalyzer::recalculate(const go::Position& position) {
     }
 }
 
-go::BoardAnalyzer::Report
-go::BoardAnalyzer::findSequences(const StoneGroup& group) const {
+BoardAnalyzer::Report
+BoardAnalyzer::findSequences(const StoneGroup& group) const {
     // ECHO("----------------------------");
     std::vector<Sequence> result;
     bool foundQuintuple = false;
 
     Sequence currentSequence;
-    Stone* lastPtr;
+    go::Stone* lastPtr;
     bool isFirst = true;
 
-    auto setFirst = [&](Stone* const ptr) {
+    auto setFirst = [&](go::Stone* const ptr) {
         currentSequence.stones.push_back(ptr);
         lastPtr = ptr;
         isFirst = false;
@@ -109,22 +109,26 @@ go::BoardAnalyzer::findSequences(const StoneGroup& group) const {
         isFirst = true;
     };
 
-    for (auto& pair : group) {
-        auto& stonePtr = pair.second;
+    // for (unsigned key : keys) {
+    for (unsigned i = 0; i < GomokuTraits::BOARD_DIMENSION; i++) {
+        if (!group.count(i)) {
+            continue;
+        }
+        auto& stonePtr = group.at(i);
         // TRACE(currentSequence.stones.size());
         if (isFirst) {
             setFirst(stonePtr);
             continue;
         }
 
-        Stone& stone = *stonePtr;
-        Stone& last = *lastPtr;
+        go::Stone& stone = *stonePtr;
+        go::Stone& last = *lastPtr;
         // TRACE(static_cast<int>(stone.team));
         // TRACE(static_cast<int>(last.team));
         // std::cout << stone << std::endl;
         // std::cout << last << std::endl;
         unsigned dist = distance(stone.position, last.position);
-        if (dist > 3 || stone.team != last.team) {
+        if (dist > 1 || stone.team != last.team) {
             // unable to continue the sequence
             // TRACE(dist);
             // ECHO("BREAK");
@@ -150,7 +154,7 @@ go::BoardAnalyzer::findSequences(const StoneGroup& group) const {
     return {result, foundQuintuple};
 }
 
-unsigned go::BoardAnalyzer::distance(const go::Position& first,
+unsigned BoardAnalyzer::distance(const go::Position& first,
                                      const go::Position& second) const {
     unsigned r1 = first.row;
     unsigned r2 = second.row;
