@@ -1,16 +1,15 @@
 /* Copyright 2016 Ghabriel Nunes, Marleson Graf
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
-#ifndef COMMAND_HPP
-#define COMMAND_HPP
+#ifndef BASE_COMMAND_HPP
+#define BASE_COMMAND_HPP
 
 namespace base {
-    template<typename T>
+    template<typename T,typename R = void>
     class Command {
       public:
-        void execute(const T&);
-        void execute(T&);
+        R execute(const T&);
     };
 }
 
-#endif /* COMMAND_HPP */
+#endif /* BASE_COMMAND_HPP */

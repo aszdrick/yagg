@@ -1,20 +1,20 @@
 /* Copyright 2016 Ghabriel Nunes, Marleson Graf
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
-#ifndef GAME_HPP
-#define GAME_HPP
+#ifndef BASE_GAME_HPP
+#define BASE_GAME_HPP
 
 #include <list>
 #include <memory>
 #include "GameState.hpp"
 
 namespace base {
-    template <typename R, typename I>
+    template <typename I, typename R>
     class Game {
      public:
-        using Renderer = R;
         using Input = I;
-        using State = GameState<R, I>;
+        using Renderer = R;
+        using State = GameState<I, R>;
 
         bool close();
         bool closed();
@@ -45,4 +45,4 @@ namespace base {
 
 #include "Game.ipp"
 
-#endif /* GAME_HPP */
+#endif /* BASE_GAME_HPP */

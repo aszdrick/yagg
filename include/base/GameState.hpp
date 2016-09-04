@@ -1,11 +1,11 @@
 /* Copyright 2016 Ghabriel Nunes, Marleson Graf
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
-#ifndef GAME_STATE_HPP
-#define GAME_STATE_HPP
+#ifndef BASE_GAME_STATE_HPP
+#define BASE_GAME_STATE_HPP
 
 namespace base {
-    template <typename R, typename I>
+    template <typename I, typename R>
     class GameState {
      public:
         struct Transition;
@@ -22,14 +22,14 @@ namespace base {
         virtual Transition onProcessInput(Input&);
     };
 
-    template <typename R, typename I>
-    struct GameState<R,I>::Transition {
+    template <typename I, typename R>
+    struct GameState<I,R>::Transition {
         enum class Type { SELF, STORE, REPLACE, RESTORE, CLOSE };
         Type type;
-        GameState<R,I>* state;
+        GameState<I,R>* state;
     };    
 }
 
 #include "GameState.ipp"
 
-#endif /* GAME_STATE_HPP */
+#endif /* BASE_GAME_STATE_HPP */

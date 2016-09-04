@@ -1,23 +1,15 @@
-/* Copyright 2016 Ghabriel Nunes, Marleson Graf
-   <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
+/* Copyright 2016 Marleson Graf <aszdrick@gmail.com>
+   Ghabriel Nunes <ghabriel.nunes@gmail.com> */
 
-template<typename B, typename R, typename I>
-void base::Player<B,R,I>::periodicUpdate() {
+template<typename B, typename I>
+void base::Player<B,I>::periodicUpdate() {
     onPeriodicUpdate();
 }
 
-template<typename B, typename R, typename I>
-void base::Player<B,R,I>::updateRenderer(R& renderer) {
-    onUpdateRenderer(renderer);
+template<typename B, typename I>
+base::Command<B> base::Player<B,I>::processInput(B& board, I& input) {
+    return onProcessInput(board, input);
 }
 
-template<typename B, typename R, typename I>
-typename base::Player<B,R,I>::Move base::Player<B,R,I>::processInput(I& in) {
-    return onProcessInput(in);
-}
-
-template<typename B, typename R, typename I>
-void base::Player<B,R,I>::onPeriodicUpdate() { }
-
-template<typename B, typename R, typename I>
-void base::Player<B,R,I>::onUpdateRenderer(R&) { }
+template<typename B, typename I>
+void base::Player<B,I>::onPeriodicUpdate() { }

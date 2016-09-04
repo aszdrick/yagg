@@ -1,29 +1,27 @@
-/* Copyright 2016 Ghabriel Nunes, Marleson Graf
-   <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
+/* Copyright 2016 Marleson Graf <aszdrick@gmail.com>
+   Ghabriel Nunes <ghabriel.nunes@gmail.com> */
 
-#ifndef PLAYER_HPP
-#define PLAYER_HPP
+#ifndef BASE_PLAYER_HPP
+#define BASE_PLAYER_HPP
 
 #include "Command.hpp"
 
 namespace base {
-    template<typename Board, typename Render, typename InputProvider>
+    template<typename Game, typename Entry>
     class Player {
      public:
-        using Renderer = Render;
-        using Input = InputProvider;
-        using Move = Command<Board>;
+        using Board = Game;
+        using Input = Entry;
+        using Move = Command<Game>;
 
         void periodicUpdate();
-        void updateRenderer(Render&);
-        Move processInput(InputProvider&);
+        Move processInput(Game&, Entry&);
      private:
         virtual void onPeriodicUpdate();
-        virtual void onUpdateRenderer(Renderer&);
-        virtual Move onProcessInput(Input&) = 0;
+        virtual Move onProcessInput(Board&, Input&) = 0;
     };
 }
 
 #include "Player.ipp"
 
-#endif /* PLAYER_HPP */
+#endif /* BASE_PLAYER_HPP */

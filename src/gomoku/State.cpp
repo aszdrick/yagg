@@ -5,7 +5,6 @@
 #include "extra/macros.hpp"
 
 void go::State::play(const go::Position& position, go::Team team) {
-    // stones.push_back(go::Stone{position, team});
     if (!analyzer.isOccupied(position)) {
         // board[position.row][position.column] = go::Stone{position, team};
         analyzer.play(position, team);

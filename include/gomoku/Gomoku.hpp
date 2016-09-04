@@ -11,15 +11,11 @@
 class Gomoku : public mbe::Game {
  public:
     using PlayerInput = std::list<go::Position>;
-    using BasePlayer = base::Player<go::State, Game::Renderer, PlayerInput>;
+    using BasePlayer = base::Player<go::State, PlayerInput>;
     class Match;
     class Player;
 
     Gomoku();
- private:
-    // void onPeriodicUpdate() override;
-    // void onUpdateRenderer(Renderer&) override;
-    // void onProcessInput(Input&) override;
 };
 
 #endif /* GOMOKU_HPP */
