@@ -12,15 +12,13 @@ namespace base {
     class Command<go::State> {
      public:
         Command(go::Team = go::Team::BLACK,
-                const go::Position& = {0, 0},
-                bool = false);
+                const go::Position& = {0, 0});
 
         void setPosition(const go::Position&);
         void execute(go::State&);
      private:
         go::Team team;
         go::Position position;
-        bool valid;
     };
 }
 
