@@ -59,7 +59,9 @@ void Gomoku::Match::InputHandler::doUpdate(Agent& match, Element& list) {
         }
     }
 
-    match.updatePlayers(inputs);
+    if (!inputs.empty()) {
+        match.updatePlayers(inputs);
+    }
 }
 
 bool Gomoku::Match::InputHandler::isInsideBoard(const gm::Pixel& pixel) {
