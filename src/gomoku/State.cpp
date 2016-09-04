@@ -2,28 +2,27 @@
    <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
 
 #include "gomoku/State.hpp"
+#include "extra/macros.hpp"
 
 void go::State::play(const go::Position& position, go::Team team) {
     // stones.push_back(go::Stone{position, team});
-    if (!isOccupied(position)) {
-        board[position.row][position.column] = go::Stone{position, team};
+    if (!analyzer.isOccupied(position)) {
+        // board[position.row][position.column] = go::Stone{position, team};
+        analyzer.play(position, team);
         player = 1 - player;
+        TRACE(isOver());
     }
 }
 
 void go::State::iterate(const std::function<void(const go::Stone&)>& fn) const {
-    for (auto& row : board) {
-        for (auto& pair : row.second) {
-            fn(pair.second);
-        }
-    }
+    analyzer.iterate(fn);
 }
 
 short go::State::currentPlayer() const {
     return player;
 }
 
-bool go::State::isOccupied(const go::Position& position) const {
-    return board.count(position.row)
-        && board.at(position.row).count(position.column);
+
+bool go::State::isOver() const {
+    return analyzer.isOver();
 }

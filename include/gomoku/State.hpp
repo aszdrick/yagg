@@ -4,6 +4,7 @@
 #ifndef GO_STATE_HPP
 #define GO_STATE_HPP
 
+#include "BoardAnalyzer.hpp"
 #include "CommonTypes.hpp"
 #include <functional>
 #include <unordered_map>
@@ -13,14 +14,11 @@ class go::State {
     void play(const go::Position&, go::Team);
     void iterate(const std::function<void(const Stone&)>&) const;
     short currentPlayer() const;
+    bool isOver() const;
 
  private:
     short player = 0;
-    using Board = std::unordered_map<unsigned,
-                    std::unordered_map<unsigned, Stone>>;
-    Board board;
-
-    bool isOccupied(const go::Position&) const;
+    BoardAnalyzer analyzer;
 };
 
 #endif /* GO_STATE_HPP */
