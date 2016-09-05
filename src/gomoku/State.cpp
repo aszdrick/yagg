@@ -24,3 +24,7 @@ short go::State::currentPlayer() const {
 bool go::State::isOver() const {
     return analyzer.isOver();
 }
+
+void go::State::quadrupletIteration(const BoardAnalyzer::SequenceCallback& fn) const {
+    analyzer.quadrupletIteration(fn);
+}

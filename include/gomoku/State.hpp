@@ -15,6 +15,7 @@ class go::State {
     void iterate(const std::function<void(const Stone&)>&) const;
     short currentPlayer() const;
     bool isOver() const;
+    void quadrupletIteration(const BoardAnalyzer::SequenceCallback&) const;
 
  private:
     short player = 0;

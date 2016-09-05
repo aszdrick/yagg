@@ -92,8 +92,8 @@ bool Gomoku::Match::InputHandler::isInsideBoard(const gm::Pixel& pixel) {
 go::Position Gomoku::Match::InputHandler::pixelToPosition(const gm::Pixel& p) {
     auto boardStart = MatchTraits::BORDER_WIDTH;
     auto squareSize = MatchTraits::SQUARE_SIZE;
-    unsigned column = round((p.x - boardStart) / squareSize);
-    unsigned row = round((p.y - boardStart) / squareSize);
+    int column = round((p.x - boardStart) / squareSize);
+    int row = round((p.y - boardStart) / squareSize);
     return {row, column};
 }
 
@@ -101,9 +101,11 @@ go::Position Gomoku::Match::InputHandler::pixelToPosition(const gm::Pixel& p) {
 
 void Gomoku::Match::Graphics::doUpdate(Agent& match, Element& window) {
     drawBoard(window);
-    drawBalls(match, window);
+    drawStones(match, window);
     if (match.isOver()) {
         drawGameOverScreen(match, window);
+    } else {
+        highlight(match, window);    
     }
 }
 
@@ -133,7 +135,7 @@ void Gomoku::Match::Graphics::drawBoard(Element& window) const {
     window.draw(&lines.front(), 4 * boardDimension, sf::Lines);
 }
 
-void Gomoku::Match::Graphics::drawBalls(Agent& match, Element& window) const {
+void Gomoku::Match::Graphics::drawStones(Agent& match, Element& window) const {
     match.state.iterate([&window](auto& stone) {
         auto shape = sf::CircleShape(MatchTraits::STONE_RADIUS, 50);
         auto squareSize = MatchTraits::SQUARE_SIZE;
@@ -174,4 +176,55 @@ void Gomoku::Match::Graphics::drawGameOverScreen(Agent& match, Element& window) 
     text.setPosition(sf::Vector2f(boardEnd + MatchTraits::TEXT_PADDING, 100));
 
     window.draw(text);
+}
+
+void Gomoku::Match::Graphics::highlight(Agent& match, Element& window) const {
+// struct BoardAnalyzer::Sequence {
+//     std::vector<go::Stone*> stones;
+//     std::pair<bool, bool> freeEnds = {false, false};
+// };
+    auto drawHighlightedSpot = [&](const go::Position& position) {
+        auto shape = sf::CircleShape(MatchTraits::STONE_RADIUS, 50);
+        auto squareSize = MatchTraits::SQUARE_SIZE;
+        shape.setPosition(sf::Vector2f(
+            squareSize + position.column * squareSize 
+            - MatchTraits::STONE_RADIUS,
+            squareSize + position.row * squareSize 
+            - MatchTraits::STONE_RADIUS));
+
+        shape.setOutlineThickness(MatchTraits::STONE_BORDER_WIDTH);
+        shape.setOutlineColor(GomokuTraits::HIGHLIGHT_OUTLINE_COLOR);
+        shape.setFillColor(GomokuTraits::HIGHLIGHT_COLOR);
+        window.draw(shape);
+    };
+
+    match.state.quadrupletIteration([&](auto& sequence) {
+        go::Stone& first = *sequence.stones.front();
+        go::Stone& last = *sequence.stones.back();
+        unsigned distance = go::Position::distance(first.position, last.position);
+        if (distance == 4) {
+            go::Position hole;
+            go::Position* prev = &first.position;
+            for (unsigned i = 1; i < sequence.stones.size(); i++) {
+                go::Stone& stone = *sequence.stones[i];
+                go::Position& position = stone.position;
+                if (go::Position::distance(position, *prev) > 1) {
+                    hole = (position + *prev) / 2;
+                    break;
+                }
+                prev = &position;
+            }
+            drawHighlightedSpot(hole);
+        } else {
+            if (sequence.freeEnds.first) {
+                go::Position highlighted = first.position - sequence.delta;
+                drawHighlightedSpot(highlighted);
+            }
+
+            if (sequence.freeEnds.second) {
+                go::Position highlighted = last.position + sequence.delta;
+                drawHighlightedSpot(highlighted);
+            }            
+        }
+    });
 }

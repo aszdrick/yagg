@@ -14,9 +14,9 @@ class BoardAnalyzer {
     struct Sequence;
     using StoneGroup = std::unordered_map<unsigned, go::Stone*>;
     using StoneCallback = std::function<void(const go::Stone&)>;
-    using SequenceCallback = std::function<void(const Sequence&)>;
     using SequenceReference = std::vector<std::pair<const StoneGroup*, unsigned>>;
  public:
+    using SequenceCallback = std::function<void(const Sequence&)>;
 
     BoardAnalyzer();
     void play(const go::Position&, go::Team);
@@ -39,12 +39,13 @@ class BoardAnalyzer {
     SequenceReference quadruplets;
 
     void recalculate(const go::Position&);
-    Report findSequences(const StoneGroup&);
+    Report findSequences(const StoneGroup&, const go::Position&);
 };
 
 struct BoardAnalyzer::Sequence {
     std::vector<go::Stone*> stones;
     std::pair<bool, bool> freeEnds = {false, false};
+    go::Position delta;
 };
 
 struct BoardAnalyzer::Report {

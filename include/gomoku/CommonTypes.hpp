@@ -13,8 +13,24 @@ namespace go {
     };
 
     struct Position {
-        unsigned row;
-        unsigned column;
+        int row;
+        int column;
+        static unsigned distance(const go::Position& first,
+                                 const go::Position& second) {
+            unsigned r1 = first.row;
+            unsigned r2 = second.row;
+            unsigned c1 = first.column;
+            unsigned c2 = second.column;
+            auto deltaRow = (r1 > r2) ? r1 - r2 : r2 - r1;
+            auto deltaColumn = (c1 > c2) ? c1 - c2 : c2 - c1;
+            if (deltaRow == deltaColumn) {
+                // same diagonal
+                return deltaRow;
+            }
+        
+            // manhattan distance
+            return deltaRow + deltaColumn;
+        }
     };
 
     struct Stone {
@@ -23,6 +39,18 @@ namespace go {
     };
 
     class State;
+
+    inline Position operator+(const Position& lhs, const Position& rhs) {
+        return {lhs.row + rhs.row, lhs.column + rhs.column};
+    }
+
+    inline Position operator-(const Position& lhs, const Position& rhs) {
+        return {lhs.row - rhs.row, lhs.column - rhs.column};
+    }
+
+    inline Position operator/(const Position& lhs, int rhs) {
+        return {lhs.row / rhs, lhs.column / rhs};
+    }
 
     inline bool operator==(const Position& lhs, const Position& rhs) {
         return lhs.row == rhs.row && lhs.column == rhs.column;

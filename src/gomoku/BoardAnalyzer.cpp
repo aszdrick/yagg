@@ -73,24 +73,17 @@ void BoardAnalyzer::recalculate(const go::Position& position) {
         &secondaryDiagonals[row + column]
     };
 
-    // std::vector<std::string> labels = {
-    //     "Row: ", "Column: ", "Main diagonal: ",
-    //     "Secondary diagonal: "
-    // };
-
-    // ECHO("----------------------");
-    // BLANK
-    // int i = 0;
+    unsigned i = 0;
     for (StoneGroup* group : groups) {
-        // ECHO(labels[i++]);
-        auto report = findSequences(*group);
+        auto report = findSequences(*group, MatchTraits::DELTA[i]);
         sequences[group] = report.sequences;
         hasQuintuple = hasQuintuple || report.foundQuintuple;
+        i++;
     }
 }
 
 BoardAnalyzer::Report
-BoardAnalyzer::findSequences(const StoneGroup& group) {
+BoardAnalyzer::findSequences(const StoneGroup& group, const go::Position& delta) {
     // ECHO("----------------------------");
     std::vector<Sequence> result;
     bool foundQuintuple = false;
@@ -120,13 +113,8 @@ BoardAnalyzer::findSequences(const StoneGroup& group) {
                 j++;
             }
 
-            if (!group.count(sequence[i] - 1)) {
-                seq.freeEnds.first = true;
-            }
-
-            if (j < sequence.size() && !group.count(sequence[j])) {
-                seq.freeEnds.second = true;
-            }
+            seq.freeEnds.first = !group.count(sequence[i] - 1);
+            seq.freeEnds.second = !group.count(sequence[j]);
 
             size_t size = seq.stones.size();
             foundQuintuple = foundQuintuple || (size >= 5);
@@ -134,6 +122,7 @@ BoardAnalyzer::findSequences(const StoneGroup& group) {
                 decltype(quadruplets)::value_type pair{&group, result.size()};
                 quadruplets.push_back(std::move(pair));
             }
+            seq.delta = delta;
             result.push_back(std::move(seq));
         }
     }
