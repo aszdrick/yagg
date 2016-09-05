@@ -25,7 +25,7 @@ void Gomoku::Match::updatePlayers(Player::Input& positions) {
 }
 
 void Gomoku::Match::restart() {
-    ECHO("new game");
+    state = go::State();
 }
 
 go::Team Gomoku::Match::currentTeam() const {
