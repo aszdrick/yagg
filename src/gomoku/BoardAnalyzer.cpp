@@ -46,7 +46,10 @@ void BoardAnalyzer::iterate(const StoneCallback& fn) const {
 
 void BoardAnalyzer::quadrupletIteration(const SequenceCallback& fn) const {
     for (auto& pair : quadruplets) {
-        fn(sequences.at(const_cast<StoneGroup*>(pair.first)).at(pair.second));
+        auto& seq = sequences.at(const_cast<StoneGroup*>(pair.first)).at(pair.second);
+        if (seq.stones.size() == 4) {
+            fn(seq);
+        }
     }
 }
 
