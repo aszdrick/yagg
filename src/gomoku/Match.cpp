@@ -99,14 +99,19 @@ go::Position Gomoku::Match::InputHandler::pixelToPosition(const gm::Pixel& p) {
 
 //-------------------------- Match::Graphics class --------------------------//
 
+Gomoku::Match::Graphics::Graphics() {
+    font.loadFromFile("res/arial.ttf");
+}
+
+
 void Gomoku::Match::Graphics::doUpdate(Agent& match, Element& window) {
     drawBoard(window);
-    drawStones(match, window);
     if (match.isOver()) {
         drawGameOverScreen(match, window);
     } else {
         highlight(match, window);    
     }
+    drawStones(match, window);
 }
 
 void Gomoku::Match::Graphics::drawBoard(Element& window) const {
@@ -160,9 +165,6 @@ void Gomoku::Match::Graphics::drawStones(Agent& match, Element& window) const {
 }
 
 void Gomoku::Match::Graphics::drawGameOverScreen(Agent& match, Element& window) const {
-    sf::Font font;
-    font.loadFromFile("arial.ttf");
-
     auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     auto squareSize = MatchTraits::SQUARE_SIZE;
     auto boardStart = MatchTraits::BORDER_WIDTH;

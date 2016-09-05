@@ -51,7 +51,10 @@ class Gomoku::Match : public State {
     };
 
     class Graphics : public GraphicalComponent {
+     public:
+        Graphics();
      private:
+        sf::Font font;
         void doUpdate(Agent&, Element&) override;
         void drawBoard(Element&) const;
         void drawStones(Agent&, Element&) const;

@@ -25,11 +25,8 @@ BoardAnalyzer::BoardAnalyzer() {
 }
 
 void BoardAnalyzer::play(const go::Position& position, go::Team team) {
-    // BLANK
     stoneContainer.push_back(go::Stone{position, team});
     go::Stone* stone = &stoneContainer.back();
-    // auto p = std::make_pair(stone->position.row, stone->position.column);
-    // TRACE(p);
 
     unsigned boardDimension = GomokuTraits::BOARD_DIMENSION;
     unsigned row = position.row;
@@ -84,11 +81,9 @@ void BoardAnalyzer::recalculate(const go::Position& position) {
 
 BoardAnalyzer::Report
 BoardAnalyzer::findSequences(const StoneGroup& group, const go::Position& delta) {
-    // ECHO("----------------------------");
     std::vector<Sequence> result;
     bool foundQuintuple = false;
 
-    // Sequence currentSequence;
     std::vector<std::vector<unsigned>> partialSequences;
 
     for (unsigned i = 0; i < GomokuTraits::BOARD_DIMENSION; i++) {
@@ -127,14 +122,5 @@ BoardAnalyzer::findSequences(const StoneGroup& group, const go::Position& delta)
         }
     }
 
-    // TRACE(result.size());
-    // for (auto& sequence : result) {
-    //     // TRACE(sequence.stones.size());
-    //     for (auto& stone : sequence.stones) {
-    //         std::cout << *stone << std::endl;
-    //     }
-    //     TRACE(sequence.freeEnds);
-    //     BLANK
-    // }
     return {result, foundQuintuple};
 }
