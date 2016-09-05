@@ -118,7 +118,7 @@ BoardAnalyzer::findSequences(const StoneGroup& group) const {
                 seq.freeEnds.first = true;
             }
 
-            if (!group.count(sequence[j])) {
+            if (j < sequence.size() && !group.count(sequence[j])) {
                 seq.freeEnds.second = true;
             }
             foundQuintuple = foundQuintuple || (seq.stones.size() >= 5);

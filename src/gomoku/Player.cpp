@@ -14,6 +14,10 @@ void Gomoku::Player::setTeam(go::Team t) {
     team = t;
 }
 
+go::Team Gomoku::Player::getTeam() const {
+    return team;
+}
+
 Gomoku::Player::Move Gomoku::Player::onProcessInput(Board& board, Input& in) {
     Move move(team);
     input.update(move, in);

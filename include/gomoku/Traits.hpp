@@ -32,6 +32,7 @@ struct Traits<Match> {
     constexpr static float BORDER_WIDTH = SQUARE_SIZE;
     constexpr static float STONE_RADIUS = 18;
     constexpr static float STONE_BORDER_WIDTH = 2;
+    constexpr static float TEXT_PADDING = 80;
     const static gm::Pixel INF_BOARD_LIMIAR;
     const static gm::Pixel SUP_BOARD_LIMIAR;
 

@@ -24,6 +24,18 @@ void Gomoku::Match::updatePlayers(Player::Input& positions) {
     move.execute(state);
 }
 
+void Gomoku::Match::restart() {
+    ECHO("new game");
+}
+
+go::Team Gomoku::Match::currentTeam() const {
+    return players[state.currentPlayer()].getTeam();
+}
+
+bool Gomoku::Match::isOver() const {
+    return state.isOver();
+}
+
 void Gomoku::Match::onUpdateRenderer(Renderer& render) {
     graphics.update(*this, render);
 }
@@ -48,13 +60,21 @@ void Gomoku::Match::InputHandler::doUpdate(Agent& match, Element& list) {
                     static_cast<float>(event.mouseButton.y)
                 };
                 
-                if (isInsideBoard(pixel)) {
+                if (!match.isOver() && isInsideBoard(pixel)) {
                     auto position = pixelToPosition(pixel);
                     inputs.push_back(position);                    
                 }
 
                 break;
             }
+            case sf::Event::KeyPressed:
+                switch (event.key.code) {
+                    case sf::Keyboard::F1:
+                        match.restart();
+                        break;
+                    default:;
+                }
+                break;
             default:;
         }
     }
@@ -82,6 +102,9 @@ go::Position Gomoku::Match::InputHandler::pixelToPosition(const gm::Pixel& p) {
 void Gomoku::Match::Graphics::doUpdate(Agent& match, Element& window) {
     drawBoard(window);
     drawBalls(match, window);
+    if (match.isOver()) {
+        drawGameOverScreen(match, window);
+    }
 }
 
 void Gomoku::Match::Graphics::drawBoard(Element& window) const {
@@ -132,4 +155,23 @@ void Gomoku::Match::Graphics::drawBalls(Agent& match, Element& window) const {
         shape.setFillColor(stone.team == go::Team::WHITE ? white : black);
         window.draw(shape);
     });
+}
+
+void Gomoku::Match::Graphics::drawGameOverScreen(Agent& match, Element& window) const {
+    sf::Font font;
+    font.loadFromFile("arial.ttf");
+
+    auto boardDimension = GomokuTraits::BOARD_DIMENSION;
+    auto squareSize = MatchTraits::SQUARE_SIZE;
+    auto boardStart = MatchTraits::BORDER_WIDTH;
+    auto boardEnd = boardStart + (boardDimension - 1) * squareSize;
+
+    std::string team = (match.currentTeam() == go::Team::BLACK) ? "White"
+                                                                : "Black";
+    sf::Text text(team + " wins!", font);
+    text.setCharacterSize(30);
+    text.setColor(sf::Color::White);
+    text.setPosition(sf::Vector2f(boardEnd + MatchTraits::TEXT_PADDING, 100));
+
+    window.draw(text);
 }

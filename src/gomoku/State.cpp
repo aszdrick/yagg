@@ -9,7 +9,6 @@ void go::State::play(const go::Position& position, go::Team team) {
         // board[position.row][position.column] = go::Stone{position, team};
         analyzer.play(position, team);
         player = 1 - player;
-        TRACE(isOver());
     }
 }
 

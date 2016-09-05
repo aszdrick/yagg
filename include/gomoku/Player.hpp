@@ -19,6 +19,7 @@ class Gomoku::Player : public BasePlayer {
            InputHandler* const = new InputHandler());
 
     void setTeam(go::Team);
+    go::Team getTeam() const;
 
  private:
     go::Team team;

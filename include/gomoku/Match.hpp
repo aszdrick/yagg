@@ -28,6 +28,9 @@ class Gomoku::Match : public State {
           InputHandler* const = new InputHandler());
     
     void updatePlayers(Player::Input&);
+    void restart();
+    go::Team currentTeam() const;
+    bool isOver() const;
 
  private:
     std::unique_ptr<Graphics> graphicsPtr;
@@ -35,7 +38,6 @@ class Gomoku::Match : public State {
     GraphicalComponent& graphics;
     InputComponent& input;
     std::array<Player,2> players;
-    short currentPlayer;
     go::State state;
 
     void onUpdateRenderer(Renderer&) override;
@@ -53,6 +55,7 @@ class Gomoku::Match : public State {
         void doUpdate(Agent&, Element&) override;
         void drawBoard(Element&) const;
         void drawBalls(Agent&, Element&) const;
+        void drawGameOverScreen(Agent&, Element&) const;
     };
 
 };
