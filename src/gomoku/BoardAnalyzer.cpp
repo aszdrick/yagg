@@ -67,16 +67,16 @@ void BoardAnalyzer::recalculate(const go::Position& position) {
         &secondaryDiagonals[row + column]
     };
 
-    std::vector<std::string> labels = {
-        "Row: ", "Column: ", "Main diagonal: ",
-        "Secondary diagonal: "
-    };
+    // std::vector<std::string> labels = {
+    //     "Row: ", "Column: ", "Main diagonal: ",
+    //     "Secondary diagonal: "
+    // };
 
-    ECHO("----------------------");
-    BLANK
-    int i = 0;
+    // ECHO("----------------------");
+    // BLANK
+    // int i = 0;
     for (StoneGroup* group : groups) {
-        ECHO(labels[i++]);
+        // ECHO(labels[i++]);
         auto report = findSequences(*group);
         sequences[group] = report.sequences;
         hasQuintuple = hasQuintuple || report.foundQuintuple;
@@ -89,83 +89,52 @@ BoardAnalyzer::findSequences(const StoneGroup& group) const {
     std::vector<Sequence> result;
     bool foundQuintuple = false;
 
-    Sequence currentSequence;
-    go::Stone* lastPtr;
-    bool isFirst = true;
-    bool empty = false;
-    bool onHold = false;
-
-    auto setFirst = [&](go::Stone* const ptr) {
-        currentSequence.stones.push_back(ptr);
-        if (empty) {
-            currentSequence.freeEnds.first = true;
-        }
-        lastPtr = ptr;
-        isFirst = false;
-        onHold = false;
-    };
-
-    auto pushSequence = [&]() {
-        // pushes the current sequence to the result if it's big enough
-        size_t size = currentSequence.stones.size();
-        if (size > 1) {
-            foundQuintuple = foundQuintuple || (size >= 5);
-            result.push_back(std::move(currentSequence));
-        }
-        onHold = (size > 1);
-        currentSequence.stones.clear();
-        currentSequence.freeEnds = {false, false};
-        isFirst = true;
-    };
+    // Sequence currentSequence;
+    std::vector<std::vector<unsigned>> partialSequences;
 
     for (unsigned i = 0; i < GomokuTraits::BOARD_DIMENSION; i++) {
         if (!group.count(i)) {
-            empty = true;
-            if (onHold) {
-                result.back().freeEnds.second = true;
-            }
             continue;
         }
         auto& stonePtr = group.at(i);
-        // TRACE(currentSequence.stones.size());
-        if (isFirst) {
-            setFirst(stonePtr);
-            empty = false;
-            continue;
-        }
+        if (partialSequences.size() == 0
+            || group.at(partialSequences.back().back())->team != stonePtr->team) {
 
-        go::Stone& stone = *stonePtr;
-        go::Stone& last = *lastPtr;
-        // TRACE(static_cast<int>(stone.team));
-        // TRACE(static_cast<int>(last.team));
-        unsigned dist = distance(stone.position, last.position);
-        if (dist > 1 || stone.team != last.team) {
-            // unable to continue the sequence
-            pushSequence();
-            setFirst(stonePtr);
-            empty = false;
-            continue;
+            partialSequences.push_back(std::vector<unsigned>());
         }
-
-        currentSequence.stones.push_back(stonePtr);
-        lastPtr = stonePtr;
-        empty = false;
+        partialSequences.back().push_back(i);
     }
 
-    pushSequence();
-    if (empty && onHold) {
-        result.back().freeEnds.second = true;
+    for (auto& sequence : partialSequences) {
+        for (unsigned i = 0; i < sequence.size(); i++) {
+            Sequence seq;
+            unsigned j = i;
+            while (j < sequence.size() && sequence[j] - sequence[i] <= 4) {
+                seq.stones.push_back(group.at(sequence[j]));
+                j++;
+            }
+
+            if (!group.count(sequence[i] - 1)) {
+                seq.freeEnds.first = true;
+            }
+
+            if (!group.count(sequence[j])) {
+                seq.freeEnds.second = true;
+            }
+            foundQuintuple = foundQuintuple || (seq.stones.size() >= 5);
+            result.push_back(std::move(seq));
+        }
     }
 
     // TRACE(result.size());
-    for (auto& sequence : result) {
-        // TRACE(sequence.stones.size());
-        for (auto& stone : sequence.stones) {
-            std::cout << *stone << std::endl;
-        }
-        TRACE(sequence.freeEnds);
-        BLANK
-    }
+    // for (auto& sequence : result) {
+    //     // TRACE(sequence.stones.size());
+    //     for (auto& stone : sequence.stones) {
+    //         std::cout << *stone << std::endl;
+    //     }
+    //     TRACE(sequence.freeEnds);
+    //     BLANK
+    // }
     return {result, foundQuintuple};
 }
 
