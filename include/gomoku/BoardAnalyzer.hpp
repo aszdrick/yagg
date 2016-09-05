@@ -10,18 +10,22 @@
 #include <vector>
 
 class BoardAnalyzer {
- public:
+ private:
+    struct Sequence;
     using StoneGroup = std::unordered_map<unsigned, go::Stone*>;
-    using Callback = std::function<void(const go::Stone&)>;
+    using StoneCallback = std::function<void(const go::Stone&)>;
+    using SequenceCallback = std::function<void(const Sequence&)>;
+    using SequenceReference = std::vector<std::pair<const StoneGroup*, unsigned>>;
+ public:
 
     BoardAnalyzer();
     void play(const go::Position&, go::Team);
-    void iterate(const Callback&) const;
+    void iterate(const StoneCallback&) const;
+    void quadrupletIteration(const SequenceCallback&) const;
     bool isOccupied(const go::Position&) const;
     bool isOver() const;
 
  private:
-    struct Sequence;
     struct Report;
     using SequenceGroup = std::unordered_map<unsigned, StoneGroup>;
 
@@ -32,10 +36,10 @@ class BoardAnalyzer {
     SequenceGroup secondaryDiagonals;
     std::unordered_map<StoneGroup*, std::vector<Sequence>> sequences;
     bool hasQuintuple = false;
+    SequenceReference quadruplets;
 
     void recalculate(const go::Position&);
-    Report findSequences(const StoneGroup&) const;
-    unsigned distance(const go::Position&, const go::Position&) const;
+    Report findSequences(const StoneGroup&);
 };
 
 struct BoardAnalyzer::Sequence {

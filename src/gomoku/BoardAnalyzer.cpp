@@ -41,9 +41,15 @@ void BoardAnalyzer::play(const go::Position& position, go::Team team) {
     recalculate(position);
 }
 
-void BoardAnalyzer::iterate(const Callback& fn) const {
+void BoardAnalyzer::iterate(const StoneCallback& fn) const {
     for (auto& stone : stoneContainer) {
         fn(stone);
+    }
+}
+
+void BoardAnalyzer::quadrupletIteration(const SequenceCallback& fn) const {
+    for (auto& pair : quadruplets) {
+        fn(sequences.at(const_cast<StoneGroup*>(pair.first)).at(pair.second));
     }
 }
 
@@ -84,7 +90,7 @@ void BoardAnalyzer::recalculate(const go::Position& position) {
 }
 
 BoardAnalyzer::Report
-BoardAnalyzer::findSequences(const StoneGroup& group) const {
+BoardAnalyzer::findSequences(const StoneGroup& group) {
     // ECHO("----------------------------");
     std::vector<Sequence> result;
     bool foundQuintuple = false;
@@ -121,7 +127,13 @@ BoardAnalyzer::findSequences(const StoneGroup& group) const {
             if (j < sequence.size() && !group.count(sequence[j])) {
                 seq.freeEnds.second = true;
             }
-            foundQuintuple = foundQuintuple || (seq.stones.size() >= 5);
+
+            size_t size = seq.stones.size();
+            foundQuintuple = foundQuintuple || (size >= 5);
+            if (size == 4) {
+                decltype(quadruplets)::value_type pair{&group, result.size()};
+                quadruplets.push_back(std::move(pair));
+            }
             result.push_back(std::move(seq));
         }
     }
@@ -136,21 +148,4 @@ BoardAnalyzer::findSequences(const StoneGroup& group) const {
     //     BLANK
     // }
     return {result, foundQuintuple};
-}
-
-unsigned BoardAnalyzer::distance(const go::Position& first,
-                                     const go::Position& second) const {
-    unsigned r1 = first.row;
-    unsigned r2 = second.row;
-    unsigned c1 = first.column;
-    unsigned c2 = second.column;
-    auto deltaRow = (r1 > r2) ? r1 - r2 : r2 - r1;
-    auto deltaColumn = (c1 > c2) ? c1 - c2 : c2 - c1;
-    if (deltaRow == deltaColumn) {
-        // same diagonal
-        return deltaRow;
-    }
-
-    // manhattan distance
-    return deltaRow + deltaColumn;
 }
