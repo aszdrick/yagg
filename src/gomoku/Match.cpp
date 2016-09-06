@@ -174,7 +174,7 @@ void Gomoku::Match::Graphics::drawGameOverScreen(Agent& match, Element& window) 
                                                                 : "Black";
     sf::Text text(team + " wins!", font);
     text.setCharacterSize(30);
-    text.setColor(sf::Color::White);
+    text.setFillColor(sf::Color::White);
     text.setPosition(sf::Vector2f(boardEnd + MatchTraits::TEXT_PADDING, 100));
 
     window.draw(text);
@@ -186,6 +186,12 @@ void Gomoku::Match::Graphics::highlight(Agent& match, Element& window) const {
 //     std::pair<bool, bool> freeEnds = {false, false};
 // };
     auto drawHighlightedSpot = [&](const go::Position& position) {
+        int signedDimension = static_cast<int>(GomokuTraits::BOARD_DIMENSION);
+        if (position.row < 0 || position.column < 0
+            || position.row >= signedDimension
+            || position.column >= signedDimension) {
+            return;
+        }
         auto shape = sf::CircleShape(MatchTraits::STONE_RADIUS, 50);
         auto squareSize = MatchTraits::SQUARE_SIZE;
         shape.setPosition(sf::Vector2f(
