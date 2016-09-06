@@ -112,7 +112,9 @@ BoardAnalyzer::findSequences(const StoneGroup& group, const go::Position& delta)
             }
 
             seq.freeEnds.first = !group.count(sequence[i] - 1);
-            seq.freeEnds.second = !group.count(sequence[j]);
+            seq.freeEnds.second = (j >= sequence.size()
+                                   || !group.count(sequence[j])
+                                   || sequence[j] - sequence[j - 1] > 1);
 
             size_t size = seq.stones.size();
             foundQuintuple = foundQuintuple || (size >= 5);

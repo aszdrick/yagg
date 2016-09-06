@@ -181,10 +181,6 @@ void Gomoku::Match::Graphics::drawGameOverScreen(Agent& match, Element& window) 
 }
 
 void Gomoku::Match::Graphics::highlight(Agent& match, Element& window) const {
-// struct BoardAnalyzer::Sequence {
-//     std::vector<go::Stone*> stones;
-//     std::pair<bool, bool> freeEnds = {false, false};
-// };
     auto drawHighlightedSpot = [&](const go::Position& position) {
         int signedDimension = static_cast<int>(GomokuTraits::BOARD_DIMENSION);
         if (position.row < 0 || position.column < 0
