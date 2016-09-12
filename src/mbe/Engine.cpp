@@ -82,17 +82,17 @@ void mbe::Engine::processEvents() {
 }
 
 void mbe::Engine::resize(double width, double height) {
-    double aspectRatio = currWidth / currHeight;
-    double deltaWidth = std::abs(width - currWidth);
-    double deltaHeight = std::abs(height - currHeight);
-    if (deltaWidth > deltaHeight) {
-        currWidth = width;
-        currHeight = currWidth / aspectRatio;
-    } else {
-        currHeight = height;
-        currWidth = currHeight * aspectRatio;
-    }
-    window.setView(sf::View(sf::FloatRect(0, 0, width, height)));
+    // double aspectRatio = currWidth / currHeight;
+    // double deltaWidth = std::abs(width - currWidth);
+    // double deltaHeight = std::abs(height - currHeight);
+    // if (deltaWidth > deltaHeight) {
+    //     currWidth = width;
+    //     currHeight = currWidth / aspectRatio;
+    // } else {
+    //     currHeight = height;
+    //     currWidth = currHeight * aspectRatio;
+    // }
+    // window.setView(sf::View(sf::FloatRect(0, 0, width, height)));
     game.setVideoMode(window, currWidth, currHeight, MAX_DEPTH);
 }
 
@@ -103,8 +103,10 @@ void mbe::Engine::switchScreenMode() {
         desiredContextSettings());
         fullscreen = false;
     } else {
+        auto view = window.getView();
         window.create(BEST_VIDEO_MODE, TITLE, sf::Style::Fullscreen,
             desiredContextSettings());
+        window.setView(view);
         fullscreen = true;
     }
 }
