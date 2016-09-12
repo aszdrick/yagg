@@ -18,6 +18,9 @@ class go::State {
     bool isOver() const;
     void quadrupletIteration(const BoardAnalyzer::SequenceCallback&) const;
     bool isOccupied(const go::Position&) const;
+    State generateNext() const {
+        return go::State();
+    }
 
  private:
     short player = 0;

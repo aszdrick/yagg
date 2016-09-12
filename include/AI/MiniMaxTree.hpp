@@ -5,9 +5,14 @@
 #define MINI_MAX_TREE_HPP
 
 #include "base/Command.hpp"
+#include <climits>
 #include <functional>
 #include <memory>
 #include <vector>
+
+enum class Type {
+    MIN, MAX
+};
 
 template<typename T>
 using RatingFunction = std::function<double(const T&)>;
@@ -15,25 +20,43 @@ using RatingFunction = std::function<double(const T&)>;
 template<typename T>
 class MiniMaxTree {
     struct Node;
-    enum class Type { MIN, MAX };
-
  public:
     MiniMaxTree(const RatingFunction<T>&, const RatingFunction<T>&);
-    base::Command<T> findNextMove(const T&);
+    void findNextMove(const T&);
 
  private:
-    std::unique_ptr<Node> root;
+    Node root;
     const RatingFunction<T>& h_function;
     const RatingFunction<T>& u_function;
+
+    double update(Node&, unsigned);
 };
 
 template<typename T>
 struct MiniMaxTree<T>::Node {
     T state;
-    double value;
-    double alpha;
-    double beta;
-    std::vector<std::unique_ptr<Node>> children;
+    Type type;
+    double value = 0;
+    double alpha = -INT_MAX;
+    double beta = INT_MAX;
+    std::vector<Node> children;
+};
+
+namespace std {
+    template<>
+    struct hash<Type> {
+        std::size_t operator()(const Type& type) const {
+            return static_cast<int>(type);
+        }
+    };
+}
+
+template<typename T>
+struct initial_values {
+    double best;
+    double* param;
+    std::function<T(T,T)> fn;
+    Type nextType;
 };
 
 #include "MiniMaxTree.ipp"

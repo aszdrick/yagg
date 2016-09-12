@@ -39,6 +39,8 @@ namespace mbe {
         Game::Renderer& window;
         std::unique_ptr<Game> gamePtr;
         Game& game;
+        double currWidth;
+        double currHeight;
 
         void processEvents();
         void resize(double, double);

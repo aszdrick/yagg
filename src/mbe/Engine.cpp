@@ -75,7 +75,18 @@ void mbe::Engine::processEvents() {
 }
 
 void mbe::Engine::resize(double width, double height) {
-    game.setVideoMode(window, width, height, MAX_DEPTH);
+    // double aspectRatio = currWidth / currHeight;
+    // double deltaWidth = std::abs(width - currWidth);
+    // double deltaHeight = std::abs(height - currHeight);
+    // if (deltaWidth > deltaHeight) {
+    //     currWidth = width;
+    //     currHeight = currWidth / aspectRatio;
+    // } else {
+    //     currHeight = height;
+    //     currWidth = currHeight * aspectRatio;
+    // }
+    // window.setView(sf::View(sf::FloatRect(0, 0, currWidth, currHeight)));
+    game.setVideoMode(window, currWidth, currHeight, MAX_DEPTH);
 }
 
 sf::ContextSettings mbe::Engine::desiredContextSettings() {

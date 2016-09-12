@@ -15,6 +15,7 @@ struct Traits;
 
 class Gomoku;
 class Match;
+class AIHandler;
 
 template<>
 struct Traits<Gomoku> {
@@ -39,7 +40,13 @@ struct Traits<Match> {
     const static std::array<go::Position, 4> DELTA;
 };
 
+template<>
+struct Traits<AIHandler> {
+    constexpr static unsigned MAX_DEPTH = 5;
+};
+
 using GomokuTraits = Traits<Gomoku>;
 using MatchTraits = Traits<Match>;
+using AITraits = Traits<AIHandler>;
 
 #endif /* TRAITS_HPP */
