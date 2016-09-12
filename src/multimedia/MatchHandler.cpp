@@ -13,15 +13,13 @@ void Gomoku::Match::Handler::doUpdate(Agent& match, Element& list) {
 
         switch(event.type) {
             case sf::Event::MouseButtonPressed: {
-                gm::Pixel pixel = {
+                Pixel pixel = {
                     static_cast<float>(event.mouseButton.x),
                     static_cast<float>(event.mouseButton.y)
                 };
-                
-                if (isInsideBoard(pixel)) {
-                    auto position = pixelToPosition(pixel);
-                    inputs.push_back(position);                    
-                }
+
+                auto position = pixelToPosition(pixel);
+                inputs.push_back(position);
 
                 break;
             }
@@ -40,12 +38,7 @@ void Gomoku::Match::Handler::doUpdate(Agent& match, Element& list) {
     match.updatePlayers(inputs);
 }
 
-bool Gomoku::Match::Handler::isInsideBoard(const gm::Pixel& pixel) {
-    return pixel >= MatchTraits::INF_BOARD_LIMIAR
-        && pixel <= MatchTraits::SUP_BOARD_LIMIAR;
-}
-
-go::Position Gomoku::Match::Handler::pixelToPosition(const gm::Pixel& p) {
+go::Position Gomoku::Match::Handler::pixelToPosition(const Pixel& p) {
     auto boardStart = MatchTraits::BORDER_WIDTH;
     auto squareSize = MatchTraits::SQUARE_SIZE;
     int column = round((p.x - boardStart) / squareSize);

@@ -25,14 +25,15 @@ Gomoku::AIHandler::Product Gomoku::AIHandler::doUpdate(Agent& board, Element& ev
     static auto now = std::chrono::system_clock::now().time_since_epoch();
     static std::default_random_engine generator(now.count());
     static random pos(0, GomokuTraits::BOARD_DIMENSION - 1);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    static random r_delta(-1, 1);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     base::Command<go::State> move;
     go::Position position;
-    do {
-        position = {pos(generator), pos(generator)};
-        move.setPosition(position);
-    } while (board.isOccupied(position));
-
+    position = {pos(generator), pos(generator)};
+    while (board.isOccupied(position)) {
+        position = position + go::Position{r_delta(generator), r_delta(generator)};
+    }
+    move.setPosition(position);
     return move;
 }

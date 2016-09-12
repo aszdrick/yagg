@@ -8,9 +8,14 @@
 
 class Gomoku::Match::Handler : public InputComponent {
  private:
+    struct Pixel;
     void doUpdate(Agent&, Element&) override;
-    go::Position pixelToPosition(const gm::Pixel&);
-    bool isInsideBoard(const gm::Pixel&);
+    go::Position pixelToPosition(const Pixel&);
+};
+
+struct Gomoku::Match::Handler::Pixel {
+    float x;
+    float y;
 };
 
 #endif /* GOMOKU_MATCH_HANDLER_HPP */

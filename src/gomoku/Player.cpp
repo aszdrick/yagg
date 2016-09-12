@@ -27,10 +27,8 @@ Gomoku::Player::Move Gomoku::Player::onProcessInput(Board& board, Input& in) {
 Gomoku::Player::Move Gomoku::Player::InputHandler::doUpdate(Agent& board, Element& events) {
     Move move;
     for (auto& event : events) {
-        if (event != GomokuTraits::INVALID_POSITION) {
-            move.setPosition(event);
-            break;
-        }
+        move.setPosition(event);
+        break;
     }
     return move;
 }
