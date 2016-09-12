@@ -80,7 +80,7 @@ void Gomoku::Match::Graphics::drawGameOverScreen(Agent& match, Element& window) 
 
     sf::Text text(go::to_string(match.winnerTeam()) + " wins!", font);
     text.setCharacterSize(30);
-    text.setColor(sf::Color::White);
+    text.setFillColor(sf::Color::White);
     text.setPosition(sf::Vector2f(boardEnd + MatchTraits::TEXT_PADDING, 100));
 
     window.draw(text);

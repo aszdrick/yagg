@@ -8,7 +8,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "gomoku/CommonTypes.hpp"
-#include "Traits.hpp"
 
 template<typename T>
 struct Traits;
