@@ -3,7 +3,7 @@
 
 template<typename I, typename R>
 base::Game<I,R>::Game(State* const initial)
- : current(*initial), _closed(false) {
+ : current(*initial) {
     states.emplace_front(std::move(initial));
     currentIt = states.begin();
 }
@@ -14,6 +14,18 @@ bool base::Game<I,R>::close() {
         _closed = onClose();
     }
     return _closed;
+}
+
+template<typename I, typename R>
+bool base::Game<I,R>::switchScreenModeRequested() {
+    bool old = switchMode;
+    switchMode = false;
+    return old;
+}
+
+template<typename I, typename R>
+void base::Game<I,R>::switchScreenMode() {
+    switchMode = !switchMode;
 }
 
 template<typename I, typename R>
@@ -34,6 +46,8 @@ void base::Game<I,R>::updateRenderer(R& renderer) {
 
 template<typename I, typename R>
 void base::Game<I,R>::processInput(I& provider) {
+    onProcessInput(provider);
+    
     if (!_closed) {
         auto transition = current.get().processInput(provider);
         
@@ -56,8 +70,6 @@ void base::Game<I,R>::processInput(I& provider) {
                 replace(transition);
                 break;
         }
-
-        onProcessInput(provider);
     }
 }
 

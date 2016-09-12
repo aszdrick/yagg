@@ -9,8 +9,8 @@
 #include "mbe/GameMenu.hpp"
 
 int main(int argc, char** argv) {
-    // auto engine = mbe::Engine(new Gomoku(),"Yet Another Gomoku Game", 1024, 768);
-    // engine.run();
+    auto engine = mbe::Engine(new Gomoku(),"Yet Another Gomoku Game", 1024, 768);
+    engine.run();
 
     auto fn = [](const go::State&) {
         return 0;

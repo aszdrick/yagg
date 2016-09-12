@@ -24,6 +24,11 @@ class Gomoku : public mbe::Game {
     void quit();
 
  private:
+    void switchScreenMode(Renderer&);
+    void keyPressed(const sf::Event&);
+
+    void onUpdateRenderer(Renderer&) override;
+    void onProcessInput(Input&) override;
     void onSetVideoMode(Renderer&, double, double, double) override;
 };
 

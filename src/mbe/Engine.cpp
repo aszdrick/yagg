@@ -1,7 +1,9 @@
 /* Copyright 2016 Marleson Graf <aszdrick@gmail.com>
    Ghabriel Nunes <ghabriel.nunes@gmail.com> */
 
+#include <cmath>
 #include "mbe/Engine.hpp"
+#include "extra/macros.hpp"
 
 const sf::VideoMode mbe::Engine::BEST_VIDEO_MODE = 
     sf::VideoMode::getFullscreenModes()[0];
@@ -15,8 +17,10 @@ mbe::Engine::Engine(Game* const gameParam,
                     double width,
                     double height)
  : TITLE(title),
+   DEFAULT_WIDTH(width),
+   DEFAULT_HEIGHT(height),
    windowPtr(new Game::Renderer(
-        sf::VideoMode(width, height, BEST_VIDEO_MODE.bitsPerPixel),
+        sf::VideoMode(width, height, MAX_DEPTH),
         TITLE, sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close,
         desiredContextSettings())),
    window(*windowPtr),
@@ -36,6 +40,10 @@ void mbe::Engine::run() {
         // Some day this call will become periodic
         // for some "usefull" stuff like in-game clock
         game.periodicUpdate();
+
+        if (game.switchScreenModeRequested()) {
+            switchScreenMode();
+        }
 
         game.updateRenderer(window);
 
@@ -75,18 +83,34 @@ void mbe::Engine::processEvents() {
 }
 
 void mbe::Engine::resize(double width, double height) {
-    // double aspectRatio = currWidth / currHeight;
-    // double deltaWidth = std::abs(width - currWidth);
-    // double deltaHeight = std::abs(height - currHeight);
-    // if (deltaWidth > deltaHeight) {
-    //     currWidth = width;
-    //     currHeight = currWidth / aspectRatio;
-    // } else {
-    //     currHeight = height;
-    //     currWidth = currHeight * aspectRatio;
-    // }
-    // window.setView(sf::View(sf::FloatRect(0, 0, currWidth, currHeight)));
+    double aspectRatio = currWidth / currHeight;
+    double deltaWidth = std::abs(width - currWidth);
+    double deltaHeight = std::abs(height - currHeight);
+    if (deltaWidth > deltaHeight) {
+        currWidth = width;
+        currHeight = currWidth / aspectRatio;
+    } else {
+        currHeight = height;
+        currWidth = currHeight * aspectRatio;
+    }
+    window.setView(sf::View(sf::FloatRect(0, 0, width, height)));
     game.setVideoMode(window, currWidth, currHeight, MAX_DEPTH);
+}
+
+void mbe::Engine::switchScreenMode() {
+    ECHO("switching screen mode");
+    if (fullscreen) {
+        window.create(sf::VideoMode(DEFAULT_WIDTH, DEFAULT_HEIGHT, MAX_DEPTH),
+        TITLE, sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close,
+        desiredContextSettings());
+        fullscreen = false;
+    } else {
+        TRACE(BEST_VIDEO_MODE.width);
+        TRACE(BEST_VIDEO_MODE.height);
+        window.create(BEST_VIDEO_MODE, TITLE, sf::Style::Fullscreen,
+            desiredContextSettings());
+        fullscreen = true;
+    }
 }
 
 sf::ContextSettings mbe::Engine::desiredContextSettings() {

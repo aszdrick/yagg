@@ -34,16 +34,20 @@ namespace mbe {
 
      private:
         const std::string TITLE;
+        const double DEFAULT_WIDTH;
+        const double DEFAULT_HEIGHT;
         static const sf::VideoMode BEST_VIDEO_MODE;
         std::unique_ptr<Game::Renderer> windowPtr;
         Game::Renderer& window;
         std::unique_ptr<Game> gamePtr;
         Game& game;
+        bool fullscreen = false;
         double currWidth;
         double currHeight;
 
         void processEvents();
         void resize(double, double);
+        void switchScreenMode();
         static sf::ContextSettings desiredContextSettings();
     };
 }

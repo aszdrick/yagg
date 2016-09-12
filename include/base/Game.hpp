@@ -22,10 +22,12 @@ namespace base {
         void updateRenderer(Renderer&);
         void processInput(Input&);
         void setVideoMode(Renderer&, double, double, double);
+        bool switchScreenModeRequested();
 
      protected:
         Game(State* const);
 
+        void switchScreenMode();
         State& currentState();
 
         void popState();
@@ -39,7 +41,8 @@ namespace base {
         std::list<std::unique_ptr<State>> states;
         std::reference_wrapper<State> current;
         typename std::list<std::unique_ptr<State>>::iterator currentIt;
-        bool _closed;
+        bool switchMode = false;
+        bool _closed = false;
 
         virtual bool onClose();
         virtual void onPeriodicUpdate();
