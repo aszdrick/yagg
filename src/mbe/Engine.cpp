@@ -24,7 +24,7 @@ mbe::Engine::Engine(Game* const gameParam,
     
     window.setVerticalSyncEnabled(true);
 
-    game.setVideoMode(width, height, MAX_DEPTH);
+    game.setVideoMode(window, width, height, MAX_DEPTH);
 }
 
 void mbe::Engine::run() {
@@ -75,8 +75,7 @@ void mbe::Engine::processEvents() {
 }
 
 void mbe::Engine::resize(double width, double height) {
-    // window.setSize(width, height);
-    game.setVideoMode(width, height, MAX_DEPTH);
+    game.setVideoMode(window, width, height, MAX_DEPTH);
 }
 
 sf::ContextSettings mbe::Engine::desiredContextSettings() {

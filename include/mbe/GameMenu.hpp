@@ -28,7 +28,7 @@ namespace mbe {
 
         void onUpdateRenderer(Renderer&) override;
         Response onProcessInput(Input&) override;
-        void onSetVideoMode(double, double, double) override;
+        void onSetVideoMode(Renderer&, double, double, double) override;
 
         void keyPressed(const sf::Event&);
         void changeOption(short);

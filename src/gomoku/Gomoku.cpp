@@ -17,6 +17,10 @@ Gomoku::Gomoku()
 
 }
 
+void Gomoku::onSetVideoMode(Renderer& window, double w, double h, double d) {
+
+}
+
 void Gomoku::newGame() {
     pushState(new Match(Player(new AIHandler()), Player(new AIHandler())));
 }
@@ -28,4 +32,3 @@ void Gomoku::optionsMenu() {
 void Gomoku::quit() {
     close();
 }
-

@@ -70,7 +70,7 @@ mbe::GameMenu<G>::onProcessInput(Input& eventsList) {
 }
 
 template<typename G>
-void mbe::GameMenu<G>::onSetVideoMode(double w, double h, double d) {
+void mbe::GameMenu<G>::onSetVideoMode(Renderer&, double w, double h, double d) {
     static bool defined = false;
     if (!defined) {
         width = w;

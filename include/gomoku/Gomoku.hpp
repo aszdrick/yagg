@@ -22,6 +22,9 @@ class Gomoku : public mbe::Game {
     void newGame();
     void optionsMenu();
     void quit();
+
+ private:
+    void onSetVideoMode(Renderer&, double, double, double) override;
 };
 
 #endif /* GOMOKU_HPP */

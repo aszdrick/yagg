@@ -21,7 +21,7 @@ namespace base {
         void periodicUpdate();
         void updateRenderer(Renderer&);
         void processInput(Input&);
-        void setVideoMode(double, double, double);
+        void setVideoMode(Renderer&, double, double, double);
 
      protected:
         Game(State* const);
@@ -45,7 +45,7 @@ namespace base {
         virtual void onPeriodicUpdate();
         virtual void onUpdateRenderer(Renderer&);
         virtual void onProcessInput(Input&);
-        virtual void onSetVideoMode(double, double, double);
+        virtual void onSetVideoMode(Renderer&, double, double, double);
     };
 }
 
