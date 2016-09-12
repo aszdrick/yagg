@@ -37,6 +37,8 @@ void mbe::GameMenu<G>::onUpdateRenderer(Renderer& renderer) {
     double fixedX = width/2;
     double currentY = height/2 - padding;
 
+    renderer.clear(sf::Color::Black);
+
     for (auto option : options) {
         auto rect = option.name.getLocalBounds();
         double xOffset = rect.width/2;

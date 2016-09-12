@@ -10,12 +10,16 @@ Gomoku::Match::Graphics::Graphics() {
 }
 
 void Gomoku::Match::Graphics::doUpdate(Agent& match, Element& window) {
+    window.clear(sf::Color::Black);
+
     drawBoard(window);
+    
     if (match.isOver()) {
         drawGameOverScreen(match, window);
     } else {
-        highlight(match, window);    
+        highlight(match, window);
     }
+
     drawStones(match, window);
 }
 
@@ -41,7 +45,6 @@ void Gomoku::Match::Graphics::drawBoard(Element& window) const {
         }
     }
 
-    window.clear(sf::Color::Black);
     window.draw(&lines.front(), 4 * boardDimension, sf::Lines);
 }
 
