@@ -5,8 +5,7 @@
 #include "mbe/Engine.hpp"
 #include "extra/macros.hpp"
 
-const sf::VideoMode mbe::Engine::BEST_VIDEO_MODE = 
-    sf::VideoMode::getFullscreenModes()[0];
+const sf::VideoMode mbe::Engine::BEST_VIDEO_MODE = sf::VideoMode::getDesktopMode();
 
 const double mbe::Engine::MAX_WIDTH = BEST_VIDEO_MODE.width;
 const double mbe::Engine::MAX_HEIGHT = BEST_VIDEO_MODE.height;
@@ -98,15 +97,12 @@ void mbe::Engine::resize(double width, double height) {
 }
 
 void mbe::Engine::switchScreenMode() {
-    ECHO("switching screen mode");
     if (fullscreen) {
         window.create(sf::VideoMode(DEFAULT_WIDTH, DEFAULT_HEIGHT, MAX_DEPTH),
         TITLE, sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close,
         desiredContextSettings());
         fullscreen = false;
     } else {
-        TRACE(BEST_VIDEO_MODE.width);
-        TRACE(BEST_VIDEO_MODE.height);
         window.create(BEST_VIDEO_MODE, TITLE, sf::Style::Fullscreen,
             desiredContextSettings());
         fullscreen = true;
