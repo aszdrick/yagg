@@ -14,17 +14,17 @@ mbe::GameMenu<G>::GameMenu(G& gameParam)
     options[0].name = sf::Text("New Game", font);
     options[0].name.setCharacterSize(60);
     options[0].color = SELECTED_COLOR;
-    options[0].action = [this]() { return game.get().newGame(); };
+    options[0].action = [this]() { game.get().newGame(); };
 
     options[1].name = sf::Text("Options", font);
     options[1].name.setCharacterSize(60);
     options[1].color = UNSELECTED_COLOR;
-    options[1].action = [this]() { return game.get().optionsMenu(); };
+    options[1].action = [this]() { game.get().optionsMenu(); };
     
     options[2].name = sf::Text("Quit", font);
     options[2].name.setCharacterSize(60);
     options[2].color = UNSELECTED_COLOR;
-    options[2].action = [this]() { return game.get().quit(); };
+    options[2].action = [this]() { game.get().quit(); };
 
 }
 
@@ -61,7 +61,8 @@ mbe::GameMenu<G>::onProcessInput(Input& eventsList) {
 
         switch(event.type) {
             case sf::Event::KeyPressed:
-                return keyPressed(event);
+                keyPressed(event);
+                break;
             default:;
         }
     }
@@ -70,11 +71,11 @@ mbe::GameMenu<G>::onProcessInput(Input& eventsList) {
 }
 
 template<typename G>
-typename mbe::GameMenu<G>::Response
-mbe::GameMenu<G>::keyPressed(const sf::Event& event) {
+void mbe::GameMenu<G>::keyPressed(const sf::Event& event) {
     switch (event.key.code) {
         case sf::Keyboard::Return:
-            return {Response::Type::STORE, 0, options[selected].action()};
+            options[selected].action();
+            break;
         case sf::Keyboard::Up:
             changeOption((3 + selected - 1) % 3);
             break;
@@ -83,7 +84,6 @@ mbe::GameMenu<G>::keyPressed(const sf::Event& event) {
             break;
         default:;
     }
-    return {Response::Type::SELF, 0, nullptr};
 }
 
 template<typename G>

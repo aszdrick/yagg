@@ -26,7 +26,7 @@ namespace mbe {
 
         void onUpdateRenderer(Renderer&) override;
         Response onProcessInput(Input&) override;
-        Response keyPressed(const sf::Event&);
+        void keyPressed(const sf::Event&);
         void changeOption(short);
     };
 
@@ -34,7 +34,7 @@ namespace mbe {
     struct GameMenu<G>::Option {
         sf::Text name;
         sf::Color color;
-        std::function<Game::State*(void)> action;
+        std::function<void()> action;
     };
 }
 

@@ -19,9 +19,9 @@ class Gomoku : public mbe::Game {
 
     Gomoku();
 
-    State* newGame();
-    State* optionsMenu();
-    State* quit();
+    void newGame();
+    void optionsMenu();
+    void quit();
 };
 
 #endif /* GOMOKU_HPP */

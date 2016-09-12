@@ -17,15 +17,15 @@ Gomoku::Gomoku()
 
 }
 
-Gomoku::State* Gomoku::newGame() {
-    return new Match(Player(new AIHandler()), Player(new AIHandler()));
+void Gomoku::newGame() {
+    pushState(new Match(Player(new AIHandler()), Player(new AIHandler())));
 }
 
-Gomoku::State* Gomoku::optionsMenu() {
-    return nullptr;
+void Gomoku::optionsMenu() {
+    
 }
 
-Gomoku::State* Gomoku::quit() {
-    return nullptr;
+void Gomoku::quit() {
+    close();
 }
 
