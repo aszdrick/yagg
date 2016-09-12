@@ -8,7 +8,6 @@
 #include "CommonTypes.hpp"
 #include <functional>
 #include <unordered_map>
-#include "Zoas.hpp"
 
 class go::State {
  public:
@@ -18,12 +17,12 @@ class go::State {
     short winnerPlayer() const;
     bool isOver() const;
     void quadrupletIteration(const BoardAnalyzer::SequenceCallback&) const;
+    bool isOccupied(const go::Position&) const;
 
  private:
     short player = 0;
     short winner = 0;
     BoardAnalyzer analyzer;
-    Zoas hue;
 };
 
 #endif /* GO_STATE_HPP */

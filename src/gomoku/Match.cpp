@@ -20,8 +20,12 @@ Gomoku::Match::Match(Player&& p1, Player&& p2)
 }
 
 void Gomoku::Match::updatePlayers(Player::Input& positions) {
-    auto move = players[state.currentPlayer()].processInput(state, positions);
-    move.execute(state);
+    if (!isOver()) {
+        auto move = players[state.currentPlayer()].processInput(state, positions);
+        if (move.isValid()) {
+            move.execute(state);
+        }
+    }
 }
 
 void Gomoku::Match::restart() {

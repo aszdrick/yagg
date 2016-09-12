@@ -19,7 +19,7 @@ class MiniMaxTree {
 
  public:
     MiniMaxTree(const RatingFunction<T>&, const RatingFunction<T>&);
-    Command<T> findNextMove(const T&);
+    base::Command<T> findNextMove(const T&);
 
  private:
     std::unique_ptr<Node> root;

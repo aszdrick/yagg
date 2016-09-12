@@ -4,6 +4,7 @@
 #include "gomoku/Gomoku.hpp"
 #include "gomoku/Match.hpp"
 #include "gomoku/Player.hpp"
+#include "AI/AIHandler.hpp"
 
 // Gomoku::Gomoku()
 //  : Game(new Match(Player(), Player())) {
@@ -16,9 +17,8 @@ Gomoku::Gomoku()
 
 }
 
-
 Gomoku::State* Gomoku::newGame() {
-    return new Match(Player(), Player());
+    return new Match(Player(new AIHandler()), Player(new AIHandler()));
 }
 
 Gomoku::State* Gomoku::optionsMenu() {

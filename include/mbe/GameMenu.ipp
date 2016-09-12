@@ -14,17 +14,17 @@ mbe::GameMenu<G>::GameMenu(G& gameParam)
     options[0].name = sf::Text("New Game", font);
     options[0].name.setCharacterSize(60);
     options[0].color = SELECTED_COLOR;
-    options[0].callback = [this]() -> Game::State* { return game.get().newGame(); };
+    options[0].action = [this]() { return game.get().newGame(); };
 
     options[1].name = sf::Text("Options", font);
     options[1].name.setCharacterSize(60);
     options[1].color = UNSELECTED_COLOR;
-    options[1].callback = [this]() -> Game::State* { return game.get().optionsMenu(); };
+    options[1].action = [this]() { return game.get().optionsMenu(); };
     
     options[2].name = sf::Text("Quit", font);
     options[2].name.setCharacterSize(60);
     options[2].color = UNSELECTED_COLOR;
-    options[2].callback = [this]() -> Game::State* { return game.get().quit(); };
+    options[2].action = [this]() { return game.get().quit(); };
 
 }
 
@@ -42,7 +42,7 @@ void mbe::GameMenu<G>::onUpdateRenderer(Renderer& renderer) {
         double xOffset = rect.width/2;
         double yOffset = rect.height;
 
-        option.name.setFillColor(option.color);
+        option.name.setColor(option.color);
         option.name.setPosition(sf::Vector2f(fixedX - xOffset, currentY - yOffset));
         currentY += padding;
 
@@ -72,9 +72,9 @@ typename mbe::GameMenu<G>::Response
 mbe::GameMenu<G>::keyPressed(const sf::Event& event) {
     switch (event.key.code) {
         case sf::Keyboard::Return:
-            return {Response::Type::STORE, 0, options[selected].callback()};
+            return {Response::Type::STORE, 0, options[selected].action()};
         case sf::Keyboard::Up:
-            changeOption((selected - 1) % 3);
+            changeOption((3 + selected - 1) % 3);
             break;
         case sf::Keyboard::Down:
             changeOption((selected + 1) % 3);

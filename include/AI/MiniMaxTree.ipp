@@ -10,6 +10,6 @@ MiniMaxTree<T>::MiniMaxTree(const RatingFunction<T>& heuristic,
 }
 
 template<typename T>
-Command<T> MiniMaxTree<T>::findNextMove(const T&) {
-    return Command<T>();
+base::Command<T> MiniMaxTree<T>::findNextMove(const T&) {
+    return base::Command<T>();
 }

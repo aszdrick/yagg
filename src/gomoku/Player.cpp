@@ -5,8 +5,8 @@
 #include "gomoku/Player.hpp"
 #include "gomoku/Traits.hpp"
 
-Gomoku::Player::Player(go::Team team, InputHandler* const input)
- : team(team), inputPtr(std::move(input)), input(*inputPtr) {
+Gomoku::Player::Player(InputComponent* const input)
+ : inputPtr(std::move(input)), input(*inputPtr) {
 
  }
 
@@ -19,16 +19,18 @@ go::Team Gomoku::Player::getTeam() const {
 }
 
 Gomoku::Player::Move Gomoku::Player::onProcessInput(Board& board, Input& in) {
-    Move move(team);
-    input.update(move, in);
+    Move move = input.update(board, in);
+    move.setTeam(team);
     return move;
 }
 
-void Gomoku::Player::InputHandler::doUpdate(Agent& move, Element& events) {
+Gomoku::Player::Move Gomoku::Player::InputHandler::doUpdate(Agent& board, Element& events) {
+    Move move;
     for (auto& event : events) {
         if (event != GomokuTraits::INVALID_POSITION) {
             move.setPosition(event);
             break;
         }
     }
+    return move;
 }

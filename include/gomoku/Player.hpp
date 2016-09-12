@@ -13,24 +13,23 @@ class Gomoku::Player : public BasePlayer {
     class Graphics;
     class InputHandler;
  public:
-    using InputComponent = base::Component<Move, Input>;
+    using InputComponent = base::Component<Board, Input, Move>;
 
-    Player(go::Team = go::Team::BLACK,
-           InputHandler* const = new InputHandler());
+    Player(InputComponent* const = new InputHandler());
 
     void setTeam(go::Team);
     go::Team getTeam() const;
 
  private:
-    go::Team team;
-    std::unique_ptr<InputHandler> inputPtr;
-    InputHandler& input;
+    go::Team team = go::Team::BLACK;
+    std::unique_ptr<InputComponent> inputPtr;
+    InputComponent& input;
 
     Move onProcessInput(Board&, Input&) override;
 
     class InputHandler : public InputComponent {
      private:
-        void doUpdate(Agent&, Element&) override;
+        Product doUpdate(Agent&, Element&) override;
     };
 };
 

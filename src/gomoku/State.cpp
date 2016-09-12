@@ -7,7 +7,6 @@
 void go::State::play(const go::Position& position, go::Team team) {
     if (!analyzer.isOccupied(position)) {
         // board[position.row][position.column] = go::Stone{position, team};
-        hue.play(position, team);
         analyzer.play(position, team);
 
         if (analyzer.isOver()) {
@@ -36,4 +35,8 @@ bool go::State::isOver() const {
 
 void go::State::quadrupletIteration(const BoardAnalyzer::SequenceCallback& fn) const {
     analyzer.quadrupletIteration(fn);
+}
+
+bool go::State::isOccupied(const go::Position& position) const {
+    return analyzer.isOccupied(position);
 }

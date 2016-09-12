@@ -34,7 +34,7 @@ namespace mbe {
     struct GameMenu<G>::Option {
         sf::Text name;
         sf::Color color;
-        std::function<Game::State*(void)> callback;
+        std::function<Game::State*(void)> action;
     };
 }
 

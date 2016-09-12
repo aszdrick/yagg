@@ -18,7 +18,7 @@ void Gomoku::Match::Handler::doUpdate(Agent& match, Element& list) {
                     static_cast<float>(event.mouseButton.y)
                 };
                 
-                if (!match.isOver() && isInsideBoard(pixel)) {
+                if (isInsideBoard(pixel)) {
                     auto position = pixelToPosition(pixel);
                     inputs.push_back(position);                    
                 }
@@ -37,9 +37,7 @@ void Gomoku::Match::Handler::doUpdate(Agent& match, Element& list) {
         }
     }
 
-    if (!inputs.empty()) {
-        match.updatePlayers(inputs);
-    }
+    match.updatePlayers(inputs);
 }
 
 bool Gomoku::Match::Handler::isInsideBoard(const gm::Pixel& pixel) {
