@@ -17,7 +17,7 @@ mbe::Engine::Engine(Game* const gameParam,
  : TITLE(title),
    windowPtr(new Game::Renderer(
         sf::VideoMode(width, height, BEST_VIDEO_MODE.bitsPerPixel),
-        TITLE, sf::Style::Default,
+        TITLE, sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close,
         desiredContextSettings())),
    window(*windowPtr),
    gamePtr(gameParam),game(*gamePtr) {
@@ -75,7 +75,7 @@ void mbe::Engine::processEvents() {
 }
 
 void mbe::Engine::resize(double width, double height) {
-    window.setSize(sf::Vector2u(width, height));
+    // window.setSize(width, height);
     game.setVideoMode(width, height, MAX_DEPTH);
 }
 
