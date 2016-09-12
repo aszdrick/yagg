@@ -18,11 +18,13 @@ namespace base {
         void periodicUpdate();
         void updateRenderer(Renderer&);
         Response processInput(Input&);
+        void setVideoMode(double, double, double);
 
      private:
         virtual void onPeriodicUpdate();
         virtual void onUpdateRenderer(Renderer&);
         virtual Response onProcessInput(Input&);
+        virtual void onSetVideoMode(double, double, double);
     };
 
     template <typename I, typename R>
@@ -30,10 +32,10 @@ namespace base {
         enum class Type { 
             CLOSE,
             MOVE,
+            POP,
+            PUSH,
             REPLACE,
-            RESTORE,
-            SELF,
-            STORE
+            SELF
         };
 
         Type type;

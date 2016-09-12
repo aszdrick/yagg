@@ -20,14 +20,21 @@ namespace mbe {
     
     class Engine {
      public:
-        Engine(Game* const, double = 800, double = 600,
-            const std::string& = "MBE");
+        static const double MAX_WIDTH;
+        static const double MAX_HEIGHT;
+        static const double MAX_DEPTH;
+
+        Engine(Game* const,
+               const std::string& = "MBE",
+               double = MAX_WIDTH,
+               double = MAX_HEIGHT);
 
         void run();
         bool isRunning() const;
 
      private:
         const std::string TITLE;
+        static const sf::VideoMode BEST_VIDEO_MODE;
         std::unique_ptr<Game::Renderer> windowPtr;
         Game::Renderer& window;
         std::unique_ptr<Game> gamePtr;

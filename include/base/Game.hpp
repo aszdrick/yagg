@@ -21,6 +21,7 @@ namespace base {
         void periodicUpdate();
         void updateRenderer(Renderer&);
         void processInput(Input&);
+        void setVideoMode(double, double, double);
 
      protected:
         Game(State* const);
@@ -31,8 +32,8 @@ namespace base {
         void pushState(State* const);
         void move(const typename State::Response&);
         void replace(const typename State::Response&);
-        void restore(const typename State::Response&);
-        void store(const typename State::Response&);
+        void pop(const typename State::Response&);
+        void push(const typename State::Response&);
 
      private:
         std::list<std::unique_ptr<State>> states;
@@ -44,6 +45,7 @@ namespace base {
         virtual void onPeriodicUpdate();
         virtual void onUpdateRenderer(Renderer&);
         virtual void onProcessInput(Input&);
+        virtual void onSetVideoMode(double, double, double);
     };
 }
 

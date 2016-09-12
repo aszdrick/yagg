@@ -19,6 +19,8 @@ namespace mbe {
         GameMenu(G&);
 
      private:
+        double width;
+        double height;
         unsigned short selected;
         std::array<Option, 3> options;
         std::reference_wrapper<G> game;
@@ -26,6 +28,8 @@ namespace mbe {
 
         void onUpdateRenderer(Renderer&) override;
         Response onProcessInput(Input&) override;
+        void onSetVideoMode(double, double, double) override;
+
         void keyPressed(const sf::Event&);
         void changeOption(short);
     };

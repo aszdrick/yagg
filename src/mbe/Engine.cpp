@@ -3,17 +3,28 @@
 
 #include "mbe/Engine.hpp"
 
-mbe::Engine::Engine(Game* const game, double width, double height,
-    const std::string& title)
+const sf::VideoMode mbe::Engine::BEST_VIDEO_MODE = 
+    sf::VideoMode::getFullscreenModes()[0];
+
+const double mbe::Engine::MAX_WIDTH = BEST_VIDEO_MODE.width;
+const double mbe::Engine::MAX_HEIGHT = BEST_VIDEO_MODE.height;
+const double mbe::Engine::MAX_DEPTH = BEST_VIDEO_MODE.bitsPerPixel;
+
+mbe::Engine::Engine(Game* const gameParam,
+                    const std::string& title,
+                    double width,
+                    double height)
  : TITLE(title),
    windowPtr(new Game::Renderer(
-        sf::VideoMode(width, height),
+        sf::VideoMode(width, height, BEST_VIDEO_MODE.bitsPerPixel),
         TITLE, sf::Style::Default,
         desiredContextSettings())),
    window(*windowPtr),
-   gamePtr(game),game(*gamePtr) {
+   gamePtr(gameParam),game(*gamePtr) {
     
     window.setVerticalSyncEnabled(true);
+
+    game.setVideoMode(width, height, MAX_DEPTH);
 }
 
 void mbe::Engine::run() {
@@ -65,6 +76,7 @@ void mbe::Engine::processEvents() {
 
 void mbe::Engine::resize(double width, double height) {
     window.setSize(sf::Vector2u(width, height));
+    game.setVideoMode(width, height, MAX_DEPTH);
 }
 
 sf::ContextSettings mbe::Engine::desiredContextSettings() {

@@ -46,19 +46,25 @@ void base::Game<I,R>::processInput(I& provider) {
             case State::Response::Type::MOVE:
                 move(transition);
                 break;
+            case State::Response::Type::POP:
+                pop(transition);
+                break;
+            case State::Response::Type::PUSH:
+                push(transition);
+                break;
             case State::Response::Type::REPLACE:
                 replace(transition);
-                break;
-            case State::Response::Type::RESTORE:
-                restore(transition);
-                break;
-            case State::Response::Type::STORE:
-                store(transition);
                 break;
         }
 
         onProcessInput(provider);
     }
+}
+
+template<typename I, typename R>
+void base::Game<I,R>::setVideoMode(double width, double height, double depth) {
+    current.get().setVideoMode(width, height, depth);
+    onSetVideoMode(width, height, depth);
 }
 
 template<typename I, typename R>
@@ -74,6 +80,9 @@ void base::Game<I,R>::onUpdateRenderer(R&) { }
 
 template<typename I, typename R>
 void base::Game<I,R>::onProcessInput(I&) { }
+
+template<typename I, typename R>
+void base::Game<I,R>::onSetVideoMode(double, double, double) { }
 
 template<typename I, typename R>
 bool base::Game<I,R>::closed() {
@@ -115,7 +124,7 @@ void base::Game<I,R>::replace(const typename State::Response& transition) {
 }
 
 template<typename I, typename R>
-void base::Game<I,R>::restore(const typename State::Response& transition) {
+void base::Game<I,R>::pop(const typename State::Response& transition) {
     if (!states.empty()) {
         auto removesCount = transition.offset;
         while (removesCount > 0) {
@@ -126,7 +135,7 @@ void base::Game<I,R>::restore(const typename State::Response& transition) {
 }
 
 template<typename I, typename R>
-void base::Game<I,R>::store(const typename State::Response& transition) {
+void base::Game<I,R>::push(const typename State::Response& transition) {
     if (transition.offset == 0) {
         pushState(transition.state);
     } else {

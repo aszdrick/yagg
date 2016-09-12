@@ -18,10 +18,18 @@ base::GameState<I,R>::processInput(I& input) {
 }
 
 template <typename I, typename R>
+void base::GameState<I,R>::setVideoMode(double width, double height, double depth) {
+    onSetVideoMode(width, height, depth);
+}
+
+template <typename I, typename R>
 void base::GameState<I,R>::onPeriodicUpdate() { }
 
 template <typename I, typename R>
 void base::GameState<I,R>::onUpdateRenderer(R&) { }
+
+template <typename I, typename R>
+void base::GameState<I,R>::onSetVideoMode(double, double, double) { }
 
 template <typename I, typename R>
 typename base::GameState<I,R>::Response

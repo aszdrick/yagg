@@ -1,6 +1,8 @@
 /* Copyright 2016 Marleson Graf <aszdrick@gmail.com>
    Ghabriel Nunes <ghabriel.nunes@gmail.com> */
 
+#include "extra/macros.hpp"
+
 template<typename G>
 const sf::Color mbe::GameMenu<G>::SELECTED_COLOR(225, 225, 225);
 template<typename G>
@@ -30,9 +32,6 @@ mbe::GameMenu<G>::GameMenu(G& gameParam)
 
 template<typename G>
 void mbe::GameMenu<G>::onUpdateRenderer(Renderer& renderer) {
-    auto size = renderer.getSize();
-    double width = size.x;
-    double height = size.y;
     double padding = OPTIONS_Y_PADDING * height;
     double fixedX = width/2;
     double currentY = height/2 - padding;
@@ -68,6 +67,16 @@ mbe::GameMenu<G>::onProcessInput(Input& eventsList) {
     }
 
     return {Response::Type::SELF, 0, nullptr};
+}
+
+template<typename G>
+void mbe::GameMenu<G>::onSetVideoMode(double w, double h, double d) {
+    static bool defined = false;
+    if (!defined) {
+        width = w;
+        height = h;
+        defined = true;
+    }
 }
 
 template<typename G>

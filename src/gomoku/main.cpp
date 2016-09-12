@@ -6,8 +6,7 @@
 #include "mbe/GameMenu.hpp"
 
 int main(int argc, char** argv) {
-    auto engine = mbe::Engine(new Gomoku(),
-        1024, 768, "Yet Another Gomoku Game");
+    auto engine = mbe::Engine(new Gomoku(),"Yet Another Gomoku Game", 1024, 768);
 
     engine.run();
 
