@@ -12,7 +12,7 @@ void base::GameState<I,R>::updateRenderer(R& renderer) {
 }
     
 template <typename I, typename R>
-typename base::GameState<I,R>::Transition 
+typename base::GameState<I,R>::Response 
 base::GameState<I,R>::processInput(I& input) {
     return onProcessInput(input);
 }
@@ -24,7 +24,7 @@ template <typename I, typename R>
 void base::GameState<I,R>::onUpdateRenderer(R&) { }
 
 template <typename I, typename R>
-typename base::GameState<I,R>::Transition
+typename base::GameState<I,R>::Response
 base::GameState<I,R>::onProcessInput(I&) {
-    return {Transition::Type::SELF, nullptr};
+    return {Response::Type::SELF, 0, nullptr};
 }

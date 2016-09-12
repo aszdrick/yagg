@@ -59,13 +59,39 @@ namespace go {
     inline bool operator!=(const Position& lhs, const Position& rhs) {
         return !(lhs == rhs);
     }
+    
+    inline std::string to_string(const go::Team& team) {
+        std::string out;
+        switch (team) {
+            case go::Team::BLACK:
+                out = "Black";
+                break;
+            case go::Team::WHITE:
+                out = "White";
+                break;
+        }
+        return out;
+    }
+
+    inline std::ostream& operator<<(std::ostream& stream, const go::Team& team) {
+        switch (team) {
+            case go::Team::BLACK:
+                stream << "Black";
+                break;
+            case go::Team::WHITE:
+                stream << "White";
+                break;
+        }
+        return stream;
+    }
+
+    inline std::ostream& operator<<(std::ostream& stream, const go::Stone& stone) {
+        auto pos = stone.position;
+        return stream << "{" << pos.row << "," << pos.column << "}" << ", "
+               << ((stone.team == go::Team::BLACK) ? "BLACK" : "WHITE");
+    }
 }
 
-inline std::ostream& operator<<(std::ostream& stream, const go::Stone& stone) {
-    auto pos = stone.position;
-    return stream << "{" << pos.row << "," << pos.column << "}" << ", "
-           << ((stone.team == go::Team::BLACK) ? "BLACK" : "WHITE");
-}
 
 namespace gm {
     struct Pixel {

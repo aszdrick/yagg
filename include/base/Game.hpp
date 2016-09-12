@@ -29,13 +29,17 @@ namespace base {
 
         void popState();
         void pushState(State* const);
-        void replaceState(State* const);
+        void move(const typename State::Response&);
+        void replace(const typename State::Response&);
+        void restore(const typename State::Response&);
+        void store(const typename State::Response&);
 
      private:
         std::list<std::unique_ptr<State>> states;
         std::reference_wrapper<State> current;
+        typename std::list<std::unique_ptr<State>>::iterator currentIt;
         bool _closed;
-        
+
         virtual bool onClose();
         virtual void onPeriodicUpdate();
         virtual void onUpdateRenderer(Renderer&);

@@ -12,7 +12,7 @@
 
 class Gomoku::Match : public State {
     class Graphics;
-    class InputHandler;
+    class Handler;
  public:
     using GraphicalComponent = base::Component<Match, Renderer>;
     using InputComponent = base::Component<Match, Input>;
@@ -22,46 +22,25 @@ class Gomoku::Match : public State {
     };
 
  public:
-    Match(Player&&,
-          Player&&,
-          Graphics* const = new Graphics(),
-          InputHandler* const = new InputHandler());
+    Match(Player&&, Player&&);
     
     void updatePlayers(Player::Input&);
     void restart();
     go::Team currentTeam() const;
+    go::Team winnerTeam() const;
     bool isOver() const;
 
  private:
-    std::unique_ptr<Graphics> graphicsPtr;
-    std::unique_ptr<InputHandler> inputPtr;
+    std::unique_ptr<GraphicalComponent> graphicsPtr;
+    std::unique_ptr<InputComponent> inputPtr;
     GraphicalComponent& graphics;
     InputComponent& input;
+
     std::array<Player,2> players;
     go::State state;
 
     void onUpdateRenderer(Renderer&) override;
-    Transition onProcessInput(Input&) override;
-
-    class InputHandler : public InputComponent {
-     private:
-        void doUpdate(Agent&, Element&) override;
-        go::Position pixelToPosition(const gm::Pixel&);
-        bool isInsideBoard(const gm::Pixel&);
-    };
-
-    class Graphics : public GraphicalComponent {
-     public:
-        Graphics();
-     private:
-        sf::Font font;
-        void doUpdate(Agent&, Element&) override;
-        void drawBoard(Element&) const;
-        void drawStones(Agent&, Element&) const;
-        void drawGameOverScreen(Agent&, Element&) const;
-        void highlight(Agent&, Element&) const;
-    };
-
+    Response onProcessInput(Input&) override;
 };
 
 #endif /* GOMOKU_MATCH_HPP */

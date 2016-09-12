@@ -35,7 +35,7 @@ all: makedir $(EXEC)
 
 $(EXEC): $(OBJ)
 	@echo "[linking] $@"
-	@$(CXX) $(OBJ) -o $@ $(LDLIBS) $(LDFLAGS)
+	@$(CXX) $^ -o $@ $(LDLIBS) $(LDFLAGS)
 
 $(BUILDIR)/%.o: %.cpp
 	@echo "[  $(CXX)  ] $< -> .o"

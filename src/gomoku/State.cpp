@@ -7,7 +7,13 @@
 void go::State::play(const go::Position& position, go::Team team) {
     if (!analyzer.isOccupied(position)) {
         // board[position.row][position.column] = go::Stone{position, team};
+        hue.play(position, team);
         analyzer.play(position, team);
+
+        if (analyzer.isOver()) {
+            winner = player;
+        }
+
         player = 1 - player;
     }
 }
@@ -20,6 +26,9 @@ short go::State::currentPlayer() const {
     return player;
 }
 
+short go::State::winnerPlayer() const {
+    return winner;
+}
 
 bool go::State::isOver() const {
     return analyzer.isOver();

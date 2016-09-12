@@ -6,6 +6,7 @@
 
 #include "base/Player.hpp"
 #include "mbe/Engine.hpp"
+#include "mbe/GameMenu.hpp"
 #include "CommonTypes.hpp"
 
 class Gomoku : public mbe::Game {
@@ -16,6 +17,10 @@ class Gomoku : public mbe::Game {
     class Player;
 
     Gomoku();
+
+    State* newGame();
+    State* optionsMenu();
+    State* quit();
 };
 
 #endif /* GOMOKU_HPP */

@@ -5,7 +5,27 @@
 #include "gomoku/Match.hpp"
 #include "gomoku/Player.hpp"
 
+// Gomoku::Gomoku()
+//  : Game(new Match(Player(), Player())) {
+
+// }
+
+
 Gomoku::Gomoku()
- : Game(new Match(Player(), Player())) {
+ : Game(new mbe::GameMenu<Gomoku>(*this)) {
 
 }
+
+
+Gomoku::State* Gomoku::newGame() {
+    return new Match(Player(), Player());
+}
+
+Gomoku::State* Gomoku::optionsMenu() {
+    return nullptr;
+}
+
+Gomoku::State* Gomoku::quit() {
+    return nullptr;
+}
+

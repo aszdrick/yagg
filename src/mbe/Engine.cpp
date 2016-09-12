@@ -1,17 +1,17 @@
-/* Copyright 2016 Ghabriel Nunes, Marleson Graf
-   <ghabriel.nunes@gmail.com>, <aszdrick@gmail.com> */
+/* Copyright 2016 Marleson Graf <aszdrick@gmail.com>
+   Ghabriel Nunes <ghabriel.nunes@gmail.com> */
 
 #include "mbe/Engine.hpp"
 
 mbe::Engine::Engine(Game* const game, double width, double height,
     const std::string& title)
- : WIDTH(width), HEIGHT(height), TITLE(title),
+ : TITLE(title),
    windowPtr(new Game::Renderer(
-    sf::VideoMode(WIDTH, HEIGHT),
-    TITLE, sf::Style::Default,
-    desiredContextSettings())),
+        sf::VideoMode(width, height),
+        TITLE, sf::Style::Default,
+        desiredContextSettings())),
    window(*windowPtr),
-   gamePtr(game), game(*gamePtr) {
+   gamePtr(game),game(*gamePtr) {
     
     window.setVerticalSyncEnabled(true);
 }

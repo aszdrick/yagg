@@ -1,8 +1,8 @@
 /* Copyright 2016 Marleson Graf <aszdrick@gmail.com>
    Ghabriel Nunes <ghabriel.nunes@gmail.com> */
 
-#ifndef GAME_ENGINE_HPP
-#define GAME_ENGINE_HPP
+#ifndef MBE_ENGINE_HPP
+#define MBE_ENGINE_HPP
 
 // SFML Libraries
 #include <SFML/Graphics.hpp>
@@ -24,12 +24,9 @@ namespace mbe {
             const std::string& = "MBE");
 
         void run();
-        void resize(double, double);
         bool isRunning() const;
 
      private:
-        const double WIDTH;
-        const double HEIGHT;
         const std::string TITLE;
         std::unique_ptr<Game::Renderer> windowPtr;
         Game::Renderer& window;
@@ -37,8 +34,9 @@ namespace mbe {
         Game& game;
 
         void processEvents();
+        void resize(double, double);
         static sf::ContextSettings desiredContextSettings();
     };
 }
 
-#endif /* GAME_ENGINE_HPP */
+#endif /* MBE_ENGINE_HPP */
