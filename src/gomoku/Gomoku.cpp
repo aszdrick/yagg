@@ -41,7 +41,8 @@ void Gomoku::keyPressed(const sf::Event& event) {
 }
 
 void Gomoku::newGame() {
-    pushState(new Match(Player(new AIHandler()), Player(new AIHandler())));
+    // pushState(new Match(Player(new AIHandler()), Player(new AIHandler())));
+    pushState(new Match(Player(), Player()));
 }
 
 void Gomoku::optionsMenu() {

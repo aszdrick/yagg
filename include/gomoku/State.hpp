@@ -6,6 +6,7 @@
 
 #include "BoardAnalyzer.hpp"
 #include "CommonTypes.hpp"
+#include "IntervaledBoard.hpp"
 #include <functional>
 #include <unordered_map>
 
@@ -28,6 +29,7 @@ class go::State {
     short player = 0;
     short winner = 0;
     BoardAnalyzer analyzer;
+    IntervaledBoard ivBoard;
 };
 
 #endif /* GO_STATE_HPP */

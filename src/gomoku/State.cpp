@@ -8,6 +8,7 @@ void go::State::play(const go::Position& position, go::Team team) {
     if (!analyzer.occupied(position)) {
         // board[position.row][position.column] = go::Stone{position, team};
         analyzer.play(position, team);
+        ivBoard.play(position, team);
 
         if (analyzer.hasWinner()) {
             winner = player;
