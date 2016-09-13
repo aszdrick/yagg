@@ -2,6 +2,7 @@
    Ghabriel Nunes <ghabriel.nunes@gmail.com> */
 
 #include "extra/macros.hpp"
+#include "multimedia/sf_utils.hpp"
 
 template<typename G>
 const sf::Color mbe::GameMenu<G>::SELECTED_COLOR(225, 225, 225);
@@ -38,12 +39,12 @@ void mbe::GameMenu<G>::onUpdateRenderer(Renderer& renderer) {
 
     renderer.clear(sf::Color::Black);
 
-    for (auto option : options) {
+    for (auto& option : options) {
         auto rect = option.name.getLocalBounds();
         double xOffset = rect.width/2;
         double yOffset = rect.height;
 
-        option.name.setColor(option.color);
+        sf_utils::set_color(option.name, option.color);
         option.name.setPosition(sf::Vector2f(fixedX - xOffset, currentY - yOffset));
         currentY += padding;
 

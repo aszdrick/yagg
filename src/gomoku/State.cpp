@@ -5,11 +5,11 @@
 #include "extra/macros.hpp"
 
 void go::State::play(const go::Position& position, go::Team team) {
-    if (!analyzer.isOccupied(position)) {
+    if (!analyzer.occupied(position)) {
         // board[position.row][position.column] = go::Stone{position, team};
         analyzer.play(position, team);
 
-        if (analyzer.isOver()) {
+        if (analyzer.hasWinner()) {
             winner = player;
         }
 
@@ -29,14 +29,23 @@ short go::State::winnerPlayer() const {
     return winner;
 }
 
-bool go::State::isOver() const {
-    return analyzer.isOver();
+bool go::State::over() const {
+    return analyzer.over();
+}
+
+bool go::State::hasWinner() const {
+    return analyzer.hasWinner();
+}
+
+bool go::State::full() const {
+    return analyzer.full();
 }
 
 void go::State::quadrupletIteration(const BoardAnalyzer::SequenceCallback& fn) const {
     analyzer.quadrupletIteration(fn);
 }
 
-bool go::State::isOccupied(const go::Position& position) const {
-    return analyzer.isOccupied(position);
+bool go::State::occupied(const go::Position& position) const {
+    return analyzer.occupied(position);
+    // return true;
 }

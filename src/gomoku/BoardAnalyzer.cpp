@@ -53,14 +53,23 @@ void BoardAnalyzer::quadrupletIteration(const SequenceCallback& fn) const {
     }
 }
 
-bool BoardAnalyzer::isOccupied(const go::Position& position) const {
+bool BoardAnalyzer::occupied(const go::Position& position) const {
     unsigned row = position.row;
     unsigned column = position.column;
     return rows.count(row) && rows.at(row).count(column);
 }
 
-bool BoardAnalyzer::isOver() const {
+bool BoardAnalyzer::over() const {
+    return hasWinner() || full();
+}
+
+bool BoardAnalyzer::hasWinner() const {
     return hasQuintuple;
+}
+
+bool BoardAnalyzer::full() const {
+    constexpr auto maxStones = std::pow(GomokuTraits::BOARD_DIMENSION, 2);
+    return stoneContainer.size() == maxStones;
 }
 
 void BoardAnalyzer::recalculate(const go::Position& position) {

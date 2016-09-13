@@ -3,23 +3,18 @@
 
 #include "gomoku/Traits.hpp"
 #include "multimedia/MatchGraphics.hpp"
+#include "multimedia/sf_utils.hpp"
 #include "extra/macros.hpp"
 
 Gomoku::Match::Graphics::Graphics() {
-    font.loadFromFile("res/ARCADECLASSIC.TTF");
+    font.loadFromFile("res/DTM-Mono.otf");
 }
 
 void Gomoku::Match::Graphics::doUpdate(Agent& match, Element& window) {
     window.clear(sf::Color::Black);
 
     drawBoard(window);
-    
-    if (match.isOver()) {
-        drawGameOverScreen(match, window);
-    } else {
-        highlight(match, window);
-    }
-
+    drawStatus(match, window);
     drawStones(match, window);
 }
 
@@ -33,7 +28,7 @@ void Gomoku::Match::Graphics::drawBoard(Element& window) const {
         auto offset = [=](unsigned i) {
             return boardStart + i * squareSize;
         };
-        
+
         for (unsigned i = 0; i < boardDimension; i++) {
             lines.emplace_back(sf::Vector2f(boardStart, offset(i)));
             lines.emplace_back(sf::Vector2f(boardEnd, offset(i)));
@@ -46,6 +41,31 @@ void Gomoku::Match::Graphics::drawBoard(Element& window) const {
     }
 
     window.draw(&lines.front(), 4 * boardDimension, sf::Lines);
+}
+
+void Gomoku::Match::Graphics::drawStatus(Agent& match, Element& window) const {
+    sf::Text text;
+    unsigned iterCount = match.iterations();
+    if (iterCount > 0) {
+        text = prepareText(std::to_string(iterCount) + " iterations", 200);
+        window.draw(text);
+    }
+
+    if (match.hasWinner()) {
+        text = prepareText(go::to_string(match.winnerTeam()) + " wins!", 100);
+        window.draw(text);
+        return;
+    }
+
+    if (match.full()) {
+        text = prepareText("Draw!!!", 100);
+        window.draw(text);
+        return;
+    }
+
+    text = prepareText(go::to_string(match.currentTeam()) + " turn", 100);
+    window.draw(text);
+    highlight(match, window);
 }
 
 void Gomoku::Match::Graphics::drawStones(Agent& match, Element& window) const {
@@ -64,33 +84,13 @@ void Gomoku::Match::Graphics::drawStones(Agent& match, Element& window) const {
         auto b_border = GomokuTraits::BLACK_OUTLINE_COLOR;
 
         shape.setOutlineThickness(MatchTraits::STONE_BORDER_WIDTH);
-        
         shape.setOutlineColor(stone.team == go::Team::WHITE ? w_border : b_border);
-
         shape.setFillColor(stone.team == go::Team::WHITE ? white : black);
         window.draw(shape);
     });
 }
 
-void Gomoku::Match::Graphics::drawGameOverScreen(Agent& match, Element& window) const {
-    auto boardDimension = GomokuTraits::BOARD_DIMENSION;
-    auto squareSize = MatchTraits::SQUARE_SIZE;
-    auto boardStart = MatchTraits::BORDER_WIDTH;
-    auto boardEnd = boardStart + (boardDimension - 1) * squareSize;
-
-    sf::Text text(go::to_string(match.winnerTeam()) + " wins!", font);
-    text.setCharacterSize(30);
-    text.setFillColor(sf::Color::White);
-    text.setPosition(sf::Vector2f(boardEnd + MatchTraits::TEXT_PADDING, 100));
-
-    window.draw(text);
-}
-
 void Gomoku::Match::Graphics::highlight(Agent& match, Element& window) const {
-// struct BoardAnalyzer::Sequence {
-//     std::vector<go::Stone*> stones;
-//     std::pair<bool, bool> freeEnds = {false, false};
-// };
     auto drawHighlightedSpot = [&](const go::Position& position) {
         int signedDimension = static_cast<int>(GomokuTraits::BOARD_DIMENSION);
         if (position.row < 0 || position.column < 0
@@ -141,4 +141,17 @@ void Gomoku::Match::Graphics::highlight(Agent& match, Element& window) const {
             }            
         }
     });
+}
+
+sf::Text Gomoku::Match::Graphics::prepareText(const std::string& content, unsigned y) const {
+    auto boardDimension = GomokuTraits::BOARD_DIMENSION;
+    auto squareSize = MatchTraits::SQUARE_SIZE;
+    auto boardStart = MatchTraits::BORDER_WIDTH;
+    auto boardEnd = boardStart + (boardDimension - 1) * squareSize;
+
+    sf::Text text(content, font);
+    text.setCharacterSize(30);
+    sf_utils::set_color(text, sf::Color::White);
+    text.setPosition(sf::Vector2f(boardEnd + MatchTraits::TEXT_PADDING, y));
+    return text;
 }

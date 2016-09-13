@@ -13,15 +13,16 @@ MiniMaxTree<T>::MiniMaxTree(const RatingFunction<T>& heuristic,
 }
 
 template<typename T>
-void MiniMaxTree<T>::findNextMove(const T& currentState) {
+typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(const T& currentState) {
     root = Node{currentState, Type::MAX};
     update(root, AITraits::MAX_DEPTH);
+    return {base::Command<T>(), AITraits::MAX_DEPTH};
 }
 
 template<typename T>
 double MiniMaxTree<T>::update(Node& node, unsigned depth) {
     T& currentState = node.state;
-    if (depth == 0 || currentState.isOver()) {
+    if (depth == 0 || currentState.over()) {
         return node.value;
     }
 

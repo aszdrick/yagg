@@ -25,3 +25,11 @@ bool base::Command<go::State>::isValid() const {
 void base::Command<go::State>::execute(go::State& state) {
     state.play(position, team);
 }
+
+void base::Command<go::State>::setIterations(unsigned iterations) {
+    commandIterations = iterations;
+}
+
+unsigned base::Command<go::State>::iterations() const {
+    return commandIterations;
+}

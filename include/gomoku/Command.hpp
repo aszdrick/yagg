@@ -17,10 +17,13 @@ namespace base {
         void setTeam(const go::Team&);
         void setPosition(const go::Position&);
         void execute(go::State&);
+        void setIterations(unsigned);
+        unsigned iterations() const;
      private:
         go::Team team;
         go::Position position = {0, 0};
         bool valid = false;
+        unsigned commandIterations;
     };
 }
 

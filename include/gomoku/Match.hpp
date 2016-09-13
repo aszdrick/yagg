@@ -28,7 +28,10 @@ class Gomoku::Match : public State {
     void restart();
     go::Team currentTeam() const;
     go::Team winnerTeam() const;
-    bool isOver() const;
+    bool over() const;
+    bool hasWinner() const;
+    bool full() const;
+    unsigned iterations() const;
 
  private:
     std::unique_ptr<GraphicalComponent> graphicsPtr;
@@ -38,6 +41,7 @@ class Gomoku::Match : public State {
 
     std::array<Player,2> players;
     go::State state;
+    unsigned moveIterations;
 
     void onUpdateRenderer(Renderer&) override;
     Response onProcessInput(Input&) override;

@@ -33,7 +33,7 @@ struct Traits<Match> {
     constexpr static float BORDER_WIDTH = SQUARE_SIZE;
     constexpr static float STONE_RADIUS = 18;
     constexpr static float STONE_BORDER_WIDTH = 2;
-    constexpr static float TEXT_PADDING = 80;
+    constexpr static float TEXT_PADDING = 60;
     const static go::Position INF_BOARD_LIMIAR;
     const static go::Position SUP_BOARD_LIMIAR;
     const static std::array<go::Position, 4> DELTA;

@@ -20,9 +20,10 @@ using RatingFunction = std::function<double(const T&)>;
 template<typename T>
 class MiniMaxTree {
     struct Node;
+    struct AnalysisReport;
  public:
     MiniMaxTree(const RatingFunction<T>&, const RatingFunction<T>&);
-    void findNextMove(const T&);
+    AnalysisReport analyze(const T&);
 
  private:
     Node root;
@@ -40,6 +41,12 @@ struct MiniMaxTree<T>::Node {
     double alpha = -INT_MAX;
     double beta = INT_MAX;
     std::vector<Node> children;
+};
+
+template<typename T>
+struct MiniMaxTree<T>::AnalysisReport {
+    base::Command<T> move;
+    unsigned depth;
 };
 
 namespace std {

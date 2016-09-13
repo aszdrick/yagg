@@ -15,9 +15,11 @@ class go::State {
     void iterate(const std::function<void(const Stone&)>&) const;
     short currentPlayer() const;
     short winnerPlayer() const;
-    bool isOver() const;
     void quadrupletIteration(const BoardAnalyzer::SequenceCallback&) const;
-    bool isOccupied(const go::Position&) const;
+    bool occupied(const go::Position&) const;
+    bool over() const;
+    bool hasWinner() const;
+    bool full() const;
     State generateNext() const {
         return go::State();
     }

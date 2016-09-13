@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
     MiniMaxTree<go::State> tree(fn, fn);
 
     go::State state;
-    tree.findNextMove(state);
+    tree.analyze(state);
 
     return 0;
 }

@@ -13,9 +13,11 @@ class Gomoku::Match::Graphics : public GraphicalComponent {
     sf::Font font;
     void doUpdate(Agent&, Element&) override;
     void drawBoard(Element&) const;
+    void drawWinner(Agent&, Element&) const;
+    void drawStatus(Agent&, Element&) const; 
     void drawStones(Agent&, Element&) const;
-    void drawGameOverScreen(Agent&, Element&) const;
     void highlight(Agent&, Element&) const;
+    sf::Text prepareText(const std::string&, unsigned) const;
 };
 
 #endif /* GOMOKU_MATCH_GRAPHICS_HPP */

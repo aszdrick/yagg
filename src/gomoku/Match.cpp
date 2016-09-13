@@ -9,8 +9,6 @@
 #include "multimedia/MatchHandler.hpp"
 #include "extra/macros.hpp"
 
-//------------------------------- Match class -------------------------------//
-
 Gomoku::Match::Match(Player&& p1, Player&& p2)
 : graphicsPtr(new Graphics()), inputPtr(new Handler()),
   graphics(*graphicsPtr), input(*inputPtr),
@@ -20,10 +18,11 @@ Gomoku::Match::Match(Player&& p1, Player&& p2)
 }
 
 void Gomoku::Match::updatePlayers(Player::Input& positions) {
-    if (!isOver()) {
+    if (!over()) {
         auto move = players[state.currentPlayer()].processInput(state, positions);
         if (move.isValid()) {
             move.execute(state);
+            moveIterations = move.iterations();
         }
     }
 }
@@ -40,8 +39,20 @@ go::Team Gomoku::Match::winnerTeam() const {
     return players[state.winnerPlayer()].getTeam();
 }
 
-bool Gomoku::Match::isOver() const {
-    return state.isOver();
+bool Gomoku::Match::over() const {
+    return state.over();
+}
+
+bool Gomoku::Match::hasWinner() const {
+    return state.hasWinner();
+}
+
+bool Gomoku::Match::full() const {
+    return state.full();
+}
+
+unsigned Gomoku::Match::iterations() const {
+    return moveIterations;
 }
 
 void Gomoku::Match::onUpdateRenderer(Renderer& render) {
