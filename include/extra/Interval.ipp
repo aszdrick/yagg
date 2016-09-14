@@ -29,14 +29,11 @@ void IntervalMap<T>::split(const iterator& it, Interval& iv, T& value, bool lowS
     Interval lower = upper;
     T& data = it->second;
 
-    lower.center_high = lower.center_low;
+    lower.center_high = iv.low;
     lower.high = iv.center_low - 1;
 
-    upper.center_low = upper.center_high;
+    upper.center_low = iv.high;
     upper.low = iv.center_high + 1;
-
-    iv.low = lower.center_high + 1;
-    iv.high = upper.center_low - 1;
 
     iterator hint = map.erase(it);
     if (lowSplit) {
@@ -53,14 +50,14 @@ typename IntervalMap<T>::assoc IntervalMap<T>::premerge(const iterator& it, Inte
     Interval interval = it->first;
     T& data = it->second;
 
-    interval.low = std::min(interval.low, iv.low);
-    interval.high = std::max(interval.high, iv.high);
+    // interval.low = std::min(interval.low, iv.low);
+    // interval.high = std::max(interval.high, iv.high);
 
-    if (interval.center_low > iv.center_high) {
-        interval.center_low = iv.center_low;
-    } else {
-        interval.center_high = iv.center_high;
-    }
+    // if (interval.center_low > iv.center_high) {
+    //     interval.center_low = iv.center_low;
+    // } else {
+    //     interval.center_high = iv.center_high;
+    // }
 
     map.erase(it);
     return {interval, data};
@@ -87,6 +84,11 @@ auto IntervalMap<T>::find(const Interval& iv) {
 }
 
 template<typename T>
+auto IntervalMap<T>::erase(auto& key) {
+    return map.erase(key);
+}
+
+template<typename T>
 auto IntervalMap<T>::begin() {
     return map.begin();
 }
@@ -106,11 +108,15 @@ auto IntervalMap<T>::end() const {
     return map.cend();
 }
 
-inline ushort Interval::center_distance(const Interval& iv) const {
+inline short Interval::center_distance(const Interval& iv) const {
     if (center_low > iv.center_high)
         return center_low - iv.center_high - 1;
     else
         return iv.center_low - center_high - 1;
+}
+
+inline ushort Interval::size() const {
+    return high - low;
 }
 
 inline bool operator<(const Interval& lhs, const Interval& rhs) {

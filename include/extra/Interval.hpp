@@ -13,7 +13,8 @@ struct Interval {
     short center_high;
     short high;
 
-    ushort center_distance(const Interval&) const;
+    short center_distance(const Interval&) const;
+    ushort size() const;
 };
 
 template<typename T>
@@ -30,6 +31,7 @@ class IntervalMap {
     auto count(const Interval&) const;
     auto insert(const auto&);
     auto find(const Interval&);
+    auto erase(auto&);
     auto& operator[](const Interval&);
 
     auto begin();

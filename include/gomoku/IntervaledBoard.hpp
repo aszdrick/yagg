@@ -17,14 +17,15 @@ using Split = std::pair<ushort, bool>;
 struct Sequence {
     go::Team team;
     short origin;
-    ushort size;
+    ushort localSize;
+    ushort totalSize;
+    ushort capacity;
     IvMap holes;
-    std::pair<bool, bool> openings;
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Sequence& seq) {
-    auto team = seq.team == go::Team::BLACK ? 0 : 1;
-    out << "{" << team << "," << seq.origin << "," << seq.size << "}";
+    // auto team = seq.team == go::Team::BLACK ? 0 : 1;
+    // out << "{" << team << "," << seq.origin << "," << seq.size << "}";
     return out;
 }
 
@@ -44,8 +45,9 @@ class IntervaledBoard {
     std::unordered_map<ushort, IvMap> secondaryDiagonals;
 
     void solve(IvMap&, Interval, const go::Team&);
-    ushort newSequence(IvMap&, Interval&, const go::Team&);
+    void mergeSequence(IvMap&, IvMap::assoc&, Interval&);
     std::pair<ushort,bool> splitSequence(const IvMap::iterator&, Interval&);
+    ushort newSequence(IvMap&, Interval&, const go::Team&);
 };
 
 #endif /* INTERVALED_BOARD_HPP */
