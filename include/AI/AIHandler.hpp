@@ -9,6 +9,7 @@
 #include "gomoku/State.hpp"
 #include <memory>
 
+template<unsigned id>
 class Gomoku::AIHandler : public Player::InputComponent {
  public:
     AIHandler();
@@ -20,5 +21,7 @@ class Gomoku::AIHandler : public Player::InputComponent {
 
     Product doUpdate(Agent&, Element&) override;
 };
+
+#include "AIHandler.ipp"
 
 #endif /* AI_HANDLER_HPP */

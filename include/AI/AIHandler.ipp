@@ -4,23 +4,26 @@
 #include <chrono>
 #include <random>
 #include <thread>
-#include "AI/AIHandler.hpp"
+#include "AI/ai_utils.hpp"
+// #include "AI/AIHandler.hpp"
+#include "extra/macros.hpp"
 #include "gomoku/Command.hpp"
 #include "gomoku/Traits.hpp"
 
-RatingFunction<go::State> Gomoku::AIHandler::heuristicFn = [](const go::State&) {
-    return 0.0;
-};
-RatingFunction<go::State> Gomoku::AIHandler::utilityFn = [](const go::State&) {
-    return 0.0;
-};
+template<unsigned id>
+RatingFunction<go::State> Gomoku::AIHandler<id>::heuristicFn = ai_utils::heuristic<id>;
+template<unsigned id>
+RatingFunction<go::State> Gomoku::AIHandler<id>::utilityFn = ai_utils::utility<id>;
 
-Gomoku::AIHandler::AIHandler()
+template<unsigned id>
+Gomoku::AIHandler<id>::AIHandler()
  : decisionTree(heuristicFn, utilityFn) {
 
 }
 
-Gomoku::AIHandler::Product Gomoku::AIHandler::doUpdate(Agent& board, Element& events) {
+template<unsigned id>
+typename Gomoku::AIHandler<id>::Product
+Gomoku::AIHandler<id>::doUpdate(Agent& board, Element& events) {
     using random = std::uniform_int_distribution<int>;
     static auto now = std::chrono::system_clock::now().time_since_epoch();
     static std::default_random_engine generator(now.count());

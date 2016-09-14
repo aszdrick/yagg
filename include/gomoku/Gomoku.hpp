@@ -15,6 +15,7 @@ class Gomoku : public mbe::Game {
     using BasePlayer = base::Player<go::State, PlayerInput>;
     class Match;
     class Player;
+    template<unsigned>
     class AIHandler;
 
     Gomoku();
