@@ -6,11 +6,11 @@
 #include "multimedia/sf_utils.hpp"
 #include "extra/macros.hpp"
 
-Gomoku::Match::Graphics::Graphics() {
+Match::Graphics::Graphics() {
     font.loadFromFile("res/DTM-Mono.otf");
 }
 
-void Gomoku::Match::Graphics::doUpdate(Agent& match, Element& window) {
+void Match::Graphics::doUpdate(Agent& match, Element& window) {
     window.clear(sf::Color::Black);
 
     drawBoard(window);
@@ -18,7 +18,7 @@ void Gomoku::Match::Graphics::doUpdate(Agent& match, Element& window) {
     drawStones(match, window);
 }
 
-void Gomoku::Match::Graphics::drawBoard(Element& window) const {
+void Match::Graphics::drawBoard(Element& window) const {
     static std::vector<sf::Vertex> lines;
     auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     if (lines.empty()) {
@@ -43,7 +43,7 @@ void Gomoku::Match::Graphics::drawBoard(Element& window) const {
     window.draw(&lines.front(), 4 * boardDimension, sf::Lines);
 }
 
-void Gomoku::Match::Graphics::drawStatus(Agent& match, Element& window) const {
+void Match::Graphics::drawStatus(Agent& match, Element& window) const {
     sf::Text text;
     unsigned iterCount = match.iterations();
     if (iterCount > 0) {
@@ -68,7 +68,7 @@ void Gomoku::Match::Graphics::drawStatus(Agent& match, Element& window) const {
     highlight(match, window);
 }
 
-void Gomoku::Match::Graphics::drawStones(Agent& match, Element& window) const {
+void Match::Graphics::drawStones(Agent& match, Element& window) const {
     match.state.iterate([&window](auto& stone) {
         auto shape = sf::CircleShape(MatchTraits::STONE_RADIUS, 50);
         auto squareSize = MatchTraits::SQUARE_SIZE;
@@ -90,7 +90,7 @@ void Gomoku::Match::Graphics::drawStones(Agent& match, Element& window) const {
     });
 }
 
-void Gomoku::Match::Graphics::highlight(Agent& match, Element& window) const {
+void Match::Graphics::highlight(Agent& match, Element& window) const {
     auto drawHighlightedSpot = [&](const go::Position& position) {
         int signedDimension = static_cast<int>(GomokuTraits::BOARD_DIMENSION);
         if (position.row < 0 || position.column < 0
@@ -143,7 +143,7 @@ void Gomoku::Match::Graphics::highlight(Agent& match, Element& window) const {
     });
 }
 
-sf::Text Gomoku::Match::Graphics::prepareText(const std::string& content, unsigned y) const {
+sf::Text Match::Graphics::prepareText(const std::string& content, unsigned y) const {
     auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     auto squareSize = MatchTraits::SQUARE_SIZE;
     auto boardStart = MatchTraits::BORDER_WIDTH;

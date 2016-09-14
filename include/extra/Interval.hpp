@@ -28,6 +28,7 @@ class IntervalMap {
     void split(const iterator&, Interval&, T&, bool = true);
     assoc premerge(const iterator&, Interval&);
 
+    bool empty() const;
     auto count(const Interval&) const;
     auto find(const Interval&);
     template<typename U>

@@ -9,7 +9,7 @@
 #include "multimedia/MatchHandler.hpp"
 #include "extra/macros.hpp"
 
-Gomoku::Match::Match(Player&& p1, Player&& p2)
+Match::Match(Player&& p1, Player&& p2)
 : graphicsPtr(new Graphics()), inputPtr(new Handler()),
   graphics(*graphicsPtr), input(*inputPtr),
   players{std::move(p1), std::move(p2)} {
@@ -17,7 +17,7 @@ Gomoku::Match::Match(Player&& p1, Player&& p2)
     players[1].setTeam(go::Team::WHITE);
 }
 
-void Gomoku::Match::updatePlayers(Player::Input& positions) {
+void Match::updatePlayers(Player::Input& positions) {
     if (!over()) {
         auto move = players[state.currentPlayer()].processInput(state, positions);
         if (move.isValid()) {
@@ -27,39 +27,39 @@ void Gomoku::Match::updatePlayers(Player::Input& positions) {
     }
 }
 
-void Gomoku::Match::restart() {
+void Match::restart() {
     state = go::State();
 }
 
-go::Team Gomoku::Match::currentTeam() const {
+go::Team Match::currentTeam() const {
     return players[state.currentPlayer()].getTeam();
 }
 
-go::Team Gomoku::Match::winnerTeam() const {
+go::Team Match::winnerTeam() const {
     return players[state.winnerPlayer()].getTeam();
 }
 
-bool Gomoku::Match::over() const {
+bool Match::over() const {
     return state.over();
 }
 
-bool Gomoku::Match::hasWinner() const {
+bool Match::hasWinner() const {
     return state.hasWinner();
 }
 
-bool Gomoku::Match::full() const {
+bool Match::full() const {
     return state.full();
 }
 
-unsigned Gomoku::Match::iterations() const {
+unsigned Match::iterations() const {
     return moveIterations;
 }
 
-void Gomoku::Match::onUpdateRenderer(Renderer& render) {
+void Match::onUpdateRenderer(Renderer& render) {
     graphics.update(*this, render);
 }
 
-Gomoku::Match::Response Gomoku::Match::onProcessInput(Input& in) {
+Match::Response Match::onProcessInput(Input& in) {
     input.update(*this, in);
     return { Response::Type::SELF, 0, this};
 }

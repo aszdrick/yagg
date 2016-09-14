@@ -5,26 +5,36 @@
 #define GOMOKU_HPP
 
 #include "base/Player.hpp"
-#include "mbe/Engine.hpp"
-#include "mbe/GameMenu.hpp"
 #include "CommonTypes.hpp"
+#include "gomoku/Match.hpp"
+#include "mbe/Engine.hpp"
+#include "mbe/Menu.hpp"
 
 class Gomoku : public mbe::Game {
  public:
-    using PlayerInput = std::list<go::Position>;
-    using BasePlayer = base::Player<go::State, PlayerInput>;
-    class Match;
-    class Player;
+    using Menu = mbe::Menu<Gomoku, 2>;
+    using NewGameMenu = mbe::Menu<Gomoku, 3>;
     template<unsigned>
     class AIHandler;
 
     Gomoku();
 
-    void newGame();
-    void optionsMenu();
+    template<typename BH, typename WH = BH>
+    inline void newGame() {
+        popState();
+        pushState(new Match(Player(new BH()), Player(new WH())));
+    }
+
+    void newGameMenu();
     void quit();
 
  private:
+    static const std::array<Menu::Option, 2> options;
+    static const std::array<NewGameMenu::Option, 3> subOptions;
+
+    const auto desiredOptions();
+    const auto desiredSubOptions();
+
     void switchScreenMode(Renderer&);
     void keyPressed(const sf::Event&);
 

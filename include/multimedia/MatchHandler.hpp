@@ -6,14 +6,14 @@
 
 #include "gomoku/Match.hpp"
 
-class Gomoku::Match::Handler : public InputComponent {
+class Match::Handler : public InputComponent {
  private:
     struct Pixel;
     void doUpdate(Agent&, Element&) override;
     go::Position pixelToPosition(const Pixel&);
 };
 
-struct Gomoku::Match::Handler::Pixel {
+struct Match::Handler::Pixel {
     float x;
     float y;
 };

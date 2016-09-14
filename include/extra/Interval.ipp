@@ -48,19 +48,16 @@ void IntervalMap<T>::split(const iterator& it, Interval& iv, T& value, bool lowS
 template<typename T>
 typename IntervalMap<T>::assoc IntervalMap<T>::premerge(const iterator& it, Interval& iv) {
     Interval interval = it->first;
-    T& data = it->second;
-
-    // interval.low = std::min(interval.low, iv.low);
-    // interval.high = std::max(interval.high, iv.high);
-
-    // if (interval.center_low > iv.center_high) {
-    //     interval.center_low = iv.center_low;
-    // } else {
-    //     interval.center_high = iv.center_high;
-    // }
+    T data = it->second;
 
     map.erase(it);
+
     return {interval, data};
+}
+
+template<typename T>
+bool IntervalMap<T>::empty() const {
+    return map.empty();
 }
 
 template<typename T>

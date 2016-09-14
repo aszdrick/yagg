@@ -6,16 +6,17 @@
 
 #include <memory>
 #include "base/Component.hpp"
+#include "base/Player.hpp"
 #include "Command.hpp"
-#include "Gomoku.hpp"
+#include "mbe/Engine.hpp"
 
-class Gomoku::Player : public BasePlayer {
+class Player : public base::Player<go::State, std::list<go::Position>> {
     class Graphics;
-    class InputHandler;
  public:
+    class InputHandler;
     using InputComponent = base::Component<Board, Input, Move>;
 
-    Player(InputComponent* const = new InputHandler());
+    Player(InputComponent* const);
 
     void setTeam(go::Team);
     go::Team getTeam() const;
@@ -25,12 +26,12 @@ class Gomoku::Player : public BasePlayer {
     std::unique_ptr<InputComponent> inputPtr;
     InputComponent& input;
 
-    Move onProcessInput(Board&, Input&) override;
+    Move onProcessInput(Board&, Input&) override;    
+};
 
-    class InputHandler : public InputComponent {
-     private:
-        Product doUpdate(Agent&, Element&) override;
-    };
+class Player::InputHandler : public InputComponent {
+ private:
+    Product doUpdate(Agent&, Element&) override;
 };
 
 #endif /* GOMOKU_PLAYER_HPP */

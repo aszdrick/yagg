@@ -2,12 +2,48 @@
                   Marleson Graf <aszdrick@gmail.com> */
 
 #include "gomoku/Gomoku.hpp"
-#include "gomoku/Match.hpp"
 #include "gomoku/Player.hpp"
 #include "AI/AIHandler.hpp"
 
+const std::array<Gomoku::Menu::Option, 2> Gomoku::options = {
+    Gomoku::Menu::Option{
+        sf::Text("New Game", sf::Font()),
+        sf::Color::Black,
+        [](Gomoku& gomoku) { gomoku.newGameMenu(); }
+    },
+    Gomoku::Menu::Option{
+        sf::Text("Quit", sf::Font()),
+        sf::Color::Black,
+        [](Gomoku& gomoku) { gomoku.quit(); }
+    }
+};
+
+const std::array<Gomoku::NewGameMenu::Option, 3> Gomoku::subOptions = {
+    Gomoku::NewGameMenu::Option{
+        sf::Text("Player vs Player", sf::Font()),
+        sf::Color::Black,
+        [](Gomoku& gomoku) {
+            gomoku.newGame<Player::InputHandler>();
+        }
+    },
+    Gomoku::NewGameMenu::Option{
+        sf::Text("Player vs Computer", sf::Font()),
+        sf::Color::Black,
+        [](Gomoku& gomoku) {
+            gomoku.newGame<Player::InputHandler, Gomoku::AIHandler<1>>();
+        }
+    },
+    Gomoku::NewGameMenu::Option{
+        sf::Text("Computer vs Computer", sf::Font()),
+        sf::Color::Black,
+        [](Gomoku& gomoku) {
+            gomoku.newGame<Gomoku::AIHandler<1>>();
+        }
+    }
+};
+
 Gomoku::Gomoku()
- : Game(new mbe::GameMenu<Gomoku>(*this)) {
+ : Game(new Menu(*this, options)) {
 
 }
 
@@ -40,13 +76,8 @@ void Gomoku::keyPressed(const sf::Event& event) {
     }
 }
 
-void Gomoku::newGame() {
-    pushState(new Match(Player(new AIHandler<1>()), Player(new AIHandler<2>())));
-    // pushState(new Match(Player(), Player()));
-}
-
-void Gomoku::optionsMenu() {
-    
+void Gomoku::newGameMenu() {
+    pushState(new NewGameMenu(*this, subOptions));
 }
 
 void Gomoku::quit() {

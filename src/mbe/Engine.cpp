@@ -93,7 +93,7 @@ void mbe::Engine::resize(double width, double height) {
     //     currWidth = currHeight * aspectRatio;
     // }
     // window.setView(sf::View(sf::FloatRect(0, 0, width, height)));
-    game.setVideoMode(window, currWidth, currHeight, MAX_DEPTH);
+    game.setVideoMode(window, DEFAULT_WIDTH, DEFAULT_HEIGHT, MAX_DEPTH);
 }
 
 void mbe::Engine::switchScreenMode() {

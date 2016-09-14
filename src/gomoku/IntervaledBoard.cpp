@@ -79,7 +79,7 @@ void IntervaledBoard::play(const go::Position& position, const go::Team& team) {
 
 void IntervaledBoard::solve(IvMap& map, Interval iv, const go::Team& team) {
     ECHO("--------------------------------------------------");
-    ushort mergeDistance = 5, mergeCount = 0;
+    unsigned short mergeDistance = 5, mergeCount = 0;
     std::array<IvMap::assoc, 2> merges;
     bool noMerges = true;
     auto it = map.find(iv);
@@ -113,57 +113,70 @@ void IntervaledBoard::solve(IvMap& map, Interval iv, const go::Team& team) {
     }
 }
 
-void IntervaledBoard::mergeSequence(IvMap& map, IvMap::assoc& pair, Interval& iv) {
+void IntervaledBoard::mergeSequence(IvMap& map, 
+                                    IvMap::assoc& pair,
+                                    Interval& iv) {
     auto& piv = pair.first;
     auto& sequence = sequences[pair.second];
     auto distance = piv.center_distance(iv);
-    ushort adition;
+    unsigned short adition;
 
-    if (distance > 0) {
-        // TODO: deal with hole
+    if (distance >= 0) {
+        if (distance != 0) {
+            generateHole(sequence, piv, iv);
+        } else {
+            if (!sequence.holes.empty()) {
+                // TODO
+            } else {
+                ++sequence.localSize;
+            }
+        }
 
-    } else if (distance < 0) {
-        // TODO: deal with play in a hole
-
+        if (piv.center_low > iv.center_high) {
+            adition = piv.low - iv.low;
+            piv.low = iv.low;
+            piv.center_low = iv.center_low;
+        } else {
+            adition = iv.high - piv.high;
+            piv.high = iv.high;
+            piv.center_high = iv.center_high;
+        }
+        
+        sequence.capacity += adition;
+        
     } else {
-        sequence.localSize++;
+        fillHole(sequence, piv, iv);
     }
 
-    if (piv.center_low > iv.center_high) {
-        adition = piv.low - iv.low;
-        piv.low = iv.low;
-        piv.center_low = iv.center_low;
-    } else {
-        adition = iv.high - piv.high;
-        piv.high = iv.high;
-        piv.center_high = iv.center_high;
-    }
-
-    sequence.capacity += adition;
-
+    ++sequence.totalSize;
     map.insert(std::move(pair));
 }
 
+void IntervaledBoard::generateHole(Sequence& sequence,
+                                   Interval& piv,
+                                   Interval& iv) {
+    short low = std::min(iv.center_low, piv.center_low) + 1;
+    short high = std::max(iv.center_high, piv.center_high) - 1;
+    Interval hole_iv = {low, low, high, high};
+    sequence.holes[hole_iv] = 1;
+}
+
+void IntervaledBoard::fillHole(Sequence& sequence, Interval& piv, Interval& iv) {
+    auto hole = findHole(sequence, iv);
+
+}
+
 Split IntervaledBoard::splitSequence(const IvMap::iterator& it, Interval& iv) {
-    ushort localSize = 0, totalSize = 0, capacity = 0;
-    IvMap remainingHoles;
-    short origin = 0;
-    bool lowSplit = true;
-    
-    auto id = currentSequence++;
+    unsigned short localSize = 0, totalSize = 0, capacity = 0;
     auto& sequence = sequences[it->second];
-    auto& piv = it->first;
-    auto atomic = iv;
-
-    // Make interval atomic
-    atomic.low = atomic.center_low;
-    atomic.high = atomic.center_high;
-
-    // For that shit work, holes need to have center_high = high
-    // With this condition satisfied, it's guaranteed that only one hole will match
-    auto hole = sequence.holes.find(atomic);
+    auto hole = findHole(sequence, iv);
     auto hole_iv = hole->first;
-    
+    auto id = currentSequence++;
+    auto& piv = it->first;
+    IvMap remainingHoles;
+    bool lowSplit = true;
+    short origin = 0;
+
     // iv assumes extremeties of hole
     iv.low = hole_iv.low;
     iv.high = hole_iv.high;
@@ -209,8 +222,19 @@ Split IntervaledBoard::splitSequence(const IvMap::iterator& it, Interval& iv) {
     return {id, lowSplit};
 }
 
-ushort IntervaledBoard::newSequence(IvMap& map, Interval& iv, const go::Team& team) {
-    ushort id = currentSequence;
+IvMap::iterator IntervaledBoard::findHole(Sequence& sequence, Interval iv) {
+    // Make interval atomic
+    iv.low = iv.center_low;
+    iv.high = iv.center_high;
+    // For that shit work, holes need to have center_high = high
+    // With this condition satisfied, it's guaranteed that only one hole will match
+    return sequence.holes.find(iv);
+}
+
+unsigned short IntervaledBoard::newSequence(IvMap& map,
+                                            Interval& iv,
+                                            const go::Team& team) {
+    unsigned short id = currentSequence;
     sequences[currentSequence] = {
         team,           // Team
         iv.center_low,  // Origin

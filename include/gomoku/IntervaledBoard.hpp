@@ -11,15 +11,15 @@
 #include "extra/Matrix.hpp"
 #include "extra/Interval.hpp"
 
-using IvMap = IntervalMap<ushort>;
-using Split = std::pair<ushort, bool>;
+using IvMap = IntervalMap<unsigned short>;
+using Split = std::pair<unsigned short, bool>;
 
 struct Sequence {
     go::Team team;
     short origin;
-    ushort localSize;
-    ushort totalSize;
-    ushort capacity;
+    unsigned short localSize;
+    unsigned short totalSize;
+    unsigned short capacity;
     IvMap holes;
 };
 
@@ -37,17 +37,20 @@ class IntervaledBoard {
 
  private:
     std::list<go::Stone> stones;
-    ushort currentSequence;
-    std::unordered_map<ushort, Sequence> sequences;
-    std::unordered_map<ushort, IvMap> rows;
-    std::unordered_map<ushort, IvMap> columns;
-    std::unordered_map<ushort, IvMap> mainDiagonals;
-    std::unordered_map<ushort, IvMap> secondaryDiagonals;
+    unsigned short currentSequence;
+    std::unordered_map<unsigned short, Sequence> sequences;
+    std::unordered_map<unsigned short, IvMap> rows;
+    std::unordered_map<unsigned short, IvMap> columns;
+    std::unordered_map<unsigned short, IvMap> mainDiagonals;
+    std::unordered_map<unsigned short, IvMap> secondaryDiagonals;
 
     void solve(IvMap&, Interval, const go::Team&);
     void mergeSequence(IvMap&, IvMap::assoc&, Interval&);
-    std::pair<ushort,bool> splitSequence(const IvMap::iterator&, Interval&);
-    ushort newSequence(IvMap&, Interval&, const go::Team&);
+    Split splitSequence(const IvMap::iterator&, Interval&);
+    unsigned short newSequence(IvMap&, Interval&, const go::Team&);
+    void generateHole(Sequence&, Interval&, Interval&);
+    void fillHole(Sequence&, Interval&, Interval&);
+    IvMap::iterator findHole(Sequence&, Interval);
 };
 
 #endif /* INTERVALED_BOARD_HPP */

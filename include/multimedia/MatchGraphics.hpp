@@ -6,7 +6,7 @@
 
 #include "gomoku/Match.hpp"
 
-class Gomoku::Match::Graphics : public GraphicalComponent {
+class Match::Graphics : public GraphicalComponent {
  public:
     Graphics();
  private:

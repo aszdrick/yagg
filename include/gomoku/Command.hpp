@@ -23,7 +23,7 @@ namespace base {
         go::Team team;
         go::Position position = {0, 0};
         bool valid = false;
-        unsigned commandIterations;
+        unsigned commandIterations = 0;
     };
 }
 

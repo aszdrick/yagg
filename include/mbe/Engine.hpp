@@ -42,8 +42,6 @@ namespace mbe {
         std::unique_ptr<Game> gamePtr;
         Game& game;
         bool fullscreen = false;
-        double currWidth;
-        double currHeight;
 
         void processEvents();
         void resize(double, double);

@@ -5,7 +5,7 @@
 #include "multimedia/MatchHandler.hpp"
 #include "gomoku/Traits.hpp"
 
-void Gomoku::Match::Handler::doUpdate(Agent& match, Element& list) {
+void Match::Handler::doUpdate(Agent& match, Element& list) {
     std::list<go::Position> inputs;
     while (!list.empty()) {
         auto event = list.front();
@@ -38,7 +38,7 @@ void Gomoku::Match::Handler::doUpdate(Agent& match, Element& list) {
     match.updatePlayers(inputs);
 }
 
-go::Position Gomoku::Match::Handler::pixelToPosition(const Pixel& p) {
+go::Position Match::Handler::pixelToPosition(const Pixel& p) {
     auto boardStart = MatchTraits::BORDER_WIDTH;
     auto squareSize = MatchTraits::SQUARE_SIZE;
     int column = round((p.x - boardStart) / squareSize);

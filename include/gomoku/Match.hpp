@@ -6,16 +6,16 @@
 
 #include <array>
 #include "base/Component.hpp"
-#include "Gomoku.hpp"
 #include "Player.hpp"
 #include "State.hpp"
 
-class Gomoku::Match : public State {
+class Match : public mbe::Game::State {
     class Graphics;
     class Handler;
  public:
     using GraphicalComponent = base::Component<Match, Renderer>;
     using InputComponent = base::Component<Match, Input>;
+    using Transition = Response::Type;
 
     enum class Type {
         PLAYER_VS_BOT, PLAYERS_ONLY, BOTS_ONLY
@@ -41,7 +41,7 @@ class Gomoku::Match : public State {
 
     std::array<Player,2> players;
     go::State state;
-    unsigned moveIterations;
+    unsigned moveIterations = 0;
 
     void onUpdateRenderer(Renderer&) override;
     Response onProcessInput(Input&) override;
