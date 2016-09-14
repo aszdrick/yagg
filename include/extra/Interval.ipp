@@ -74,17 +74,19 @@ auto& IntervalMap<T>::operator[](const Interval& iv) {
 }
 
 template<typename T>
-auto IntervalMap<T>::insert(const auto& value) {
-    return map.insert(value);
-}
-
-template<typename T>
 auto IntervalMap<T>::find(const Interval& iv) {
     return map.find(iv);
 }
 
 template<typename T>
-auto IntervalMap<T>::erase(auto& key) {
+template<typename U>
+auto IntervalMap<T>::insert(const U& value) {
+    return map.insert(value);
+}
+
+template<typename T>
+template<typename U>
+auto IntervalMap<T>::erase(U& key) {
     return map.erase(key);
 }
 

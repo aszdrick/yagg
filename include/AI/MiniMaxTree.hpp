@@ -30,7 +30,7 @@ class MiniMaxTree {
     const RatingFunction<T>& h_function;
     const RatingFunction<T>& u_function;
 
-    double update(Node&, unsigned);
+    Node& update(Node&, unsigned);
 };
 
 template<typename T>
@@ -41,6 +41,7 @@ struct MiniMaxTree<T>::Node {
     double alpha = -INT_MAX;
     double beta = INT_MAX;
     std::vector<Node> children;
+    Node* bestChild;
 };
 
 template<typename T>
@@ -62,7 +63,7 @@ template<typename T>
 struct initial_values {
     double best;
     double* param;
-    std::function<T(T,T)> fn;
+    std::function<T(T,T)> updater;
     Type nextType;
 };
 

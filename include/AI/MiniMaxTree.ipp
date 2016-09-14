@@ -15,27 +15,32 @@ MiniMaxTree<T>::MiniMaxTree(const RatingFunction<T>& heuristic,
 template<typename T>
 typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(const T& currentState) {
     root = Node{currentState, Type::MAX};
-    update(root, AITraits::MAX_DEPTH);
+    auto& bestNode = update(root, AITraits::MAX_DEPTH);
+    TRACE(bestNode.value);
     return {base::Command<T>(), AITraits::MAX_DEPTH};
 }
 
 template<typename T>
-double MiniMaxTree<T>::update(Node& node, unsigned depth) {
+typename MiniMaxTree<T>::Node& MiniMaxTree<T>::update(Node& node, unsigned depth) {
     T& currentState = node.state;
-    if (depth == 0 || currentState.over()) {
-        return node.value;
+    bool over = currentState.over();
+    bool exceededMaxDepth = (depth == 0);
+    if (over || exceededMaxDepth) {
+        auto fn = over ? u_function : h_function;
+        node.value = fn(node.state);
+        return node;
     }
 
     std::unordered_map<Type, initial_values<double>> options;
     std::function<double(double, double)> nop;
     options[Type::MAX] = {-INT_MAX, &node.alpha, nop, Type::MIN};
     options[Type::MIN] = {INT_MAX, &node.beta, nop, Type::MAX};
-    options[Type::MAX].fn = [](double a, double b) { return std::max(a, b); };
-    options[Type::MIN].fn = [](double a, double b) { return std::min(a, b); };
+    options[Type::MAX].updater = [](double a, double b) { return std::max(a, b); };
+    options[Type::MIN].updater = [](double a, double b) { return std::min(a, b); };
 
     double best = options[node.type].best;
     double& param = *options[node.type].param;
-    auto fn = options[node.type].fn;
+    auto updater = options[node.type].updater;
     Type nextType = options[node.type].nextType;
 
     // while (currentState.hasNext()) {
@@ -43,16 +48,22 @@ double MiniMaxTree<T>::update(Node& node, unsigned depth) {
         T next = currentState.generateNext();
         Node nextNode{next, nextType};
 
-        best = fn(best, update(nextNode, depth - 1));
-        param = fn(param, best);
+        auto& bestChild = update(nextNode, depth - 1);
+        best = updater(best, bestChild.value);
+        param = updater(param, best);
+
+        if (best == bestChild.value) {
+            node.bestChild = &bestChild;
+        }
+
         double alpha = nextNode.alpha;
         double beta = nextNode.beta;
-
         node.children.push_back(std::move(nextNode));
         if (beta <= alpha) {
             break;
         }
     }
 
-    return best;
+    // return best;
+    return *node.bestChild;
 }

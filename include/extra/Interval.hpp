@@ -29,9 +29,11 @@ class IntervalMap {
     assoc premerge(const iterator&, Interval&);
 
     auto count(const Interval&) const;
-    auto insert(const auto&);
     auto find(const Interval&);
-    auto erase(auto&);
+    template<typename U>
+    auto insert(const U&);
+    template<typename U>
+    auto erase(U&);
     auto& operator[](const Interval&);
 
     auto begin();
