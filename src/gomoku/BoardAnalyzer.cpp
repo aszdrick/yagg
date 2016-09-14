@@ -53,6 +53,14 @@ void BoardAnalyzer::quadrupletIteration(const SequenceCallback& fn) const {
     }
 }
 
+void BoardAnalyzer::sequenceIteration(const SequenceCallback& fn) const {
+    for (auto& pair : sequences) {
+        for (auto& seq : pair.second) {
+            fn(seq);
+        }
+    }
+}
+
 bool BoardAnalyzer::occupied(const go::Position& position) const {
     unsigned row = position.row;
     unsigned column = position.column;

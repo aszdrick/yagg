@@ -22,6 +22,7 @@ class BoardAnalyzer {
     void play(const go::Position&, go::Team);
     void iterate(const StoneCallback&) const;
     void quadrupletIteration(const SequenceCallback&) const;
+    void sequenceIteration(const SequenceCallback&) const;
     bool occupied(const go::Position&) const;
     bool over() const;
     bool hasWinner() const;
