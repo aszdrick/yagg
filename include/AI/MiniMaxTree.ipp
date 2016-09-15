@@ -15,61 +15,55 @@ MiniMaxTree<T>::MiniMaxTree(const RatingFunction<T>& heuristic,
 template<typename T>
 template<typename Generator>
 typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(const T& currentState) {
-    root = Node{currentState, Type::MAX};
-    auto& bestNode = update<Generator>(root, AITraits::MAX_DEPTH);
-    TRACE(bestNode.value);
-    return {base::Command<T>(), AITraits::MAX_DEPTH};
+    auto depth = AITraits::MAX_DEPTH;
+    double bestValue = -INT_MAX;
+    T bestState;
+    Generator generator(currentState);
+    while (generator.hasNext()) {
+        const T& next = generator.generateNext();
+        auto value = calculate<Generator>(next, depth - 1);
+        if (value > bestValue) {
+            bestValue = value;
+            bestState = next;
+        }
+    }
+
+    return {generator.command(bestState), AITraits::MAX_DEPTH};
 }
 
 template<typename T>
 template<typename Generator>
-typename MiniMaxTree<T>::Node& MiniMaxTree<T>::update(Node& node, unsigned depth) {
-    T& currentState = node.state;
-    bool over = currentState.over();
+double MiniMaxTree<T>::calculate(const T& state, unsigned depth,
+    double alpha, double beta, Type type) const {
+
+    bool over = state.over();
     bool exceededMaxDepth = (depth == 0);
     if (over || exceededMaxDepth) {
         auto fn = over ? u_function : h_function;
-        node.value = fn(node.state);
-        return node;
+        return fn(state);
     }
 
     std::unordered_map<Type, initial_values<double>> options;
     std::function<double(double, double)> nop;
-    options[Type::MAX] = {-INT_MAX, &node.alpha, nop, Type::MIN};
-    options[Type::MIN] = {INT_MAX, &node.beta, nop, Type::MAX};
+    options[Type::MAX] = {-INT_MAX, &alpha, nop, Type::MIN};
+    options[Type::MIN] = {INT_MAX, &beta, nop, Type::MAX};
     options[Type::MAX].updater = [](double a, double b) { return std::max(a, b); };
     options[Type::MIN].updater = [](double a, double b) { return std::min(a, b); };
 
-    double best = options[node.type].best;
-    double& param = *options[node.type].param;
-    auto updater = options[node.type].updater;
-    Type nextType = options[node.type].nextType;
+    double best = options[type].best;
+    double& param = *options[type].param;
+    auto updater = options[type].updater;
+    Type nextType = options[type].nextType;
 
-    Generator generator(currentState);
+    Generator generator(state);
     while (generator.hasNext()) {
-    // for (unsigned i = 0; i < 2; i++) {
         T next = generator.generateNext();
-        Node nextNode{next, nextType};
-
-        auto& bestChild = update<Generator>(nextNode, depth - 1);
-        best = updater(best, bestChild.value);
+        auto nextValue = calculate<Generator>(next, depth - 1, alpha, beta, nextType);
+        best = updater(best, nextValue);
         param = updater(param, best);
-
-        if (best == bestChild.value) {
-            // node.bestChild = &bestChild;
-            node.state = bestChild.state;
-        }
-
-        double alpha = nextNode.alpha;
-        double beta = nextNode.beta;
-        node.children.push_back(std::move(nextNode));
         if (beta <= alpha) {
             break;
         }
     }
-
-    // return best;
-    // return *node.bestChild;
-    node.value = best;
-    return node;
+    return best;
 }

@@ -19,7 +19,6 @@ using RatingFunction = std::function<double(const T&)>;
 
 template<typename T>
 class MiniMaxTree {
-    struct Node;
     struct AnalysisReport;
  public:
     MiniMaxTree(const RatingFunction<T>&, const RatingFunction<T>&);
@@ -27,22 +26,12 @@ class MiniMaxTree {
     AnalysisReport analyze(const T&);
 
  private:
-    Node root;
     const RatingFunction<T>& h_function;
     const RatingFunction<T>& u_function;
 
     template<typename Generator>
-    Node& update(Node&, unsigned);
-};
-
-template<typename T>
-struct MiniMaxTree<T>::Node {
-    T state;
-    Type type;
-    double value = 0;
-    double alpha = -INT_MAX;
-    double beta = INT_MAX;
-    std::vector<Node> children;
+    double calculate(const T&, unsigned,
+        double = -INT_MAX, double = INT_MAX, Type = Type::MIN) const;
 };
 
 template<typename T>

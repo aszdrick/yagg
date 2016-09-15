@@ -1,6 +1,7 @@
 /* Copyright 2016 Ghabriel Nunes <ghabriel.nunes@gmail.com>
                   Marleson Graf <aszdrick@gmail.com> */
 
+#include <cassert>
 #include "extra/macros.hpp"
 #include "gomoku/StateGenerator.hpp"
 #include "gomoku/Traits.hpp"
@@ -22,14 +23,26 @@ StateGenerator::StateGenerator(const go::State& state) : state(state) {
 }
 
 bool StateGenerator::hasNext() const {
-    return emptySquares.size() > 0;
+    return !emptySquares.empty();
 }
 
 go::State StateGenerator::generateNext() {
-    assert(hasNext());
     auto currentPlayer = state.currentPlayer();
     auto newState = state;
-    newState.play(emptySquares.front(), static_cast<go::Team>(currentPlayer));
+    auto& position = emptySquares.front();
+    newState.play(position, static_cast<go::Team>(currentPlayer));
+    past.push_back(position);
     emptySquares.pop();
     return newState;
+}
+
+Player::Move StateGenerator::command(const go::State& target) const {
+    for (auto& position : past) {
+        if (target.occupied(position)) {
+            Player::Move command(static_cast<go::Team>(state.currentPlayer()));
+            command.setPosition(position);
+            return command;
+        }
+    }
+    assert(false);
 }

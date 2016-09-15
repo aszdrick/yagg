@@ -108,4 +108,13 @@ namespace go {
     }
 }
 
+namespace std {
+    template<>
+    struct hash<go::Team> {
+        std::size_t operator()(const go::Team& team) const {
+            return static_cast<int>(team);
+        }
+    };
+}
+
 #endif /* GO_COMMON_TYPES_HPP */

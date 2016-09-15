@@ -6,6 +6,7 @@
 
 #include <queue>
 #include "gomoku/CommonTypes.hpp"
+#include "gomoku/Player.hpp"
 #include "gomoku/State.hpp"
 
 class StateGenerator {
@@ -13,9 +14,11 @@ class StateGenerator {
     explicit StateGenerator(const go::State&);
     bool hasNext() const;
     go::State generateNext();
+    Player::Move command(const go::State&) const;
 
  private:
     std::queue<go::Position> emptySquares;
+    std::vector<go::Position> past;
     const go::State& state;
 };
 

@@ -41,7 +41,7 @@ struct Traits<Match> {
 
 template<>
 struct Traits<AIHandler> {
-    constexpr static unsigned MAX_DEPTH = 1;
+    constexpr static unsigned MAX_DEPTH = 2;
 };
 
 using GomokuTraits = Traits<Gomoku>;

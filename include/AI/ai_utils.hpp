@@ -38,18 +38,18 @@ namespace ai_utils {
         }
     };
 
-    // using TeamValues = std::unordered_map<go::Team, BoardProperties>;
+    using TeamValues = std::unordered_map<go::Team, BoardProperties>;
 
     inline auto properties(const go::State& state) {
-        // TeamValues props;
-        BoardProperties props;
+        TeamValues props;
+        // BoardProperties props;
         state.sequenceIteration([&](const auto& sequence) {
             // TODO: handle sequences in which numSeqs > 1
             auto size = sequence.stones.size();
             auto freeEnds = sequence.freeEnds.first + sequence.freeEnds.second;
-            // auto team = (*sequence.stones.front()).team;
-            // props[team].score(size, freeEnds)++;
-            props.score(size, freeEnds)++;
+            auto team = (*sequence.stones.front()).team;
+            props[team].score(size, freeEnds)++;
+            // props.score(size, freeEnds)++;
         });
         // TRACE_IT(props.groups);
         // BLANK
@@ -57,14 +57,20 @@ namespace ai_utils {
     }
 
     template<typename Iterable>
-    inline auto applyWeights(const BoardProperties& props, const Iterable& weightList) {
-        double result = 0;
-        size_t i = 0;
-        for (auto& wt : weightList) {
-            result += props.groups[i] * wt;
-            i++;
+    inline auto applyWeights(const TeamValues& props, const Iterable& weightList) {
+        std::unordered_map<go::Team, double> sumPerTeam;
+        for (auto& pair : props) {
+            double result = 0;
+            size_t i = 0;
+            for (auto& wt : weightList) {
+                // result += props.groups[i] * wt;
+                result += pair.second.groups[i] * wt;
+                i++;
+            }
+            sumPerTeam[pair.first] = result;
         }
-        return result;
+        // TRACE(sumPerTeam[go::Team::WHITE] - sumPerTeam[go::Team::BLACK]);
+        return sumPerTeam[go::Team::WHITE] - sumPerTeam[go::Team::BLACK];
     }
 
     template<typename Iterable>
