@@ -76,8 +76,12 @@ bool BoardAnalyzer::hasWinner() const {
 }
 
 bool BoardAnalyzer::full() const {
-    constexpr auto maxStones = std::pow(GomokuTraits::BOARD_DIMENSION, 2);
-    return stoneContainer.size() == maxStones;
+    return countEmptySquares() == 0;
+}
+
+unsigned BoardAnalyzer::countEmptySquares() const {
+    static constexpr auto maxStones = std::pow(GomokuTraits::BOARD_DIMENSION, 2);
+    return maxStones - stoneContainer.size();
 }
 
 void BoardAnalyzer::recalculate(const go::Position& position) {

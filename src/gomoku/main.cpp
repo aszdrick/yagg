@@ -11,13 +11,13 @@ int main(int argc, char** argv) {
     auto engine = mbe::Engine(new Gomoku(),"Yet Another Gomoku Game", 1024, 768);
     engine.run();
 
-    auto fn = [](const go::State&) {
-        return 0;
-    };
-    MiniMaxTree<go::State> tree(fn, fn);
+    // auto fn = [](const go::State&) {
+    //     return 0;
+    // };
+    // MiniMaxTree<go::State> tree(fn, fn);
 
-    go::State state;
-    tree.analyze(state);
+    // go::State state;
+    // tree.analyze(state);
 
     return 0;
 }

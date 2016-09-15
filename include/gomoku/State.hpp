@@ -13,21 +13,23 @@
 class go::State {
  public:
     void play(const go::Position&, go::Team);
-    void iterate(const std::function<void(const Stone&)>&) const;
-    short currentPlayer() const;
-    short winnerPlayer() const;
-    void quadrupletIteration(const BoardAnalyzer::SequenceCallback&) const;
-    bool occupied(const go::Position&) const;
-    bool over() const;
-    bool hasWinner() const;
-    bool full() const;
-    State generateNext() const {
-        return go::State();
+    void iterate(const std::function<void(const Stone&)>& fn) const {
+        analyzer.iterate(fn);
     }
+    void quadrupletIteration(const BoardAnalyzer::SequenceCallback& fn) const {
+        analyzer.quadrupletIteration(fn);
+    }
+    auto currentPlayer() const { return player; }
+    auto winnerPlayer() const { return winner; }
+    auto countEmptySquares() const { return analyzer.countEmptySquares(); }
+    bool occupied(const go::Position& pos) const { return analyzer.occupied(pos); }
+    bool over() const { return analyzer.over(); }
+    bool hasWinner() const { return analyzer.hasWinner(); }
+    bool full() const { return analyzer.full(); }
 
  private:
     short player = 0;
-    short winner = 0;
+    decltype(player) winner = 0;
     BoardAnalyzer analyzer;
     IntervaledBoard ivBoard;
 };

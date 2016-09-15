@@ -27,6 +27,7 @@ class BoardAnalyzer {
     bool over() const;
     bool hasWinner() const;
     bool full() const;
+    unsigned countEmptySquares() const;
 
  private:
     struct Report;

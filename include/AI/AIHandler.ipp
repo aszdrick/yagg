@@ -8,6 +8,7 @@
 // #include "AI/AIHandler.hpp"
 #include "extra/macros.hpp"
 #include "gomoku/Command.hpp"
+#include "gomoku/StateGenerator.hpp"
 #include "gomoku/Traits.hpp"
 
 template<unsigned id>
@@ -40,7 +41,7 @@ Gomoku::AIHandler<id>::doUpdate(Agent& board, Element& events) {
     move.setPosition(position);
     move.setIterations(pos(generator) + 1);
     return move;
-    // auto analysis = decisionTree.analyze(board);
+    // auto analysis = decisionTree.analyze<StateGenerator>(board);
     // analysis.move.setIterations(analysis.depth);
     // return analysis.move;
 }

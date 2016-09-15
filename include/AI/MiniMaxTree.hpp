@@ -23,6 +23,7 @@ class MiniMaxTree {
     struct AnalysisReport;
  public:
     MiniMaxTree(const RatingFunction<T>&, const RatingFunction<T>&);
+    template<typename Generator>
     AnalysisReport analyze(const T&);
 
  private:
@@ -30,6 +31,7 @@ class MiniMaxTree {
     const RatingFunction<T>& h_function;
     const RatingFunction<T>& u_function;
 
+    template<typename Generator>
     Node& update(Node&, unsigned);
 };
 
@@ -41,7 +43,6 @@ struct MiniMaxTree<T>::Node {
     double alpha = -INT_MAX;
     double beta = INT_MAX;
     std::vector<Node> children;
-    Node* bestChild;
 };
 
 template<typename T>

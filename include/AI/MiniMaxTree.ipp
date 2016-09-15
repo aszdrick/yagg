@@ -13,14 +13,16 @@ MiniMaxTree<T>::MiniMaxTree(const RatingFunction<T>& heuristic,
 }
 
 template<typename T>
+template<typename Generator>
 typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(const T& currentState) {
     root = Node{currentState, Type::MAX};
-    auto& bestNode = update(root, AITraits::MAX_DEPTH);
+    auto& bestNode = update<Generator>(root, AITraits::MAX_DEPTH);
     TRACE(bestNode.value);
     return {base::Command<T>(), AITraits::MAX_DEPTH};
 }
 
 template<typename T>
+template<typename Generator>
 typename MiniMaxTree<T>::Node& MiniMaxTree<T>::update(Node& node, unsigned depth) {
     T& currentState = node.state;
     bool over = currentState.over();
@@ -43,17 +45,19 @@ typename MiniMaxTree<T>::Node& MiniMaxTree<T>::update(Node& node, unsigned depth
     auto updater = options[node.type].updater;
     Type nextType = options[node.type].nextType;
 
-    // while (currentState.hasNext()) {
-    for (unsigned i = 0; i < 2; i++) {
-        T next = currentState.generateNext();
+    Generator generator(currentState);
+    while (generator.hasNext()) {
+    // for (unsigned i = 0; i < 2; i++) {
+        T next = generator.generateNext();
         Node nextNode{next, nextType};
 
-        auto& bestChild = update(nextNode, depth - 1);
+        auto& bestChild = update<Generator>(nextNode, depth - 1);
         best = updater(best, bestChild.value);
         param = updater(param, best);
 
         if (best == bestChild.value) {
-            node.bestChild = &bestChild;
+            // node.bestChild = &bestChild;
+            node.state = bestChild.state;
         }
 
         double alpha = nextNode.alpha;
@@ -65,5 +69,7 @@ typename MiniMaxTree<T>::Node& MiniMaxTree<T>::update(Node& node, unsigned depth
     }
 
     // return best;
-    return *node.bestChild;
+    // return *node.bestChild;
+    node.value = best;
+    return node;
 }
