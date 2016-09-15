@@ -47,14 +47,6 @@ Gomoku::Gomoku()
 
 }
 
-void Gomoku::onSetVideoMode(Renderer& window, double w, double h, double d) {
-
-}
-
-void Gomoku::onUpdateRenderer(Renderer& renderer) {
-
-}
-
 void Gomoku::onProcessInput(Input& events) {
     for (auto event : events) {
         switch (event.type) {

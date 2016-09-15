@@ -4,7 +4,6 @@
 #ifndef GOMOKU_HPP
 #define GOMOKU_HPP
 
-#include "base/Player.hpp"
 #include "CommonTypes.hpp"
 #include "gomoku/Match.hpp"
 #include "mbe/Engine.hpp"
@@ -38,9 +37,7 @@ class Gomoku : public mbe::Game {
     void switchScreenMode(Renderer&);
     void keyPressed(const sf::Event&);
 
-    void onUpdateRenderer(Renderer&) override;
     void onProcessInput(Input&) override;
-    void onSetVideoMode(Renderer&, double, double, double) override;
 };
 
 #endif /* GOMOKU_HPP */

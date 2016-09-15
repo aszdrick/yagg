@@ -18,13 +18,13 @@ namespace base {
         void periodicUpdate();
         void updateRenderer(Renderer&);
         Response processInput(Input&);
-        void setVideoMode(Renderer&, double, double, double);
+        void resize(double, double);
 
      private:
         virtual void onPeriodicUpdate();
         virtual void onUpdateRenderer(Renderer&);
         virtual Response onProcessInput(Input&);
-        virtual void onSetVideoMode(Renderer&, double, double, double);
+        virtual void onResize(double, double);
     };
 
     template <typename I, typename R>

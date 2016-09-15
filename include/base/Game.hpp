@@ -21,7 +21,7 @@ namespace base {
         void periodicUpdate();
         void updateRenderer(Renderer&);
         void processInput(Input&);
-        void setVideoMode(Renderer&, double, double, double);
+        void resize(double, double);
         bool switchScreenModeRequested();
 
      protected:
@@ -48,7 +48,7 @@ namespace base {
         virtual void onPeriodicUpdate();
         virtual void onUpdateRenderer(Renderer&);
         virtual void onProcessInput(Input&);
-        virtual void onSetVideoMode(Renderer&, double, double, double);
+        virtual void onResize(double, double);
     };
 }
 

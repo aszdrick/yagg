@@ -19,7 +19,7 @@ Match::Match(Player&& p1, Player&& p2)
 
 void Match::updatePlayers(Player::Input& positions) {
     if (!over()) {
-        auto move = players[state.currentPlayer()].processInput(state, positions);
+        auto move = players[state.currentPlayer()].makeMove(state, positions);
         if (move.isValid()) {
             move.execute(state);
             moveIterations = move.iterations();

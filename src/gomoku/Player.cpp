@@ -18,7 +18,7 @@ go::Team Player::getTeam() const {
     return team;
 }
 
-Player::Move Player::onProcessInput(Board& board, Input& in) {
+Player::Move Player::makeMove(Board& board, Input& in) {
     Move move = input.update(board, in);
     move.setTeam(team);
     return move;

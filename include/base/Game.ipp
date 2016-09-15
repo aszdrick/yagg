@@ -74,9 +74,9 @@ void base::Game<I,R>::processInput(I& provider) {
 }
 
 template<typename I, typename R>
-void base::Game<I,R>::setVideoMode(R& renderer, double w, double h, double d) {
-    current.get().setVideoMode(renderer, w, h, d);
-    onSetVideoMode(renderer, w, h, d);
+void base::Game<I,R>::resize(double width, double height) {
+    current.get().resize(width, height);
+    onResize(width, height);
 }
 
 template<typename I, typename R>
@@ -94,7 +94,7 @@ template<typename I, typename R>
 void base::Game<I,R>::onProcessInput(I&) { }
 
 template<typename I, typename R>
-void base::Game<I,R>::onSetVideoMode(Renderer&, double, double, double) { }
+void base::Game<I,R>::onResize(double, double) { }
 
 template<typename I, typename R>
 bool base::Game<I,R>::closed() {
