@@ -37,7 +37,7 @@ class MiniMaxTree {
 template<typename T>
 struct MiniMaxTree<T>::AnalysisReport {
     base::Command<T> move;
-    unsigned depth;
+    unsigned iterations;
 };
 
 namespace std {

@@ -18,6 +18,7 @@ typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(const T& current
     auto depth = AITraits::MAX_DEPTH;
     double bestValue = -INT_MAX;
     T bestState;
+    Generator::reset();
     Generator generator(currentState);
     while (generator.hasNext()) {
         const T& next = generator.generateNext();
@@ -28,7 +29,7 @@ typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(const T& current
         }
     }
 
-    return {generator.command(bestState), AITraits::MAX_DEPTH};
+    return {generator.command(bestState), Generator::generationCount()};
 }
 
 template<typename T>

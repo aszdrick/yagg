@@ -15,10 +15,13 @@ class StateGenerator {
     bool hasNext() const;
     go::State generateNext();
     Player::Move command(const go::State&) const;
+    static void reset() { generations = 0; }
+    static unsigned generationCount() { return generations; }
 
  private:
     std::queue<go::Position> emptySquares;
     std::vector<go::Position> past;
+    static unsigned generations;
     const go::State& state;
 };
 

@@ -6,6 +6,8 @@
 #include "gomoku/StateGenerator.hpp"
 #include "gomoku/Traits.hpp"
 
+unsigned StateGenerator::generations = 0;
+
 StateGenerator::StateGenerator(const go::State& state) : state(state) {
     constexpr auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     using BoardType = std::decay_t<decltype(boardDimension)>;
@@ -33,6 +35,7 @@ go::State StateGenerator::generateNext() {
     newState.play(position, static_cast<go::Team>(currentPlayer));
     past.push_back(position);
     emptySquares.pop();
+    generations++;
     return newState;
 }
 

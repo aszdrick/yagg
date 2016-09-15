@@ -42,6 +42,6 @@ Gomoku::AIHandler<id>::doUpdate(Agent& board, Element& events) {
     // move.setIterations(pos(generator) + 1);
     // return move;
     auto analysis = decisionTree.analyze<StateGenerator>(board);
-    analysis.move.setIterations(analysis.depth);
+    analysis.move.setIterations(analysis.iterations);
     return analysis.move;
 }
