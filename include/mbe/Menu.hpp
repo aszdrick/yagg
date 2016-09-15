@@ -5,6 +5,7 @@
 #define MBE_MENU_HPP
 
 #include "Engine.hpp"
+#include "gomoku/Traits.hpp"
 
 namespace mbe {
     template<typename G, unsigned short S>
@@ -19,15 +20,15 @@ namespace mbe {
              const std::string& = "res/ARCADECLASSIC.TTF");
 
      private:
-        double width;
-        double height;
+        double width = GomokuTraits::WINDOW_WIDTH;
+        double height = GomokuTraits::WINDOW_HEIGHT;
         unsigned short selected;
         std::array<Option, S> options;
         std::reference_wrapper<G> game;
         sf::Font font;
 
         void onUpdateRenderer(Renderer&) override;
-        Response onProcessInput(Input&) override;
+        Response onProcessInput(InputProcessor&, Input&) override;
         void onResize(double, double) override;
 
         void keyPressed(const sf::Event&);

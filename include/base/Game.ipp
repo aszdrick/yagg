@@ -1,55 +1,55 @@
 /* Copyright 2016 Marleson Graf <aszdrick@gmail.com>
    Ghabriel Nunes <ghabriel.nunes@gmail.com> */
 
-template<typename I, typename R>
-base::Game<I,R>::Game(State* const initial)
+template<typename I, typename R, typename A>
+base::Game<I,R,A>::Game(State* const initial)
  : current(*initial) {
     states.emplace_front(std::move(initial));
     currentIt = states.begin();
 }
 
-template<typename I, typename R>
-bool base::Game<I,R>::close() {
+template<typename I, typename R, typename A>
+bool base::Game<I,R,A>::close() {
     if (!_closed) {
         _closed = onClose();
     }
     return _closed;
 }
 
-template<typename I, typename R>
-bool base::Game<I,R>::switchScreenModeRequested() {
+template<typename I, typename R, typename A>
+bool base::Game<I,R,A>::switchScreenModeRequested() {
     bool old = switchMode;
     switchMode = false;
     return old;
 }
 
-template<typename I, typename R>
-void base::Game<I,R>::switchScreenMode() {
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::switchScreenMode() {
     switchMode = !switchMode;
 }
 
-template<typename I, typename R>
-void base::Game<I,R>::periodicUpdate() {
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::periodicUpdate() {
     if (!_closed) {
         current.get().periodicUpdate();
         onPeriodicUpdate();
     }
 }
 
-template<typename I, typename R>
-void base::Game<I,R>::updateRenderer(R& renderer) {
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::updateRenderer(R& renderer) {
     if (!_closed) {
         current.get().updateRenderer(renderer);
         onUpdateRenderer(renderer);
     }
 }
 
-template<typename I, typename R>
-void base::Game<I,R>::processInput(I& provider) {
-    onProcessInput(provider);
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::processInput(A& processor, I& provider) {
+    onProcessInput(processor, provider);
     
     if (!_closed) {
-        auto transition = current.get().processInput(provider);
+        auto transition = current.get().processInput(processor, provider);
         
         switch(transition.type) {
             case State::Response::Type::SELF:
@@ -73,36 +73,36 @@ void base::Game<I,R>::processInput(I& provider) {
     }
 }
 
-template<typename I, typename R>
-void base::Game<I,R>::resize(double width, double height) {
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::resize(double width, double height) {
     current.get().resize(width, height);
     onResize(width, height);
 }
 
-template<typename I, typename R>
-bool base::Game<I,R>::onClose() {
+template<typename I, typename R, typename A>
+bool base::Game<I,R,A>::onClose() {
     return true;
 }
 
-template<typename I, typename R>
-void base::Game<I,R>::onPeriodicUpdate() { }
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::onPeriodicUpdate() { }
 
-template<typename I, typename R>
-void base::Game<I,R>::onUpdateRenderer(R&) { }
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::onUpdateRenderer(R&) { }
 
-template<typename I, typename R>
-void base::Game<I,R>::onProcessInput(I&) { }
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::onProcessInput(A&, I&) { }
 
-template<typename I, typename R>
-void base::Game<I,R>::onResize(double, double) { }
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::onResize(double, double) { }
 
-template<typename I, typename R>
-bool base::Game<I,R>::closed() {
+template<typename I, typename R, typename A>
+bool base::Game<I,R,A>::closed() {
     return _closed;
 }
 
-template<typename I, typename R>
-void base::Game<I,R>::move(const typename State::Response& transition) {
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::move(const typename State::Response& transition) {
     if (!states.empty()) {
         if (transition.offset > 0) {
             auto advancesCount = transition.offset;
@@ -128,15 +128,15 @@ void base::Game<I,R>::move(const typename State::Response& transition) {
     }
 }
 
-template<typename I, typename R>
-void base::Game<I,R>::replace(const typename State::Response& transition) {
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::replace(const typename State::Response& transition) {
     popState();
     pushState(transition.state);
     _closed = false;
 }
 
-template<typename I, typename R>
-void base::Game<I,R>::pop(const typename State::Response& transition) {
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::pop(const typename State::Response& transition) {
     if (!states.empty()) {
         auto removesCount = transition.offset;
         while (removesCount > 0) {
@@ -146,8 +146,8 @@ void base::Game<I,R>::pop(const typename State::Response& transition) {
     }
 }
 
-template<typename I, typename R>
-void base::Game<I,R>::push(const typename State::Response& transition) {
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::push(const typename State::Response& transition) {
     if (transition.offset == 0) {
         pushState(transition.state);
     } else {
@@ -156,8 +156,8 @@ void base::Game<I,R>::push(const typename State::Response& transition) {
     }
 }
 
-template<typename I, typename R>
-void base::Game<I,R>::popState() {
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::popState() {
     currentIt = states.erase(currentIt);
     if (!states.empty()) {
         current = *states.front();
@@ -166,8 +166,8 @@ void base::Game<I,R>::popState() {
     }
 }
 
-template<typename I, typename R>
-void base::Game<I,R>::pushState(State* const state) {
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::pushState(State* const state) {
     currentIt = states.emplace(currentIt, std::move(state));
     current = **currentIt;
 }

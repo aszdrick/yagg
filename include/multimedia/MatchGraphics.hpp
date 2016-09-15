@@ -10,7 +10,11 @@ class Match::Graphics : public GraphicalComponent {
  public:
     Graphics();
  private:
+    double currentWidth = 0;
+    double currentHeight = 0;
     sf::Font font;
+
+
     void doUpdate(Agent&, Element&) override;
     void drawBoard(Element&) const;
     void drawWinner(Agent&, Element&) const;

@@ -9,18 +9,19 @@
 #include "GameState.hpp"
 
 namespace base {
-    template <typename I, typename R>
+    template <typename I, typename R, typename A = R>
     class Game {
      public:
         using Input = I;
         using Renderer = R;
-        using State = GameState<I, R>;
+        using State = GameState<I, R, A>;
+        using InputProcessor = A;
 
         bool close();
         bool closed();
         void periodicUpdate();
         void updateRenderer(Renderer&);
-        void processInput(Input&);
+        void processInput(InputProcessor&, Input&);
         void resize(double, double);
         bool switchScreenModeRequested();
 
@@ -47,7 +48,7 @@ namespace base {
         virtual bool onClose();
         virtual void onPeriodicUpdate();
         virtual void onUpdateRenderer(Renderer&);
-        virtual void onProcessInput(Input&);
+        virtual void onProcessInput(InputProcessor&, Input&);
         virtual void onResize(double, double);
     };
 }

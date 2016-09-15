@@ -9,7 +9,7 @@
 class Match::Handler : public InputComponent {
  private:
     struct Pixel;
-    void doUpdate(Agent&, Element&) override;
+    Product doUpdate(Agent&, Element&) override;
     go::Position pixelToPosition(const Pixel&);
 };
 

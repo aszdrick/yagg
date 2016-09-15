@@ -47,24 +47,17 @@ Gomoku::Gomoku()
 
 }
 
-void Gomoku::onProcessInput(Input& events) {
+void Gomoku::onProcessInput(InputProcessor& processor, Input& events) {
     for (auto event : events) {
-        switch (event.type) {
-            case sf::Event::KeyPressed:
-                keyPressed(event);
-                break;
-            default:;
+        if (event.type == sf::Event::KeyPressed) {
+            keyPressed(event);
         }
     }
 }
 
 void Gomoku::keyPressed(const sf::Event& event) {
-    switch (event.key.code) {
-        case sf::Keyboard::F12: {
-            Game::switchScreenMode();
-            break;
-        }
-        default:;
+    if (event.key.code == sf::Keyboard::F12) {
+        Game::switchScreenMode();
     }
 }
 

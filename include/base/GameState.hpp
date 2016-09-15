@@ -4,31 +4,29 @@
 #ifndef BASE_GAME_STATE_HPP
 #define BASE_GAME_STATE_HPP
 
-template<typename I, typename R>
-class Game;
-
 namespace base {
-    template <typename I, typename R>
+    template <typename I, typename R, typename A>
     class GameState {
      public:
         struct Response;
         using Renderer = R;
         using Input = I;
+        using InputProcessor = A;
 
         void periodicUpdate();
         void updateRenderer(Renderer&);
-        Response processInput(Input&);
+        Response processInput(InputProcessor&, Input&);
         void resize(double, double);
 
      private:
         virtual void onPeriodicUpdate();
         virtual void onUpdateRenderer(Renderer&);
-        virtual Response onProcessInput(Input&);
+        virtual Response onProcessInput(InputProcessor&, Input&);
         virtual void onResize(double, double);
     };
 
-    template <typename I, typename R>
-    struct GameState<I,R>::Response {
+    template <typename I, typename R, typename A>
+    struct GameState<I,R,A>::Response {
         enum class Type { 
             CLOSE,
             MOVE,
@@ -40,7 +38,7 @@ namespace base {
 
         Type type;
         int offset;
-        GameState<I,R>* state;
+        GameState<I,R,A>* state;
     };    
 }
 

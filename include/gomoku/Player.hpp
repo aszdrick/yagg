@@ -14,7 +14,7 @@ class Player {
  public:
     class InputHandler;
     using Board = go::State;
-    using Input = std::list<go::Position>;
+    using Input = go::Position;
     using Move = base::Command<Board>;
     using InputComponent = base::Component<Board, Input, Move>;
 

@@ -86,6 +86,7 @@ void IntervaledBoard::solve(IvMap& map, Interval iv, const go::Team& team) {
 
     while (it != map.end()) {
         auto interval = it->first;
+        std::cout << "interval: " << interval << std::endl;
         auto diff = interval.center_distance(iv);
         if (sequences[it->second].team == team && diff < mergeDistance) {
             merges[mergeCount] = map.premerge(it, iv);
@@ -200,10 +201,13 @@ Split IntervaledBoard::splitSequence(const IvMap::iterator& it, Interval& iv) {
         origin = hole_iv.low - 1;
         capacity = iv.center_low - piv.low;
 
-        while (hole != sequence.holes.begin()) {
-            totalSize += hole->second;
-            remainingHoles[hole->first] = hole->second;
-            hole = std::prev(sequence.holes.erase(hole));
+        if (!sequence.holes.empty()) {
+            hole = std::prev(hole);
+            while (hole != sequence.holes.begin()) {
+                totalSize += hole->second;
+                remainingHoles[hole->first] = hole->second;
+                hole = std::prev(sequence.holes.erase(hole));
+            }
         }
     }
 
@@ -228,7 +232,11 @@ IvMap::iterator IntervaledBoard::findHole(Sequence& sequence, Interval iv) {
     iv.high = iv.center_high;
     // For that shit work, holes need to have center_high = high
     // With this condition satisfied, it's guaranteed that only one hole will match
-    return sequence.holes.find(iv);
+    auto find = sequence.holes.find(iv);
+    if (find == sequence.holes.end()) {
+        std::cout << "FODEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEU LEGAL" << std::endl;
+    }
+    return find;
 }
 
 unsigned short IntervaledBoard::newSequence(IvMap& map,

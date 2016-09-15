@@ -37,7 +37,7 @@ class Gomoku : public mbe::Game {
     void switchScreenMode(Renderer&);
     void keyPressed(const sf::Event&);
 
-    void onProcessInput(Input&) override;
+    void onProcessInput(InputProcessor&, Input&) override;
 };
 
 #endif /* GOMOKU_HPP */

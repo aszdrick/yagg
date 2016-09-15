@@ -17,9 +17,9 @@ Match::Match(Player&& p1, Player&& p2)
     players[1].setTeam(go::Team::WHITE);
 }
 
-void Match::updatePlayers(Player::Input& positions) {
+void Match::updatePlayers(go::Position& position) {
     if (!over()) {
-        auto move = players[state.currentPlayer()].makeMove(state, positions);
+        auto move = players[state.currentPlayer()].makeMove(state, position);
         if (move.isValid()) {
             move.execute(state);
             moveIterations = move.iterations();
@@ -59,7 +59,23 @@ void Match::onUpdateRenderer(Renderer& render) {
     graphics.update(*this, render);
 }
 
-Match::Response Match::onProcessInput(Input& in) {
-    input.update(*this, in);
-    return { Response::Type::SELF, 0, this};
+Match::Response Match::onProcessInput(InputProcessor& processor, Input& list) {
+    static const auto inv = MatchTraits::SUP_BOARD_LIMIAR + go::Position{1, 1};
+    static auto request = Request{Request::Type::NONE, inv};
+
+    for (auto event : list) {
+        request = input.update(processor, event);
+        switch (request.type) {
+            case Request::Type::NONE:
+                break;
+            case Request::Type::PAUSE:
+                restart();
+                return {Response::Type::SELF, 0, nullptr};
+            case Request::Type::PLAY:
+                updatePlayers(request.position);
+                return {Response::Type::SELF, 0, nullptr};
+        }
+    }
+    updatePlayers(request.position);
+    return {Response::Type::SELF, 0, nullptr};
 }

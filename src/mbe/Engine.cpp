@@ -55,6 +55,10 @@ bool mbe::Engine::isRunning() const {
 }
 
 void mbe::Engine::processEvents() {
+    if (game.closed()) {
+        window.close();
+    }
+
     std::list<sf::Event> list;
     sf::Event event;
 
@@ -74,11 +78,7 @@ void mbe::Engine::processEvents() {
         }
     }
     
-    game.processInput(list);
-
-    if (game.closed()) {
-        window.close();
-    }
+    game.processInput(window, list);
 }
 
 void mbe::Engine::resize(double width, double height) {

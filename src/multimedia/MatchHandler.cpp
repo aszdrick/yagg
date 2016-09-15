@@ -5,37 +5,29 @@
 #include "multimedia/MatchHandler.hpp"
 #include "gomoku/Traits.hpp"
 
-void Match::Handler::doUpdate(Agent& match, Element& list) {
-    std::list<go::Position> inputs;
-    while (!list.empty()) {
-        auto event = list.front();
-        list.pop_front();
-
-        switch(event.type) {
-            case sf::Event::MouseButtonPressed: {
-                Pixel pixel = {
-                    static_cast<float>(event.mouseButton.x),
-                    static_cast<float>(event.mouseButton.y)
-                };
-
-                auto position = pixelToPosition(pixel);
-                inputs.push_back(position);
-
-                break;
-            }
-            case sf::Event::KeyPressed:
-                switch (event.key.code) {
-                    case sf::Keyboard::F1:
-                        match.restart();
-                        break;
-                    default:;
-                }
-                break;
-            default:;
+Match::Handler::Product Match::Handler::doUpdate(Agent& window, Element& event) {
+    auto position = MatchTraits::SUP_BOARD_LIMIAR + go::Position{1,1};
+    switch(event.type) {
+        case sf::Event::MouseButtonPressed: {
+            auto coords = window.mapPixelToCoords({
+                event.mouseButton.x, 
+                event.mouseButton.y
+            });
+            Pixel pixel = {
+                static_cast<float>(coords.x),
+                static_cast<float>(coords.y)
+            };
+            position = pixelToPosition(pixel);
+            break;
         }
+        case sf::Event::KeyPressed:
+            if (event.key.code == sf::Keyboard::Escape) {
+                return {Request::Type::PAUSE, position};
+            }
+            break;
+        default:;
     }
-
-    match.updatePlayers(inputs);
+    return {Request::Type::PLAY, position};
 }
 
 go::Position Match::Handler::pixelToPosition(const Pixel& p) {

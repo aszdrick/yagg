@@ -13,8 +13,9 @@ class Match : public mbe::Game::State {
     class Graphics;
     class Handler;
  public:
+    struct Request;
     using GraphicalComponent = base::Component<Match, Renderer>;
-    using InputComponent = base::Component<Match, Input>;
+    using InputComponent = base::Component<InputProcessor, sf::Event, Request>;
     using Transition = Response::Type;
 
     enum class Type {
@@ -24,7 +25,7 @@ class Match : public mbe::Game::State {
  public:
     Match(Player&&, Player&&);
     
-    void updatePlayers(Player::Input&);
+    void updatePlayers(go::Position&);
     void restart();
     go::Team currentTeam() const;
     go::Team winnerTeam() const;
@@ -44,7 +45,13 @@ class Match : public mbe::Game::State {
     unsigned moveIterations = 0;
 
     void onUpdateRenderer(Renderer&) override;
-    Response onProcessInput(Input&) override;
+    Response onProcessInput(InputProcessor&, Input&) override;
+};
+
+struct Match::Request {
+    enum class Type { NONE, PAUSE, PLAY };
+    Type type;
+    go::Position position;   
 };
 
 #endif /* GOMOKU_MATCH_HPP */

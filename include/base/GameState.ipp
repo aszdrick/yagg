@@ -1,38 +1,38 @@
 /* Copyright 2016 Marleson Graf <aszdrick@gmail.com>
    Ghabriel Nunes <ghabriel.nunes@gmail.com> */
 
-template <typename I, typename R>
-void base::GameState<I,R>::periodicUpdate() {
+template <typename I, typename R, typename A>
+void base::GameState<I,R,A>::periodicUpdate() {
     onPeriodicUpdate();
 }
     
-template <typename I, typename R>
-void base::GameState<I,R>::updateRenderer(R& renderer) {
+template <typename I, typename R, typename A>
+void base::GameState<I,R,A>::updateRenderer(R& renderer) {
     onUpdateRenderer(renderer);
 }
     
-template <typename I, typename R>
-typename base::GameState<I,R>::Response 
-base::GameState<I,R>::processInput(I& input) {
-    return onProcessInput(input);
+template <typename I, typename R, typename A>
+typename base::GameState<I,R,A>::Response 
+base::GameState<I,R,A>::processInput(A& processor, I& input) {
+    return onProcessInput(processor, input);
 }
 
-template <typename I, typename R>
-void base::GameState<I,R>::resize(double width, double height) {
+template <typename I, typename R, typename A>
+void base::GameState<I,R,A>::resize(double width, double height) {
     onResize(width, height);
 }
 
-template <typename I, typename R>
-void base::GameState<I,R>::onPeriodicUpdate() { }
+template <typename I, typename R, typename A>
+void base::GameState<I,R,A>::onPeriodicUpdate() { }
 
-template <typename I, typename R>
-void base::GameState<I,R>::onUpdateRenderer(R&) { }
+template <typename I, typename R, typename A>
+void base::GameState<I,R,A>::onUpdateRenderer(R&) { }
 
-template <typename I, typename R>
-void base::GameState<I,R>::onResize(double, double) { }
+template <typename I, typename R, typename A>
+void base::GameState<I,R,A>::onResize(double, double) { }
 
-template <typename I, typename R>
-typename base::GameState<I,R>::Response
-base::GameState<I,R>::onProcessInput(I&) {
+template <typename I, typename R, typename A>
+typename base::GameState<I,R,A>::Response
+base::GameState<I,R,A>::onProcessInput(A&, I&) {
     return {Response::Type::SELF, 0, nullptr};
 }

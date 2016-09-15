@@ -29,10 +29,10 @@ void IntervalMap<T>::split(const iterator& it, Interval& iv, T& value, bool lowS
     Interval lower = upper;
     T& data = it->second;
 
-    lower.center_high = iv.low;
+    lower.center_high = iv.low - 1;
     lower.high = iv.center_low - 1;
 
-    upper.center_low = iv.high;
+    upper.center_low = iv.high + 1;
     upper.low = iv.center_high + 1;
 
     iterator hint = map.erase(it);

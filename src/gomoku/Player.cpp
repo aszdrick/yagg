@@ -24,11 +24,8 @@ Player::Move Player::makeMove(Board& board, Input& in) {
     return move;
 }
 
-Player::Move Player::InputHandler::doUpdate(Agent& board, Element& events) {
+Player::Move Player::InputHandler::doUpdate(Agent& board, Element& event) {
     Move move;
-    for (auto& event : events) {
-        move.setPosition(event);
-        break;
-    }
+    move.setPosition(event);
     return move;
 }

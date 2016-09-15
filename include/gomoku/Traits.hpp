@@ -25,6 +25,8 @@ struct Traits<Gomoku> {
     const static sf::Color WHITE_OUTLINE_COLOR;
     const static sf::Color BLACK_OUTLINE_COLOR;
     const static sf::Color HIGHLIGHT_OUTLINE_COLOR;
+    constexpr static double WINDOW_WIDTH = 1024;
+    constexpr static double WINDOW_HEIGHT = 768;
 };
 
 template<>

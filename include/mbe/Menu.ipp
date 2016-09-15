@@ -46,11 +46,9 @@ void mbe::Menu<G,S>::onUpdateRenderer(Renderer& renderer) {
 }
 
 template<typename G, unsigned short S>
-typename mbe::Menu<G,S>::Response mbe::Menu<G,S>::onProcessInput(Input& events) {
-     while (!events.empty()) {
-        auto event = events.front();
-        events.pop_front();
-
+typename mbe::Menu<G,S>::Response
+mbe::Menu<G,S>::onProcessInput(InputProcessor& window, Input& events) {
+    for (auto event : events) {
         switch(event.type) {
             case sf::Event::KeyPressed:
                 keyPressed(event);

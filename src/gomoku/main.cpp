@@ -8,7 +8,11 @@
 #include "mbe/Engine.hpp"
 
 int main(int argc, char** argv) {
-    auto engine = mbe::Engine(new Gomoku(),"Yet Another Gomoku Game", 1024, 768);
+    auto engine = mbe::Engine(new Gomoku(),
+        "Yet Another Gomoku Game",
+        GomokuTraits::WINDOW_WIDTH,
+        GomokuTraits::WINDOW_HEIGHT
+    );
     engine.run();
 
     // auto fn = [](const go::State&) {
