@@ -7,12 +7,12 @@
 #include "gomoku/Traits.hpp"
 
 BoardAnalyzer::BoardAnalyzer() {
-    unsigned boardDimension = GomokuTraits::BOARD_DIMENSION;
+    auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     std::vector<SequenceGroup*> sequenceGroups = {
         &rows, &columns, &mainDiagonals, &secondaryDiagonals
     };
 
-    const unsigned reserved = 2 * boardDimension;
+    const auto reserved = 2 * boardDimension;
     for (SequenceGroup* seqGroupPtr : sequenceGroups) {
         auto& seqGroup = *seqGroupPtr;
         seqGroup.reserve(reserved);
@@ -28,7 +28,7 @@ void BoardAnalyzer::play(const go::Position& position, go::Team team) {
     stoneContainer.push_back(go::Stone{position, team});
     go::Stone* stone = &stoneContainer.back();
 
-    unsigned boardDimension = GomokuTraits::BOARD_DIMENSION;
+    auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     unsigned row = position.row;
     unsigned column = position.column;
     rows[row][column] = stone;
@@ -85,7 +85,7 @@ unsigned BoardAnalyzer::countEmptySquares() const {
 }
 
 void BoardAnalyzer::recalculate(const go::Position& position) {
-    unsigned boardDimension = GomokuTraits::BOARD_DIMENSION;    
+    auto boardDimension = GomokuTraits::BOARD_DIMENSION;    
     unsigned row = position.row;
     unsigned column = position.column;
     std::vector<StoneGroup*> groups = {
@@ -138,13 +138,15 @@ BoardAnalyzer::findSequences(const StoneGroup& group, const go::Position& delta)
                                    || sequence[j] - sequence[j - 1] > 1);
 
             size_t size = seq.stones.size();
-            foundQuintuple = foundQuintuple || (size >= 5);
-            if (size == 4) {
-                decltype(quadruplets)::value_type pair{&group, result.size()};
-                quadruplets.push_back(std::move(pair));
+            if (size > 1 && seq.freeEnds.first + seq.freeEnds.second > 0) {
+                foundQuintuple = foundQuintuple || (size >= 5);
+                if (size == 4) {
+                    decltype(quadruplets)::value_type pair{&group, result.size()};
+                    quadruplets.push_back(std::move(pair));
+                }
+                seq.delta = delta;
+                result.push_back(std::move(seq));
             }
-            seq.delta = delta;
-            result.push_back(std::move(seq));
         }
     }
 

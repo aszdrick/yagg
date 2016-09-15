@@ -4,6 +4,8 @@
 #define AI_UTILS_HPP
 
 #include <cassert>
+#include <unordered_map>
+#include "extra/macros.hpp"
 #include "gomoku/State.hpp"
 
 namespace ai_utils {
@@ -13,7 +15,9 @@ namespace ai_utils {
     // 2 1 1, 2 2 1, 3 1 1, 3 2 1, 4 1 1, 4 2 1, 5 1 1, 5 2 1,
     // 2 2 2, 2 3 2, 2 4 2, 3 2 2, 3 3 2, 3 4 2, 4 2 2, 4 3 2, 4 4 2
     struct BoardProperties {
+        BoardProperties() : groups() {}
         std::array<unsigned, 17> groups;
+
         auto& score(unsigned seqSize, unsigned freeEnds, unsigned numSeqs = 1) {
             constexpr unsigned minSeqSize = 2;
             constexpr unsigned maxSeqSize = 5;
@@ -34,9 +38,22 @@ namespace ai_utils {
         }
     };
 
-    inline auto properties(const go::State& states) {
-        // TODO
-        return BoardProperties();
+    // using TeamValues = std::unordered_map<go::Team, BoardProperties>;
+
+    inline auto properties(const go::State& state) {
+        // TeamValues props;
+        BoardProperties props;
+        state.sequenceIteration([&](const auto& sequence) {
+            // TODO: handle sequences in which numSeqs > 1
+            auto size = sequence.stones.size();
+            auto freeEnds = sequence.freeEnds.first + sequence.freeEnds.second;
+            // auto team = (*sequence.stones.front()).team;
+            // props[team].score(size, freeEnds)++;
+            props.score(size, freeEnds)++;
+        });
+        // TRACE_IT(props.groups);
+        // BLANK
+        return props;
     }
 
     template<typename Iterable>
@@ -65,12 +82,12 @@ namespace ai_utils {
 
     template<>
     auto heuristic<1>(const go::State& state) {
-        // constexpr auto weights = {
-        //     10., 20., 100., 200., 1e4, 2e4, 1e8, 2e8,
-        //     2000., 3000., 4000., 2e5, 3e5, 4e5, 2e6, 3e6, 4e6
-        // };
-        // return applyWeights(state, weights);
-        return 1.0;
+        constexpr auto weights = {
+            10., 20., 100., 200., 1e4, 2e4, 1e8, 2e8,
+            2000., 3000., 4000., 2e5, 3e5, 4e5, 2e6, 3e6, 4e6
+        };
+        return applyWeights(state, weights);
+        // return 1.0;
     };
 
     template<>

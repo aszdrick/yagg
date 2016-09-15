@@ -19,6 +19,9 @@ class go::State {
     void quadrupletIteration(const BoardAnalyzer::SequenceCallback& fn) const {
         analyzer.quadrupletIteration(fn);
     }
+    void sequenceIteration(const BoardAnalyzer::SequenceCallback& fn) const {
+        analyzer.sequenceIteration(fn);
+    }
     auto currentPlayer() const { return player; }
     auto winnerPlayer() const { return winner; }
     auto countEmptySquares() const { return analyzer.countEmptySquares(); }
