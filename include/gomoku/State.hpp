@@ -44,13 +44,13 @@ class go::State {
     }
 
     bool over() const { 
-        return analyzer.over();
-        // return ivBoard.finished();
+        // return analyzer.over();
+        return ivBoard.finished();
     }
 
     bool hasWinner() const {
-        return analyzer.hasWinner();
-        // return ivBoard.finished();
+        // return analyzer.hasWinner();
+        return ivBoard.finished();
     }
 
     bool full() const {
@@ -61,7 +61,7 @@ class go::State {
     short player = 0;
     decltype(player) winner = 0;
     BoardAnalyzer analyzer;
-    // IvBoard ivBoard;
+    IvBoard ivBoard;
 };
 
 #endif /* GO_STATE_HPP */
