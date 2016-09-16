@@ -1,6 +1,7 @@
 /* Copyright 2016 Ghabriel Nunes <ghabriel.nunes@gmail.com>
                   Marleson Graf <aszdrick@gmail.com> */
 
+#include <chrono>
 #include <cmath>
 #include "extra/macros.hpp"
 #include "gomoku/BoardAnalyzer.hpp"
@@ -25,6 +26,7 @@ BoardAnalyzer::BoardAnalyzer() {
 }
 
 void BoardAnalyzer::play(const go::Position& position, go::Team team) {
+    auto start = std::chrono::system_clock::now().time_since_epoch();
     stoneContainer.push_back(go::Stone{position, team});
     go::Stone* stone = &stoneContainer.back();
 
@@ -36,6 +38,11 @@ void BoardAnalyzer::play(const go::Position& position, go::Team team) {
     mainDiagonals[boardDimension + row - column][row] = stone;
     secondaryDiagonals[row + column][row] = stone;
     recalculate(position);
+    auto end = std::chrono::system_clock::now().time_since_epoch();
+    auto noob_delay = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    if (noob_delay > 0) {
+        TRACE(noob_delay);
+    }
 }
 
 void BoardAnalyzer::iterate(const StoneCallback& fn) const {

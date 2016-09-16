@@ -41,7 +41,11 @@ Gomoku::AIHandler<id>::doUpdate(Agent& board, Element& events) {
     // move.setPosition(position);
     // move.setIterations(pos(generator) + 1);
     // return move;
+    auto start = std::chrono::system_clock::now().time_since_epoch();
     auto analysis = decisionTree.analyze<StateGenerator>(board);
     analysis.move.setIterations(analysis.iterations);
+    auto end = std::chrono::system_clock::now().time_since_epoch();
+    auto delay = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    TRACE(delay);
     return analysis.move;
 }

@@ -1,25 +1,27 @@
 /* Copyright 2016 Ghabriel Nunes <ghabriel.nunes@gmail.com>
                   Marleson Graf <aszdrick@gmail.com> */
 
+#include <chrono>
 #include "gomoku/IntervaledBoard.hpp"
 #include "gomoku/Traits.hpp"
 #include "extra/macros.hpp"
 
-IntervaledBoard::IntervaledBoard() : currentSequence(0) { }
+IvBoard::IvBoard() : currentSequence(0) { }
 
-void IntervaledBoard::play(const go::Position& position, const go::Team& team) {
-    short row = position.row;
-    short column = position.column;
-    short limit = GomokuTraits::BOARD_DIMENSION;
+void IvBoard::play(const go::Position& position, const go::Team& team) {
+    auto start = std::chrono::system_clock::now().time_since_epoch();
+    unsigned short row = position.row;
+    unsigned short column = position.column;
+    unsigned short limit = GomokuTraits::BOARD_DIMENSION;
     Interval rr = {
-        static_cast<short>(std::max(row - 4, 0)),
+        static_cast<unsigned short>(std::max(row - 4, 0)),
         row, row,
-        static_cast<short>(std::min(row + 4, limit - 1))
+        static_cast<unsigned short>(std::min(row + 4, limit - 1))
     };
     Interval cc = {
-        static_cast<short>(std::max(column - 4, 0)),
+        static_cast<unsigned short>(std::max(column - 4, 0)),
         column, column,
-        static_cast<short>(std::min(column + 4, limit - 1))
+        static_cast<unsigned short>(std::min(column + 4, limit - 1))
     };
 
     stones.push_back({position, team});
@@ -31,11 +33,11 @@ void IntervaledBoard::play(const go::Position& position, const go::Team& team) {
         // Conflicting region
         solve(rows[row], cc, team);
     }
-    ECHO("---------------------- ROWS ----------------------");
-    for (auto pair : rows[row]) {
-        std::cout << "interval: " << pair.first << std::endl;
-        std::cout << "key: " << pair.second << std::endl;
-    }
+    // ECHO("---------------------- ROWS ----------------------");
+    // for (auto pair : rows[row]) {
+    //     std::cout << "interval: " << pair.first << std::endl;
+    //     std::cout << "key: " << pair.second << std::endl;
+    // }
     
     if (!columns[column].count(rr)) {
         // Unclaimed region
@@ -44,11 +46,11 @@ void IntervaledBoard::play(const go::Position& position, const go::Team& team) {
         // Conflicting region
         solve(columns[column], rr, team);
     }
-    ECHO("-------------------- COLUMNS ---------------------");
-    for (auto pair : columns[column]) {
-        std::cout << "interval: " << pair.first << std::endl;
-        std::cout << "key: " << pair.second << std::endl;
-    }
+    // ECHO("-------------------- COLUMNS ---------------------");
+    // for (auto pair : columns[column]) {
+    //     std::cout << "interval: " << pair.first << std::endl;
+    //     std::cout << "key: " << pair.second << std::endl;
+    // }
 
     if (!mainDiagonals[limit + row - column].count(rr)) {
         // Unclaimed region
@@ -57,11 +59,11 @@ void IntervaledBoard::play(const go::Position& position, const go::Team& team) {
         // Conflicting region
         solve(mainDiagonals[limit + row - column], rr, team);
     }
-    ECHO("----------------- MAIN DIAGONALS -----------------");
-    for (auto pair : mainDiagonals[limit + row - column]) {
-        std::cout << "interval: " << pair.first << std::endl;
-        std::cout << "key: " << pair.second << std::endl;
-    }
+    // ECHO("----------------- MAIN DIAGONALS -----------------");
+    // for (auto pair : mainDiagonals[limit + row - column]) {
+    //     std::cout << "interval: " << pair.first << std::endl;
+    //     std::cout << "key: " << pair.second << std::endl;
+    // }
 
     if (!secondaryDiagonals[row + column].count(rr)) {
         // Unclaimed region
@@ -70,32 +72,40 @@ void IntervaledBoard::play(const go::Position& position, const go::Team& team) {
         // Conflicting region
         solve(secondaryDiagonals[row + column], rr, team);
     }
-    ECHO("----------------- SECD DIAGONALS -----------------");
-    for (auto pair : secondaryDiagonals[row + column]) {
-        std::cout << "interval: " << pair.first << std::endl;
-        std::cout << "key: " << pair.second << std::endl;
+    // ECHO("----------------- SECD DIAGONALS -----------------");
+    // for (auto pair : secondaryDiagonals[row + column]) {
+    //     std::cout << "interval: " << pair.first << std::endl;
+    //     std::cout << "key: " << pair.second << std::endl;
+    // }
+    auto end = std::chrono::system_clock::now().time_since_epoch();
+    auto play_delay = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    if (play_delay > 0) {
+        TRACE(play_delay);
     }
 }
 
-void IntervaledBoard::solve(IvMap& map, Interval iv, const go::Team& team) {
-    ECHO("--------------------------------------------------");
-    unsigned short mergeDistance = 5, mergeCount = 0;
-    std::array<IvMap::assoc, 2> merges;
-    bool noMerges = true;
+void IvBoard::solve(IvMap& map, Interval iv, const go::Team& team) {
+    // ECHO("--------------------------------------------------");
+    auto mergeDistance = 5, mergeCount = 0;
+    auto merges = std::array<assoc, 2>();
+    auto noMerges = true;
     auto it = map.find(iv);
 
     while (it != map.end()) {
         auto interval = it->first;
-        std::cout << "interval: " << interval << std::endl;
         auto diff = interval.center_distance(iv);
         if (sequences[it->second].team == team && diff < mergeDistance) {
-            merges[mergeCount] = map.premerge(it, iv);
+            auto piv = it->first;
+            auto data = it->second;
+            map.erase(it);
+            merges[mergeCount] = {piv, data};
             noMerges = false;
             ++mergeCount;
-        } else if (!map.resize(it, iv)) {
-            ECHO("split (breaking a sequence)");
-            auto value = splitSequence(it, iv);
-            map.split(it, iv, value.first, value.second);
+        } else if (!resize(map, it, iv)) {
+            auto pair = splitSequence(it, iv);
+            auto hint = map.erase(it);
+            hint = map.insert(hint, pair.first);
+            map.insert(hint, pair.second);
             newSequence(map, iv, team);
             return;
         }
@@ -103,155 +113,202 @@ void IntervaledBoard::solve(IvMap& map, Interval iv, const go::Team& team) {
     }
     
     if (noMerges) {
-        ECHO("double resize");
         newSequence(map, iv, team);
     } else if (mergeCount > 1) {
-        ECHO("double merge");
-        // TODO: deal with double merge
+        mergeSequence(map, merges, iv);
     } else {
-        ECHO("single merge");
         mergeSequence(map, merges[0], iv);
     }
 }
 
-void IntervaledBoard::mergeSequence(IvMap& map, 
-                                    IvMap::assoc& pair,
-                                    Interval& iv) {
+void IvBoard::mergeSequence(IvMap& map,
+                            std::array<assoc, 2>& merges,
+                            Interval& iv) {
+    auto low = 0, high = 1;
+
+    if (merges[1].first < merges[0].first) {
+        low = 1;
+        high = 0;
+    }
+
+    auto& low_piv = merges[low].first;
+    auto& high_piv = merges[high].first;
+    auto& low_sequence = sequences[merges[low].second];
+    auto& high_sequence = sequences[merges[high].second];
+    auto& low_positions = low_sequence.placedPositions;
+    auto& high_positions = high_sequence.placedPositions;
+
+    low_positions.insert(iv.center_low);
+
+    std::set_union(
+        low_positions.begin(), low_positions.end(),
+        high_positions.begin(), high_positions.end(),
+        std::inserter(low_positions, low_positions.end())
+    );
+
+    low_sequence.sequential = high_piv.low - low_piv.high == 1
+        && low_sequence.sequential
+        && high_sequence.sequential;
+
+    low_piv.high = high_piv.high;
+    low_piv.center_high = high_piv.center_high;
+
+    low_sequence.totalSize += high_sequence.totalSize + 1;
+    low_sequence.capacity = low_piv.size();
+    low_sequence.openings.second = high_sequence.openings.second;
+
+    sequences.erase(merges[high].second);
+    map.insert(std::move(merges[low]));
+
+    ended = ended || (low_sequence.sequential && low_sequence.totalSize > 4);
+}
+
+void IvBoard::mergeSequence(IvMap& map, assoc& pair, Interval& iv) {
     auto& piv = pair.first;
     auto& sequence = sequences[pair.second];
     auto distance = piv.center_distance(iv);
-    unsigned short adition;
+
+    sequence.placedPositions.insert(iv.center_low);
+
+    if (distance < 0) {
+        sequence.updateSequentiality();
+    } else {
+        sequence.sequential = sequence.sequential && distance == 0;
+    }
 
     if (distance >= 0) {
-        if (distance != 0) {
-            generateHole(sequence, piv, iv);
-        } else {
-            if (!sequence.holes.empty()) {
-                // TODO
-            } else {
-                ++sequence.localSize;
-            }
-        }
-
         if (piv.center_low > iv.center_high) {
-            adition = piv.low - iv.low;
             piv.low = iv.low;
             piv.center_low = iv.center_low;
+            sequence.openings.first = (iv.center_low - iv.low) > 0;
         } else {
-            adition = iv.high - piv.high;
             piv.high = iv.high;
             piv.center_high = iv.center_high;
+            sequence.openings.second = (iv.high - iv.center_high) > 0;
         }
-        
-        sequence.capacity += adition;
-        
-    } else {
-        fillHole(sequence, piv, iv);
     }
-
+    
     ++sequence.totalSize;
+    sequence.capacity = piv.size();
     map.insert(std::move(pair));
+
+    ended = ended || (sequence.sequential && sequence.totalSize > 4);
 }
 
-void IntervaledBoard::generateHole(Sequence& sequence,
-                                   Interval& piv,
-                                   Interval& iv) {
-    short low = std::min(iv.center_low, piv.center_low) + 1;
-    short high = std::max(iv.center_high, piv.center_high) - 1;
-    Interval hole_iv = {low, low, high, high};
-    sequence.holes[hole_iv] = 1;
-}
+Split IvBoard::splitSequence(const IvMap::iterator& it, Interval& iv) {
+    auto piv_key = it->second;
+    auto niv_key = currentSequence++;
+    auto sequence = sequences[piv_key];
+    auto piv = it->first;
 
-void IntervaledBoard::fillHole(Sequence& sequence, Interval& piv, Interval& iv) {
-    auto hole = findHole(sequence, iv);
+    auto begin = sequence.placedPositions.begin();
+    auto upper = sequence.placedPositions.upper_bound(iv.center_low);
+    auto lower = std::prev(upper);
 
-}
-
-Split IntervaledBoard::splitSequence(const IvMap::iterator& it, Interval& iv) {
-    unsigned short localSize = 0, totalSize = 0, capacity = 0;
-    auto& sequence = sequences[it->second];
-    auto hole = findHole(sequence, iv);
-    auto hole_iv = hole->first;
-    auto id = currentSequence++;
-    auto& piv = it->first;
-    IvMap remainingHoles;
-    bool lowSplit = true;
-    short origin = 0;
-
-    // iv assumes extremeties of hole
-    iv.low = hole_iv.low;
-    iv.high = hole_iv.high;
-
-    localSize = hole->second;
-    totalSize += localSize;
-    hole = sequence.holes.erase(hole);
-
-    if (hole_iv.center_high > sequence.origin) {
-        lowSplit = false;
-        origin = hole_iv.high + 1;
-        capacity = piv.high - iv.center_high;
-
-        while (hole != sequence.holes.end()) {
-            totalSize += hole->second;
-            remainingHoles[hole->first] = hole->second;
-            hole = sequence.holes.erase(hole);
-        }
-
-    } else {
-        origin = hole_iv.low - 1;
-        capacity = iv.center_low - piv.low;
-
-        if (!sequence.holes.empty()) {
-            hole = std::prev(hole);
-            while (hole != sequence.holes.begin()) {
-                totalSize += hole->second;
-                remainingHoles[hole->first] = hole->second;
-                hole = std::prev(sequence.holes.erase(hole));
-            }
-        }
+    if (upper == sequence.placedPositions.end()) {
+        std::cout << "OLD PEOPLE BURNING!!!" << std::endl;
+        throw 666;
     }
 
-    sequence.totalSize -= totalSize;
-    sequence.capacity -= (capacity + 1);
+    if (lower == sequence.placedPositions.end()) {
+        std::cout << "PUT YOUR HANDS UP!!!" << std::endl;
+        throw 666;
+    }
 
-    sequences[id] = {
+    iv.low = *lower + 1;
+    iv.high = *upper - 1;
+
+    auto low = piv.low;
+    piv.low = iv.center_high + 1;
+    piv.center_low = *upper;
+
+    auto niv = Interval{
+        low,
+        *begin,
+        *lower,
+        static_cast<unsigned short>(iv.center_low - 1)
+    };
+    auto capacity = niv.size();
+    auto lowerPositions = std::set<unsigned short>(begin, upper);
+    auto lowerOpening = sequence.openings.first;
+    
+    sequence.placedPositions.erase(begin, upper);
+    sequence.totalSize -= std::distance(begin, upper);
+    sequence.capacity -= capacity;
+    sequence.openings.first = (piv.center_low - iv.center_high) > 1;
+    sequence.updateSequentiality();
+
+    sequences[niv_key] = {
         sequence.team,
-        origin,
-        localSize,
-        totalSize,
+        static_cast<unsigned short>(lowerPositions.size()),
         capacity,
-        remainingHoles
+        true,
+        {lowerOpening, (iv.center_low - niv.center_high) > 1},
+        lowerPositions
     };
 
-    return {id, lowSplit};
+    sequences[niv_key].updateSequentiality();
+
+    return {{niv, niv_key}, {piv, piv_key}};
 }
 
-IvMap::iterator IntervaledBoard::findHole(Sequence& sequence, Interval iv) {
-    // Make interval atomic
-    iv.low = iv.center_low;
-    iv.high = iv.center_high;
-    // For that shit work, holes need to have center_high = high
-    // With this condition satisfied, it's guaranteed that only one hole will match
-    auto find = sequence.holes.find(iv);
-    if (find == sequence.holes.end()) {
-        std::cout << "FODEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEU LEGAL" << std::endl;
+bool IvBoard::resize(IvMap& map, const IvMap::iterator& it, Interval& iv) {
+    auto piv = it->first;
+    auto& data = it->second;
+
+    if (iv.center_low > piv.center_low && iv.center_high < piv.center_high) {
+        return false;
     }
-    return find;
+
+    if (piv.center_low > iv.center_high) {
+        piv.low = iv.center_high + 1;
+        iv.high = piv.center_low - 1;
+    } else {
+        piv.high = iv.center_low - 1;
+        iv.low = piv.center_high + 1;
+    }
+
+    auto hint = map.erase(it);
+    map.insert(hint, {piv, data});
+    return true;
 }
 
-unsigned short IntervaledBoard::newSequence(IvMap& map,
-                                            Interval& iv,
-                                            const go::Team& team) {
+unsigned short IvBoard::newSequence(IvMap& map,
+                                    Interval& iv,
+                                    const go::Team& team) {
     unsigned short id = currentSequence;
     sequences[currentSequence] = {
         team,           // Team
-        iv.center_low,  // Origin
-        1,              // Size (main counting of stones)
         1,              // Total size
         iv.size(),      // Sequence capacity
-        {}              // IMap holes -> counting of stones
+        true,           // Sequential
+        {true, true},   // Openings
+        {iv.center_low} // Placed positions
     };
     map[iv] = id;
     ++currentSequence;
     return id;
+}
+
+bool IvBoard::occupied(const go::Position& position) const {
+    unsigned short row = position.row;
+    unsigned short column = position.column;
+    Interval cc = {column, column, column, column};
+    return rows.count(row) && rows.at(row).count(cc);
+}
+
+bool Sequence::updateSequentiality() {
+    auto fragmented = false;
+    auto prev = placedPositions.begin();
+    auto curr = std::next(prev);
+    while(curr != placedPositions.end()) {
+        if (*curr - *prev != 1) {
+            fragmented = true;
+            break;
+        }
+        prev = curr;
+        curr = std::next(prev);
+    }
+    sequential = !fragmented;
+    return fragmented;
 }

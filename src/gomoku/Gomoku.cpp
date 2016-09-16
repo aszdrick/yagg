@@ -4,6 +4,7 @@
 #include "gomoku/Gomoku.hpp"
 #include "gomoku/Player.hpp"
 #include "AI/AIHandler.hpp"
+#include "AI/RandomHandler.hpp"
 
 const std::array<Gomoku::Menu::Option, 2> Gomoku::options = {
     Gomoku::Menu::Option{

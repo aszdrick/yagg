@@ -5,22 +5,26 @@
 #define INTERVALED_BOARD_HPP
 
 #include <array>
-#include <unordered_map>
 #include <ostream>
+#include <set>
+#include <unordered_map>
 #include "gomoku/CommonTypes.hpp"
 #include "extra/Matrix.hpp"
 #include "extra/Interval.hpp"
 
-using IvMap = IntervalMap<unsigned short>;
-using Split = std::pair<unsigned short, bool>;
+using IvMap = std::map<Interval, unsigned short>;
+using assoc = std::pair<Interval, unsigned short>;
+using Split = std::pair<assoc, assoc>;
 
 struct Sequence {
     go::Team team;
-    short origin;
-    unsigned short localSize;
     unsigned short totalSize;
     unsigned short capacity;
-    IvMap holes;
+    bool sequential;
+    std::pair<bool, bool> openings;
+    std::set<unsigned short> placedPositions;
+
+    bool updateSequentiality();
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Sequence& seq) {
@@ -29,9 +33,12 @@ inline std::ostream& operator<<(std::ostream& out, const Sequence& seq) {
     return out;
 }
 
-class IntervaledBoard {
+class IvBoard {
  public:
-    IntervaledBoard();
+    IvBoard();
+
+    bool finished() const { return ended; }
+    bool occupied(const go::Position& position) const;
 
     void play(const go::Position&, const go::Team&);
 
@@ -43,14 +50,14 @@ class IntervaledBoard {
     std::unordered_map<unsigned short, IvMap> columns;
     std::unordered_map<unsigned short, IvMap> mainDiagonals;
     std::unordered_map<unsigned short, IvMap> secondaryDiagonals;
+    bool ended = false;
 
     void solve(IvMap&, Interval, const go::Team&);
-    void mergeSequence(IvMap&, IvMap::assoc&, Interval&);
+    void mergeSequence(IvMap&, assoc&, Interval&);
+    void mergeSequence(IvMap&, std::array<assoc, 2>&, Interval&);
     Split splitSequence(const IvMap::iterator&, Interval&);
+    bool resize(IvMap&, const IvMap::iterator&, Interval&); 
     unsigned short newSequence(IvMap&, Interval&, const go::Team&);
-    void generateHole(Sequence&, Interval&, Interval&);
-    void fillHole(Sequence&, Interval&, Interval&);
-    IvMap::iterator findHole(Sequence&, Interval);
 };
 
 #endif /* INTERVALED_BOARD_HPP */
