@@ -6,82 +6,119 @@
 #include "gomoku/Traits.hpp"
 #include "extra/macros.hpp"
 
-RangeBoard::RangeBoard() : currentSequence(0) { }
+
+namespace {
+    bool validateIndex(unsigned short index) {
+        static constexpr auto limit = GomokuTraits::BOARD_DIMENSION;
+        static constexpr auto size = GomokuTraits::WIN_CONDITION;
+        static constexpr auto lower_threshold = size - 1;
+        static constexpr auto upper_threshold = 2 * limit - size - 1;
+        return index >= lower_threshold && index <= upper_threshold;
+    }
+}
+
+const std::array<IndexMapper, 4> RangeBoard::mappers = {
+    [](unsigned short row, unsigned short column) {
+        return row;
+    },
+    [](unsigned short row, unsigned short column) {
+        return column;
+    },
+    [](unsigned short row, unsigned short column) {
+        auto index = GomokuTraits::BOARD_DIMENSION + row - column;
+        if (!validateIndex(index)) {
+            index = -1;
+        }
+        return index;
+    },
+    [](unsigned short row, unsigned short column) {
+        auto index = row + column;
+        if (!validateIndex(index)) {
+            index = -1;
+        }
+        return index;
+    }
+};
+
+const std::array<IntervalChooser, 4> RangeBoard::choosers = {
+    [](const IntervalPair& pair) {
+        return pair.second;
+    },
+    [](const IntervalPair& pair) {
+        return pair.first;
+    },
+    [](const IntervalPair& pair) {
+        return pair.first;
+    },
+    [](const IntervalPair& pair) {
+        return pair.first;
+    }  
+};
 
 void RangeBoard::play(const go::Position& position, const go::Team& team) {
     auto start = std::chrono::system_clock::now().time_since_epoch();
+    static const unsigned short limit = GomokuTraits::BOARD_DIMENSION;
     unsigned short row = position.row;
     unsigned short column = position.column;
-    unsigned short limit = GomokuTraits::BOARD_DIMENSION;
-    Interval rr = {
-        static_cast<unsigned short>(std::max(row - 4, 0)),
-        row, row,
-        static_cast<unsigned short>(std::min(row + 4, limit - 1))
-    };
-    Interval cc = {
-        static_cast<unsigned short>(std::max(column - 4, 0)),
-        column, column,
-        static_cast<unsigned short>(std::min(column + 4, limit - 1))
-    };
+    auto intervals = generateIntervals(row, column, limit);
+    auto operations = std::array<Operation, 4>();
 
     stones.push_back({position, team});
 
-    if (!rows[row].count(cc)) {
-        // Unclaimed region
-        newSequence(rows[row], cc, team);
-    } else {
-        // Conflicting region
-        solve(rows[row], cc, team);
+    for (auto i = 0; i < 4; i++) {
+        auto index = mappers[i](row, column);
+        if (index > -1) {
+            auto iv = choosers[i](intervals);
+            if (!lines[i][index].count(iv)) {
+                newSequence(lines[i][index], iv, team);
+                operations[i] = Operation::NEW;
+            } else {
+                solve(lines[i][index], iv, team);
+            }
+        }
     }
-    // ECHO("---------------------- ROWS ----------------------");
-    // for (auto pair : rows[row]) {
-    //     std::cout << "interval: " << pair.first << std::endl;
-    //     std::cout << "key: " << pair.second << std::endl;
-    // }
-    
-    if (!columns[column].count(rr)) {
-        // Unclaimed region
-        newSequence(columns[column], rr, team);
-    } else {
-        // Conflicting region
-        solve(columns[column], rr, team);
-    }
-    // ECHO("-------------------- COLUMNS ---------------------");
-    // for (auto pair : columns[column]) {
-    //     std::cout << "interval: " << pair.first << std::endl;
-    //     std::cout << "key: " << pair.second << std::endl;
-    // }
 
-    if (!mainDiagonals[limit + row - column].count(rr)) {
-        // Unclaimed region
-        newSequence(mainDiagonals[limit + row - column], rr, team);
-    } else {
-        // Conflicting region
-        solve(mainDiagonals[limit + row - column], rr, team);
-    }
-    // ECHO("----------------- MAIN DIAGONALS -----------------");
-    // for (auto pair : mainDiagonals[limit + row - column]) {
-    //     std::cout << "interval: " << pair.first << std::endl;
-    //     std::cout << "key: " << pair.second << std::endl;
-    // }
-
-    if (!secondaryDiagonals[row + column].count(rr)) {
-        // Unclaimed region
-        newSequence(secondaryDiagonals[row + column], rr, team);
-    } else {
-        // Conflicting region
-        solve(secondaryDiagonals[row + column], rr, team);
-    }
-    // ECHO("----------------- SECD DIAGONALS -----------------");
-    // for (auto pair : secondaryDiagonals[row + column]) {
-    //     std::cout << "interval: " << pair.first << std::endl;
-    //     std::cout << "key: " << pair.second << std::endl;
-    // }
     auto end = std::chrono::system_clock::now().time_since_epoch();
     auto play_delay = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     if (play_delay > 0) {
         TRACE(play_delay);
     }
+}
+
+// Print sample
+// ECHO("---------------------- ROWS ----------------------");
+// for (auto pair : rows[row]) {
+//     std::cout << "interval: " << pair.first << std::endl;
+//     std::cout << "key: " << pair.second << std::endl;
+// }
+
+void RangeBoard::undo(const go::Position& position) {
+    static const unsigned short limit = GomokuTraits::BOARD_DIMENSION;
+    unsigned short row = position.row;
+    unsigned short column = position.column;
+    auto intervals = generateIntervals(row, column, limit);
+
+    for (auto i = 0; i < 4; i++) {
+        auto index = mappers[i](row, column);
+        auto iv = choosers[i](intervals);
+        if (lines[i].count(index)) {
+            undo(lines[i][index], iv);
+        }
+    }
+}
+
+void RangeBoard::undo(IvMap& map, Interval iv) {
+    // auto entry = map.find(iv);
+    // auto upper = std::next(entry);
+    // if (entry == map.end()) return;
+    // auto piv = entry->first;
+    // auto key = entry->second;
+    // auto& sequence = sequences[key];
+
+    // if (entry != map.begin()) {
+    //     auto lower = std::prev(entry);
+        
+    // }
 }
 
 void RangeBoard::solve(IvMap& map, Interval iv, const go::Team& team) {
@@ -273,9 +310,8 @@ bool RangeBoard::resize(IvMap& map, const IvMap::iterator& it, Interval& iv) {
     return true;
 }
 
-unsigned short RangeBoard::newSequence(IvMap& map,
-                                    Interval& iv,
-                                    const go::Team& team) {
+unsigned short RangeBoard::newSequence(IvMap& map, Interval& iv,
+                                       const go::Team& team) {
     unsigned short id = currentSequence;
     sequences[currentSequence] = {
         team,           // Team
@@ -290,11 +326,27 @@ unsigned short RangeBoard::newSequence(IvMap& map,
     return id;
 }
 
+IntervalPair RangeBoard::generateIntervals(unsigned short row,
+                                           unsigned short column,
+                                           unsigned short limit) const {
+    Interval rr = {
+        static_cast<unsigned short>(std::max(row - 4, 0)),
+        row, row,
+        static_cast<unsigned short>(std::min(row + 4, limit - 1))
+    };
+    Interval cc = {
+        static_cast<unsigned short>(std::max(column - 4, 0)),
+        column, column,
+        static_cast<unsigned short>(std::min(column + 4, limit - 1))
+    };
+    return {rr, cc};
+}
+
 bool RangeBoard::occupied(const go::Position& position) const {
-    unsigned short row = position.row;
-    unsigned short column = position.column;
-    Interval cc = {column, column, column, column};
-    return rows.count(row) && rows.at(row).count(cc);
+    // unsigned short row = position.row;
+    // unsigned short column = position.column;
+    // Interval cc = {column, column, column, column};
+    // return rows.count(row) && rows.at(row).count(cc);
 }
 
 bool Sequence::updateSequentiality() {
@@ -310,5 +362,5 @@ bool Sequence::updateSequentiality() {
         curr = std::next(prev);
     }
     sequential = !fragmented;
-    return fragmented;
+    return sequential;
 }

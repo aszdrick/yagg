@@ -13,6 +13,7 @@ struct Interval {
     unsigned short center_high;
     unsigned short high;
 
+    static Interval unitary(unsigned short);
     short center_distance(const Interval&) const;
     ushort size() const;
 };

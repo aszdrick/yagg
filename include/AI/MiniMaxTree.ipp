@@ -21,7 +21,7 @@ typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(T& currentState)
     Generator::reset();
     Generator generator(currentState);
     while (generator.hasNext()) {
-        const T& next = generator.generateNext();
+        const T& next = generator.generateNext(true);
         auto value = calculate(generator, next, depth - 1);
         if (value > bestValue) {
             bestValue = value;

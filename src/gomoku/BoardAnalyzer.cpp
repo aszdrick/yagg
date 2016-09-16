@@ -65,12 +65,17 @@ void BoardAnalyzer::iterate(const StoneCallback& fn) const {
 }
 
 void BoardAnalyzer::quadrupletIteration(const SequenceCallback& fn) const {
-    for (auto& pair : quadruplets) {
-        auto& seq = sequences.at(const_cast<StoneGroup*>(pair.first)).at(pair.second);
-        if (seq.stones.size() == 4) {
-            fn(seq);
+    // for (auto& pair : quadruplets) {
+    //     auto& seq = sequences.at(const_cast<StoneGroup*>(pair.first)).at(pair.second);
+    //     if (seq.stones.size() == 4) {
+    //         fn(seq);
+    //     }
+    // }
+    sequenceIteration([&fn](const auto& sequence) {
+        if (sequence.stones.size() == 4) {
+            fn(sequence);
         }
-    }
+    });
 }
 
 void BoardAnalyzer::sequenceIteration(const SequenceCallback& fn) const {
@@ -82,9 +87,10 @@ void BoardAnalyzer::sequenceIteration(const SequenceCallback& fn) const {
 }
 
 bool BoardAnalyzer::occupied(const go::Position& position) const {
-    unsigned row = position.row;
-    unsigned column = position.column;
-    return rows.count(row) && rows.at(row).count(column);
+    // unsigned row = position.row;
+    // unsigned column = position.column;
+    // return rows.count(row) && rows.at(row).count(column);
+    return !freeSquares.count(position);
 }
 
 bool BoardAnalyzer::over() const {
@@ -183,10 +189,10 @@ BoardAnalyzer::findSequences(const StoneGroup& group, const go::Position& delta)
             size_t size = seq.stones.size();
             if (size > 1 && seq.freeEnds.first + seq.freeEnds.second > 0) {
                 foundQuintuple = foundQuintuple || (size >= 5);
-                if (size == 4) {
-                    decltype(quadruplets)::value_type pair{&group, result.size()};
-                    quadruplets.push_back(std::move(pair));
-                }
+                // if (size == 4) {
+                //     decltype(quadruplets)::value_type pair{&group, result.size()};
+                //     quadruplets.push_back(std::move(pair));
+                // }
                 seq.delta = delta;
                 result.push_back(std::move(seq));
             }

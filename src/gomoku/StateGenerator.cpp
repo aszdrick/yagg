@@ -16,14 +16,16 @@ bool StateGenerator::hasNext() const {
     return state.emptySquares().size() > generationIDs.back();
 }
 
-const go::State& StateGenerator::generateNext() {
+const go::State& StateGenerator::generateNext(bool set) {
     auto currentPlayer = state.currentPlayer();
     // auto newState = state;
     const auto& position = nextPosition();
+    if (set) {
+        first = position;
+    }
     generationIDs.back()++;
 
     state.play(position, static_cast<go::Team>(currentPlayer));
-    past.push_back(position);
     // state.emptySquares().pop();
     generations++;
     generationIDs.push_back(0);
@@ -31,14 +33,9 @@ const go::State& StateGenerator::generateNext() {
 }
 
 Player::Move StateGenerator::command(const go::State& target) const {
-    for (auto& position : past) {
-        if (target.occupied(position)) {
-            Player::Move command(static_cast<go::Team>(state.currentPlayer()));
-            command.setPosition(position);
-            return command;
-        }
-    }
-    assert(false);
+    Player::Move command(static_cast<go::Team>(state.currentPlayer()));
+    command.setPosition(first);
+    return command;
 }
 
 void StateGenerator::undo() {
@@ -48,9 +45,8 @@ void StateGenerator::undo() {
 
 const go::Position& StateGenerator::nextPosition() const {
     auto& skip = generationIDs.back();
-    auto iterator = state.emptySquares().begin();
-    for (size_t i = 0; i < skip; i++) {
-        ++iterator;
-    }
-    return *iterator;
+    // for (size_t i = 0; i < skip; i++) {
+    //     ++iterator;
+    // }
+    return *std::next(state.emptySquares().begin(), skip);
 }

@@ -8,6 +8,7 @@
 #include "CommonTypes.hpp"
 #include "RangeBoard.hpp"
 #include <functional>
+#include <iostream>
 #include <unordered_map>
 
 class go::State {

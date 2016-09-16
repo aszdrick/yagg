@@ -13,7 +13,7 @@ class StateGenerator {
  public:
     explicit StateGenerator(go::State&);
     bool hasNext() const;
-    const go::State& generateNext();
+    const go::State& generateNext(bool = false);
     Player::Move command(const go::State&) const;
     void undo();
     static void reset() { generations = 0; }
@@ -21,9 +21,9 @@ class StateGenerator {
 
  private:
     std::vector<unsigned> generationIDs;
-    std::vector<go::Position> past;
     static unsigned generations;
     go::State& state;
+    go::Position first;
 
     const go::Position& nextPosition() const;
 };

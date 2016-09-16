@@ -10,7 +10,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include <iostream>
 
 class BoardAnalyzer {
  private:
@@ -48,7 +47,6 @@ class BoardAnalyzer {
     SequenceGroup secondaryDiagonals;
     std::unordered_map<StoneGroup*, std::vector<Sequence>> sequences;
     bool hasQuintuple = false;
-    SequenceReference quadruplets;
     std::stack<go::Position> history;
     std::unordered_set<go::Position> freeSquares;
 

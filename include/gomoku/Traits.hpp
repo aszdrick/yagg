@@ -19,6 +19,7 @@ class AIHandler;
 template<>
 struct Traits<Gomoku> {
     constexpr static unsigned BOARD_DIMENSION = 15;
+    constexpr static unsigned WIN_CONDITION = 5;
     const static sf::Color WHITE_COLOR;
     const static sf::Color BLACK_COLOR;
     const static sf::Color HIGHLIGHT_COLOR;
@@ -43,7 +44,7 @@ struct Traits<Match> {
 
 template<>
 struct Traits<AIHandler> {
-    constexpr static unsigned MAX_DEPTH = 2;
+    constexpr static unsigned MAX_DEPTH = 3;
 };
 
 using GomokuTraits = Traits<Gomoku>;
