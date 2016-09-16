@@ -1,11 +1,10 @@
 /* created by Ghabriel Nunes <ghabriel.nunes@gmail.com> [2016] */
-
 #ifndef UTILS_MACROS_HPP
 #define UTILS_MACROS_HPP
 
 #include <iostream>
+#include <ostream>
 #include <sstream>
-#include <tuple>
 #include <utility>
 
 namespace {
@@ -46,30 +45,74 @@ namespace {
         return '{' + extract(tuple, std::make_index_sequence<sizeof...(Types)>()) + '}';
     }
 
-    inline void echo() {}
+    using no = char;
+    using yes = char[2];
+    no ref_no;
+    yes ref_yes;
+
+    struct any_t {
+        any_t(...) {}
+    };
+}
+
+inline no operator<<(std::ostream&, const any_t&) { return ref_no; }
+
+namespace {
+    inline yes& test(std::ostream&) { return ref_yes; }
+    inline no test(no) { return ref_no; }
+    template<typename T>
+    struct insertion_exists {
+        static std::ostream& stream;
+        const static T& t;
+        constexpr static bool value = sizeof(test(stream << t)) == sizeof(yes);
+    };
+
+    template<typename T, bool>
+    struct fallback {
+        static void apply(std::ostream& stream, const T& value) {
+            stream << value;
+        }
+    };
+
+    template<typename T>
+    struct fallback<T, false> {
+        static void apply(std::ostream& stream, const T& value) {
+            stream << traceable(value);
+        }
+    };
+
+    inline void echo() {}        
 
     template<typename T, typename... Args>
     inline void echo(const T& value, Args&&... args) {
-        std::cout << traceable(value) << std::endl;
+        fallback<T, insertion_exists<T>::value>::apply(std::cout, value);
+        std::cout << std::endl;
         echo(args...);
+    }
+
+    template<typename T>
+    inline void trace(const std::string& name, const T& value) {
+        std::cout << name << " = ";
+        echo(value);
     }
 }
 
-// #define TRACE(x) std::cout << (#x) << " = " << (x) << std::endl
-#define TRACE(x) std::cout << (#x) << " = " << traceable(x) << std::endl
-#define TRACE_L(x,y) std::cout << (x) << " = " << (y) << std::endl
+#define TRACE(x) trace((#x), (x));
+#define TRACE_L(x,y) trace((x), (y))
 #define TRACE_IT(x) \
     {\
         unsigned long long counter = 0; \
         for (auto& elem : (x)) { \
-            std::cout << (#x) << "[" << std::to_string(counter++) << "] = " << elem << std::endl; \
+            std::cout << (#x) << "[" << std::to_string(counter++) << "] = "; \
+            echo(elem); \
         }\
     }
 #define TRACE_ITL(l,x) \
     {\
         unsigned long long counter = 0; \
         for (auto& elem : (x)) { \
-            std::cout << (l) << "[" << std::to_string(counter++) << "] = " << elem << std::endl; \
+            std::cout << (l) << "[" << std::to_string(counter++) << "] = "; \
+            echo(elem); \
         }\
     }
 #define ECHO(...) echo(__VA_ARGS__)

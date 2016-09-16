@@ -14,7 +14,7 @@ MiniMaxTree<T>::MiniMaxTree(const RatingFunction<T>& heuristic,
 
 template<typename T>
 template<typename Generator>
-typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(const T& currentState) {
+typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(T& currentState) {
     auto depth = AITraits::MAX_DEPTH;
     double bestValue = -INT_MAX;
     T bestState;
@@ -22,11 +22,12 @@ typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(const T& current
     Generator generator(currentState);
     while (generator.hasNext()) {
         const T& next = generator.generateNext();
-        auto value = calculate<Generator>(next, depth - 1);
+        auto value = calculate(generator, next, depth - 1);
         if (value > bestValue) {
             bestValue = value;
             bestState = next;
         }
+        generator.undo();
     }
 
     return {generator.command(bestState), Generator::generationCount()};
@@ -34,8 +35,8 @@ typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(const T& current
 
 template<typename T>
 template<typename Generator>
-double MiniMaxTree<T>::calculate(const T& state, unsigned depth,
-    double alpha, double beta, Type type) const {
+double MiniMaxTree<T>::calculate(Generator& generator, const T& state,
+    unsigned depth, double alpha, double beta, Type type) const {
 
     bool over = state.over();
     bool exceededMaxDepth = (depth == 0);
@@ -56,10 +57,10 @@ double MiniMaxTree<T>::calculate(const T& state, unsigned depth,
     auto updater = options[type].updater;
     Type nextType = options[type].nextType;
 
-    Generator generator(state);
     while (generator.hasNext()) {
-        T next = generator.generateNext();
-        auto nextValue = calculate<Generator>(next, depth - 1, alpha, beta, nextType);
+        const T& next = generator.generateNext();
+        auto nextValue = calculate(generator, next, depth - 1, alpha, beta, nextType);
+        generator.undo();
         best = updater(best, nextValue);
         param = updater(param, best);
         if (beta <= alpha) {

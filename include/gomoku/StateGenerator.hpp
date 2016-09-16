@@ -11,18 +11,21 @@
 
 class StateGenerator {
  public:
-    explicit StateGenerator(const go::State&);
+    explicit StateGenerator(go::State&);
     bool hasNext() const;
-    go::State generateNext();
+    const go::State& generateNext();
     Player::Move command(const go::State&) const;
+    void undo();
     static void reset() { generations = 0; }
     static unsigned generationCount() { return generations; }
 
  private:
-    std::queue<go::Position> emptySquares;
+    std::vector<unsigned> generationIDs;
     std::vector<go::Position> past;
     static unsigned generations;
-    const go::State& state;
+    go::State& state;
+
+    const go::Position& nextPosition() const;
 };
 
 #endif /* STATE_GENERATOR_HPP */

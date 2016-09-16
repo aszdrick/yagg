@@ -44,13 +44,13 @@ class go::State {
     }
 
     bool over() const { 
-        // return analyzer.over();
-        return ranger.finished();
+        return analyzer.over();
+        // return ranger.finished();
     }
 
     bool hasWinner() const {
-        // return analyzer.hasWinner();
-        return ranger.finished();
+        return analyzer.hasWinner();
+        // return ranger.finished();
     }
 
     bool full() const {
@@ -60,6 +60,19 @@ class go::State {
     void undo() {
         analyzer.undo();
         player = 1 - player;
+    }
+
+    auto& emptySquares() {
+        return analyzer.emptySquares();
+    }
+
+    void print() const {
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                std::cout << (occupied(go::Position{i,j}) ? 'X' : '-');
+            }
+            std::cout << std::endl;
+        }
     }
 
  private:

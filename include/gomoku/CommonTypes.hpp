@@ -115,6 +115,14 @@ namespace std {
             return static_cast<int>(team);
         }
     };
+
+    template<>
+    struct hash<go::Position> {
+        std::size_t operator()(const go::Position& pos) const {
+            // TODO: make the 15 generic
+            return pos.row * 15 + pos.column;
+        }
+    };
 }
 
 #endif /* GO_COMMON_TYPES_HPP */

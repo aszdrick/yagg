@@ -23,11 +23,23 @@ BoardAnalyzer::BoardAnalyzer() {
     }
 
     stoneContainer.reserve(boardDimension * boardDimension);
+
+    using BoardType = std::decay_t<decltype(boardDimension)>;
+    for (BoardType row = 0; row < boardDimension; row++) {
+        for (BoardType col = 0; col < boardDimension; col++) {
+            go::Position position{
+                static_cast<int>(row),
+                static_cast<int>(col)
+            };
+            freeSquares.insert(std::move(position));
+        }
+    }
 }
 
 void BoardAnalyzer::play(const go::Position& position, go::Team team) {
     auto start = std::chrono::system_clock::now().time_since_epoch();
     history.push(position);
+    freeSquares.erase(position);
     stoneContainer.push_back(go::Stone{position, team});
     go::Stone* stone = &stoneContainer.back();
 
@@ -110,6 +122,7 @@ void BoardAnalyzer::undo() {
             break;
         }
     }
+    freeSquares.insert(position);
     recalculate(position);
     history.pop();
 }

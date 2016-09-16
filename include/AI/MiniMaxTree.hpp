@@ -23,14 +23,14 @@ class MiniMaxTree {
  public:
     MiniMaxTree(const RatingFunction<T>&, const RatingFunction<T>&);
     template<typename Generator>
-    AnalysisReport analyze(const T&);
+    AnalysisReport analyze(T&);
 
  private:
     const RatingFunction<T>& h_function;
     const RatingFunction<T>& u_function;
 
     template<typename Generator>
-    double calculate(const T&, unsigned,
+    double calculate(Generator&, const T&, unsigned,
         double = -INT_MAX, double = INT_MAX, Type = Type::MIN) const;
 };
 

@@ -8,35 +8,26 @@
 
 unsigned StateGenerator::generations = 0;
 
-StateGenerator::StateGenerator(const go::State& state) : state(state) {
-    constexpr auto boardDimension = GomokuTraits::BOARD_DIMENSION;
-    using BoardType = std::decay_t<decltype(boardDimension)>;
-    for (BoardType row = 0; row < boardDimension; row++) {
-        for (BoardType col = 0; col < boardDimension; col++) {
-            go::Position position{
-                static_cast<int>(row),
-                static_cast<int>(col)
-            };
-            if (!state.occupied(position)) {
-                emptySquares.push(std::move(position));
-            }
-        }
-    }
+StateGenerator::StateGenerator(go::State& state) : state(state) {
+    generationIDs.push_back(0);
 }
 
 bool StateGenerator::hasNext() const {
-    return !emptySquares.empty();
+    return state.emptySquares().size() > generationIDs.back();
 }
 
-go::State StateGenerator::generateNext() {
+const go::State& StateGenerator::generateNext() {
     auto currentPlayer = state.currentPlayer();
-    auto newState = state;
-    auto& position = emptySquares.front();
-    newState.play(position, static_cast<go::Team>(currentPlayer));
+    // auto newState = state;
+    const auto& position = nextPosition();
+    generationIDs.back()++;
+
+    state.play(position, static_cast<go::Team>(currentPlayer));
     past.push_back(position);
-    emptySquares.pop();
+    // state.emptySquares().pop();
     generations++;
-    return newState;
+    generationIDs.push_back(0);
+    return state;
 }
 
 Player::Move StateGenerator::command(const go::State& target) const {
@@ -48,4 +39,18 @@ Player::Move StateGenerator::command(const go::State& target) const {
         }
     }
     assert(false);
+}
+
+void StateGenerator::undo() {
+    state.undo();
+    generationIDs.pop_back();
+}
+
+const go::Position& StateGenerator::nextPosition() const {
+    auto& skip = generationIDs.back();
+    auto iterator = state.emptySquares().begin();
+    for (size_t i = 0; i < skip; i++) {
+        ++iterator;
+    }
+    return *iterator;
 }

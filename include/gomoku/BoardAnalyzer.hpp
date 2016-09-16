@@ -8,7 +8,9 @@
 #include <functional>
 #include <stack>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
+#include <iostream>
 
 class BoardAnalyzer {
  private:
@@ -31,6 +33,10 @@ class BoardAnalyzer {
     unsigned countEmptySquares() const;
     void undo();
 
+    auto& emptySquares() {
+        return freeSquares;
+    }
+
  private:
     struct Report;
     using SequenceGroup = std::unordered_map<unsigned, StoneGroup>;
@@ -44,6 +50,7 @@ class BoardAnalyzer {
     bool hasQuintuple = false;
     SequenceReference quadruplets;
     std::stack<go::Position> history;
+    std::unordered_set<go::Position> freeSquares;
 
     void recalculate(const go::Position&);
     Report findSequences(const StoneGroup&, const go::Position&);
