@@ -6,6 +6,7 @@
 
 #include "CommonTypes.hpp"
 #include <functional>
+#include <stack>
 #include <unordered_map>
 #include <vector>
 
@@ -28,6 +29,7 @@ class BoardAnalyzer {
     bool hasWinner() const;
     bool full() const;
     unsigned countEmptySquares() const;
+    void undo();
 
  private:
     struct Report;
@@ -41,6 +43,7 @@ class BoardAnalyzer {
     std::unordered_map<StoneGroup*, std::vector<Sequence>> sequences;
     bool hasQuintuple = false;
     SequenceReference quadruplets;
+    std::stack<go::Position> history;
 
     void recalculate(const go::Position&);
     Report findSequences(const StoneGroup&, const go::Position&);

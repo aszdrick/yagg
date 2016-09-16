@@ -27,6 +27,7 @@ BoardAnalyzer::BoardAnalyzer() {
 
 void BoardAnalyzer::play(const go::Position& position, go::Team team) {
     auto start = std::chrono::system_clock::now().time_since_epoch();
+    history.push(position);
     stoneContainer.push_back(go::Stone{position, team});
     go::Stone* stone = &stoneContainer.back();
 
@@ -89,6 +90,28 @@ bool BoardAnalyzer::full() const {
 unsigned BoardAnalyzer::countEmptySquares() const {
     static constexpr auto maxStones = std::pow(GomokuTraits::BOARD_DIMENSION, 2);
     return maxStones - stoneContainer.size();
+}
+
+void BoardAnalyzer::undo() {
+    if (over() || history.empty()) {
+        return;
+    }
+    auto& position = history.top();
+    auto boardDimension = GomokuTraits::BOARD_DIMENSION;
+    unsigned row = position.row;
+    unsigned column = position.column;
+    rows[row].erase(column);
+    columns[column].erase(row);
+    mainDiagonals[boardDimension + row - column].erase(row);
+    secondaryDiagonals[row + column].erase(row);
+    for (auto it = stoneContainer.begin(); it != stoneContainer.end(); ++it) {
+        if (it->position == position) {
+            stoneContainer.erase(it);
+            break;
+        }
+    }
+    recalculate(position);
+    history.pop();
 }
 
 void BoardAnalyzer::recalculate(const go::Position& position) {

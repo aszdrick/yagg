@@ -57,6 +57,11 @@ class go::State {
         return analyzer.full();
     }
 
+    void undo() {
+        analyzer.undo();
+        player = 1 - player;
+    }
+
  private:
     short player = 0;
     decltype(player) winner = 0;
