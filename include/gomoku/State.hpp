@@ -6,7 +6,7 @@
 
 #include "BoardAnalyzer.hpp"
 #include "CommonTypes.hpp"
-#include "IntervaledBoard.hpp"
+#include "RangeBoard.hpp"
 #include <functional>
 #include <unordered_map>
 
@@ -40,17 +40,17 @@ class go::State {
 
     bool occupied(const go::Position& pos) const {
         return analyzer.occupied(pos);
-        // return ivBoard.occupied(pos);
+        // return ranger.occupied(pos);
     }
 
     bool over() const { 
         // return analyzer.over();
-        return ivBoard.finished();
+        return ranger.finished();
     }
 
     bool hasWinner() const {
         // return analyzer.hasWinner();
-        return ivBoard.finished();
+        return ranger.finished();
     }
 
     bool full() const {
@@ -66,7 +66,7 @@ class go::State {
     short player = 0;
     decltype(player) winner = 0;
     BoardAnalyzer analyzer;
-    IvBoard ivBoard;
+    RangeBoard ranger;
 };
 
 #endif /* GO_STATE_HPP */

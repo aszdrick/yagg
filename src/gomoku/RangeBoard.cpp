@@ -2,13 +2,13 @@
                   Marleson Graf <aszdrick@gmail.com> */
 
 #include <chrono>
-#include "gomoku/IntervaledBoard.hpp"
+#include "gomoku/RangeBoard.hpp"
 #include "gomoku/Traits.hpp"
 #include "extra/macros.hpp"
 
-IvBoard::IvBoard() : currentSequence(0) { }
+RangeBoard::RangeBoard() : currentSequence(0) { }
 
-void IvBoard::play(const go::Position& position, const go::Team& team) {
+void RangeBoard::play(const go::Position& position, const go::Team& team) {
     auto start = std::chrono::system_clock::now().time_since_epoch();
     unsigned short row = position.row;
     unsigned short column = position.column;
@@ -84,7 +84,7 @@ void IvBoard::play(const go::Position& position, const go::Team& team) {
     }
 }
 
-void IvBoard::solve(IvMap& map, Interval iv, const go::Team& team) {
+void RangeBoard::solve(IvMap& map, Interval iv, const go::Team& team) {
     // ECHO("--------------------------------------------------");
     auto mergeDistance = 5, mergeCount = 0;
     auto merges = std::array<assoc, 2>();
@@ -121,7 +121,7 @@ void IvBoard::solve(IvMap& map, Interval iv, const go::Team& team) {
     }
 }
 
-void IvBoard::mergeSequence(IvMap& map,
+void RangeBoard::mergeSequence(IvMap& map,
                             std::array<assoc, 2>& merges,
                             Interval& iv) {
     auto low = 0, high = 1;
@@ -163,7 +163,7 @@ void IvBoard::mergeSequence(IvMap& map,
     ended = ended || (low_sequence.sequential && low_sequence.totalSize > 4);
 }
 
-void IvBoard::mergeSequence(IvMap& map, assoc& pair, Interval& iv) {
+void RangeBoard::mergeSequence(IvMap& map, assoc& pair, Interval& iv) {
     auto& piv = pair.first;
     auto& sequence = sequences[pair.second];
     auto distance = piv.center_distance(iv);
@@ -195,7 +195,7 @@ void IvBoard::mergeSequence(IvMap& map, assoc& pair, Interval& iv) {
     ended = ended || (sequence.sequential && sequence.totalSize > 4);
 }
 
-Split IvBoard::splitSequence(const IvMap::iterator& it, Interval& iv) {
+Split RangeBoard::splitSequence(const IvMap::iterator& it, Interval& iv) {
     auto piv_key = it->second;
     auto niv_key = currentSequence++;
     auto sequence = sequences[piv_key];
@@ -252,7 +252,7 @@ Split IvBoard::splitSequence(const IvMap::iterator& it, Interval& iv) {
     return {{niv, niv_key}, {piv, piv_key}};
 }
 
-bool IvBoard::resize(IvMap& map, const IvMap::iterator& it, Interval& iv) {
+bool RangeBoard::resize(IvMap& map, const IvMap::iterator& it, Interval& iv) {
     auto piv = it->first;
     auto& data = it->second;
 
@@ -273,7 +273,7 @@ bool IvBoard::resize(IvMap& map, const IvMap::iterator& it, Interval& iv) {
     return true;
 }
 
-unsigned short IvBoard::newSequence(IvMap& map,
+unsigned short RangeBoard::newSequence(IvMap& map,
                                     Interval& iv,
                                     const go::Team& team) {
     unsigned short id = currentSequence;
@@ -290,7 +290,7 @@ unsigned short IvBoard::newSequence(IvMap& map,
     return id;
 }
 
-bool IvBoard::occupied(const go::Position& position) const {
+bool RangeBoard::occupied(const go::Position& position) const {
     unsigned short row = position.row;
     unsigned short column = position.column;
     Interval cc = {column, column, column, column};

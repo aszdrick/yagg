@@ -1,8 +1,8 @@
 /* Copyright 2016 Ghabriel Nunes <ghabriel.nunes@gmail.com>
                   Marleson Graf <aszdrick@gmail.com> */
 
-#ifndef INTERVALED_BOARD_HPP
-#define INTERVALED_BOARD_HPP
+#ifndef RANGE_BOARD_HPP
+#define RANGE_BOARD_HPP
 
 #include <array>
 #include <ostream>
@@ -27,15 +27,9 @@ struct Sequence {
     bool updateSequentiality();
 };
 
-inline std::ostream& operator<<(std::ostream& out, const Sequence& seq) {
-    // auto team = seq.team == go::Team::BLACK ? 0 : 1;
-    // out << "{" << team << "," << seq.origin << "," << seq.size << "}";
-    return out;
-}
-
-class IvBoard {
+class RangeBoard {
  public:
-    IvBoard();
+    RangeBoard();
 
     bool finished() const { return ended; }
     bool occupied(const go::Position& position) const;
@@ -60,4 +54,4 @@ class IvBoard {
     unsigned short newSequence(IvMap&, Interval&, const go::Team&);
 };
 
-#endif /* INTERVALED_BOARD_HPP */
+#endif /* RANGE_BOARD_HPP */
