@@ -7,15 +7,15 @@
 void go::State::play(const go::Position& position, go::Team team) {
     if (!analyzer.occupied(position)) {
         analyzer.play(position, team);
-        ivBoard.play(position, team);
+        // ivBoard.play(position, team);
 
-        // if (analyzer.hasWinner()) {
-        //     winner = player;
-        // }
-
-        if (ivBoard.finished()) {
+        if (analyzer.hasWinner()) {
             winner = player;
         }
+
+        // if (ivBoard.finished()) {
+        //     winner = player;
+        // }
 
         player = 1 - player;
     }

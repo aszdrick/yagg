@@ -87,7 +87,7 @@ namespace ai_utils {
     // ------------------------ First AI ------------------------ //
 
     template<>
-    auto heuristic<1>(const go::State& state) {
+    inline auto heuristic<1>(const go::State& state) {
         constexpr auto weights = {
             10., 20., 100., 200., 1e4, 2e4, 1e8, 2e8,
             2000., 3000., 4000., 2e5, 3e5, 4e5, 2e6, 3e6, 4e6
@@ -97,19 +97,20 @@ namespace ai_utils {
     };
 
     template<>
-    auto utility<1>(const go::State&) {
-        return 2.0;
+    inline auto utility<1>(const go::State& state) {
+        // return 2.0;
+        return heuristic<1>(state);
     };
 
     // ------------------------ Second AI ------------------------ //
 
     template<>
-    auto heuristic<2>(const go::State&) {
+    inline auto heuristic<2>(const go::State&) {
         return 3.0;
     };
 
     template<>
-    auto utility<2>(const go::State&) {
+    inline auto utility<2>(const go::State&) {
         return 4.0;
     };
 }
