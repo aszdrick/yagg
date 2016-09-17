@@ -6,8 +6,10 @@
 
 #include <array>
 #include <ostream>
+#include <stack>
 #include <set>
 #include <unordered_map>
+#include <unordered_set>
 #include "gomoku/CommonTypes.hpp"
 #include "extra/Matrix.hpp"
 #include "extra/Interval.hpp"
@@ -23,51 +25,80 @@ struct Sequence {
     bool updateSequentiality();
 };
 
-enum class Operation : unsigned short {
-    NEW = 0,
-    ADD = 1,
-    MERGE = 2,
-    SPLIT = 3,
-    RESIZE = 4,
-    ADD_RESIZE = 5
+enum class Operation {
+    CREATE, RESIZE, SPLIT
 };
 
+using Undo = std::function<void(void)>;
 using IvMap = std::map<Interval, unsigned short>;
 using assoc = std::pair<Interval, unsigned short>;
-using Split = std::pair<assoc, assoc>;
-using IntervalPair = std::pair<Interval, Interval>;
 using SequenceMap = std::unordered_map<unsigned short, Sequence>;
 using IntervalMap = std::unordered_map<unsigned short, IvMap>;
 using IndexMapper = std::function<short(unsigned short, unsigned short)>;
-using IntervalChooser = std::function<Interval(const IntervalPair&)>;
+using RangeChooser = std::function<Interval(unsigned short, unsigned short)>;
+using ClassifierMap = std::array<std::unordered_set<unsigned short>, 8>;
+
+struct CreateContext {
+    std::reference_wrapper<IvMap> map;
+    Interval created;
+};
+
+struct ResizeContext {
+    std::reference_wrapper<IvMap> map;
+    Interval original;
+    Interval resized;
+};
+
+struct SplitContext {
+    std::reference_wrapper<IvMap> map;
+    Interval original;
+    Interval lower;
+    Interval upper;
+};
 
 class RangeBoard {
  public:
     bool finished() const { return ended; }
     bool occupied(const go::Position& position) const;
 
-    void play(const go::Position&, const go::Team&);
-    void undo(const go::Position&);
+    void play(const go::Position&, go::Team);
+    void undo();
 
  private:
     static const std::array<IndexMapper, 4> mappers;
-    static const std::array<IntervalChooser, 4> choosers;
+    static const std::array<RangeChooser, 4> choosers;
 
-    std::list<go::Stone> stones;
+    std::stack<go::Stone> stones;
+    // std::stack<Undo> undos;
+    // std::stack<unsigned> undo_groupings;
+    
+    std::stack<Operation> operations;
+    std::stack<unsigned> operations_count;
+    std::stack<CreateContext> create_contexts;
+    std::stack<ResizeContext> resize_contexts;    
+    std::stack<SplitContext> split_contexts;
+
     unsigned short currentSequence = 0;
     std::array<IntervalMap, 4> lines;
+    std::array<unsigned, 2> dominations;
+    std::array<ClassifierMap, 2> classified_sequences;
     SequenceMap sequences;
     bool ended = false;
 
-    void undo(IvMap& map, Interval iv);
-    void solve(IvMap&, Interval, const go::Team&);
-    void mergeSequence(IvMap&, assoc&, Interval&);
-    void mergeSequence(IvMap&, std::array<assoc, 2>&, Interval&);
-    Split splitSequence(const IvMap::iterator&, Interval&);
+    void solve(IvMap&, Interval, go::Team);
+    
+    void create(IvMap&, Interval&, go::Team);
+    void increase(IvMap&, assoc&, Interval&, go::Team);
+    void merge(IvMap&, std::array<assoc, 2>&, Interval&, go::Team);
+    void split(IvMap& map, const IvMap::iterator&, Interval&);
     bool resize(IvMap&, const IvMap::iterator&, Interval&);
-    unsigned short newSequence(IvMap&, Interval&, const go::Team&);
-    IntervalPair generateIntervals(unsigned short,
-        unsigned short, unsigned short) const;
+    assoc premerge(IvMap&, const IvMap::iterator&);
+
+    void undoCreate();
+    void undoIncrease(IvMap&, Interval);
+    void undoMerge(IvMap&, Interval);
+    void undoSplit();
+    void undoResize();
 };
 
 #endif /* RANGE_BOARD_HPP */

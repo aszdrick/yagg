@@ -8,8 +8,8 @@
 #include <ostream>
 
 namespace go {
-    enum class Team {
-        BLACK, WHITE
+    enum class Team : unsigned short {
+        BLACK = 0, WHITE = 1
     };
 
     struct Position {

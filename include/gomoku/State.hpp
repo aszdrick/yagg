@@ -60,6 +60,7 @@ class go::State {
 
     void undo() {
         analyzer.undo();
+        ranger.undo();
         player = 1 - player;
     }
 
