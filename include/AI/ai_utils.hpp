@@ -57,7 +57,9 @@ namespace ai_utils {
     }
 
     template<typename Iterable>
-    inline auto applyWeights(const TeamValues& props, const Iterable& weightList) {
+    inline auto applyWeights(const TeamValues& props,
+        const Iterable& weightList, short player) {
+
         std::unordered_map<go::Team, double> sumPerTeam;
         for (auto& pair : props) {
             double result = 0;
@@ -70,47 +72,50 @@ namespace ai_utils {
             sumPerTeam[pair.first] = result;
         }
         // TRACE(sumPerTeam[go::Team::WHITE] - sumPerTeam[go::Team::BLACK]);
-        return sumPerTeam[go::Team::WHITE] - sumPerTeam[go::Team::BLACK];
+        auto baseValue = sumPerTeam[go::Team::BLACK] - sumPerTeam[go::Team::WHITE];
+        return baseValue * (1 - 2 * player); // flips the sum if white player
     }
 
     template<typename Iterable>
-    inline auto applyWeights(const go::State& state, const Iterable& weightList) {
-        return applyWeights(properties(state), weightList);
+    inline auto applyWeights(const go::State& state,
+        const Iterable& weightList, short player) {
+        
+        return applyWeights(properties(state), weightList, player);
     }
 
     template<unsigned id>
-    inline auto heuristic(const go::State&);
+    inline auto heuristic(const go::State&, unsigned, short);
 
     template<unsigned id>
-    inline auto utility(const go::State&);
+    inline auto utility(const go::State&, unsigned, short);
 
     // ------------------------ First AI ------------------------ //
 
     template<>
-    inline auto heuristic<1>(const go::State& state) {
+    inline auto heuristic<1>(const go::State& state, unsigned, short player) {
         constexpr auto weights = {
             10., 20., 100., 200., 1e4, 2e4, 1e8, 2e8,
             2000., 3000., 4000., 2e5, 3e5, 4e5, 2e6, 3e6, 4e6
         };
-        return applyWeights(state, weights);
+        return applyWeights(state, weights, player);
         // return 1.0;
     };
 
     template<>
-    inline auto utility<1>(const go::State& state) {
+    inline auto utility<1>(const go::State& state, unsigned level, short player) {
         // return 2.0;
-        return heuristic<1>(state);
+        return heuristic<1>(state, level, player) * (1 + 1.0/level);
     };
 
     // ------------------------ Second AI ------------------------ //
 
     template<>
-    inline auto heuristic<2>(const go::State&) {
+    inline auto heuristic<2>(const go::State&, unsigned, short) {
         return 3.0;
     };
 
     template<>
-    inline auto utility<2>(const go::State&) {
+    inline auto utility<2>(const go::State&, unsigned, short) {
         return 4.0;
     };
 }

@@ -4,25 +4,26 @@
 #include "gomoku/Traits.hpp"
 #include "extra/macros.hpp"
 
-template<typename T>
-MiniMaxTree<T>::MiniMaxTree(const RatingFunction<T>& heuristic,
-    const RatingFunction<T>& utility)
+template<typename T, typename... Args>
+MiniMaxTree<T, Args...>::MiniMaxTree(const RatingFunction<T, Args...>& heuristic,
+    const RatingFunction<T, Args...>& utility)
  : h_function(heuristic),
    u_function(utility) {
 
 }
 
-template<typename T>
+template<typename T, typename... Args>
 template<typename Generator>
-typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(T& currentState) {
-    auto depth = AITraits::MAX_DEPTH;
+minimax::AnalysisReport<T>
+MiniMaxTree<T, Args...>::analyze(T& currentState, Args... args) {
+    maxDepth = AITraits::MAX_DEPTH;
     double bestValue = -INT_MAX;
     T bestState;
     Generator::reset();
     Generator generator(currentState);
     while (generator.hasNext()) {
         const T& next = generator.generateNext(true);
-        auto value = calculate(generator, next, depth - 1);
+        auto value = calculate(generator, next, maxDepth - 1, args...);
         if (value > bestValue) {
             bestValue = value;
             bestState = next;
@@ -33,19 +34,27 @@ typename MiniMaxTree<T>::AnalysisReport MiniMaxTree<T>::analyze(T& currentState)
     return {generator.command(bestState), Generator::generationCount()};
 }
 
-template<typename T>
+template<typename T, typename... Args>
 template<typename Generator>
-double MiniMaxTree<T>::calculate(Generator& generator, const T& state,
-    unsigned depth, double alpha, double beta, Type type) const {
+double MiniMaxTree<T, Args...>::calculate(Generator& generator, const T& state,
+    unsigned depth, Args... args) const {
+
+    return exec(generator, state, depth, -INT_MAX, INT_MAX, Type::MIN, args...);
+}
+
+template<typename T, typename... Args>
+template<typename Generator>
+double MiniMaxTree<T, Args...>::exec(Generator& generator, const T& state,
+    unsigned depth, double alpha, double beta, Type type, Args... args) const {
 
     bool over = state.over();
     bool exceededMaxDepth = (depth == 0);
     if (over || exceededMaxDepth) {
         auto fn = over ? u_function : h_function;
-        return fn(state);
+        return fn(state, maxDepth - depth, args...);
     }
 
-    std::unordered_map<Type, initial_values<double>> options;
+    std::unordered_map<Type, minimax::initial_values<double>> options;
     std::function<double(double, double)> nop;
     options[Type::MAX] = {-INT_MAX, &alpha, nop, Type::MIN};
     options[Type::MIN] = {INT_MAX, &beta, nop, Type::MAX};
@@ -59,7 +68,7 @@ double MiniMaxTree<T>::calculate(Generator& generator, const T& state,
 
     while (generator.hasNext()) {
         const T& next = generator.generateNext();
-        auto nextValue = calculate(generator, next, depth - 1, alpha, beta, nextType);
+        auto nextValue = exec(generator, next, depth - 1, alpha, beta, nextType, args...);
         generator.undo();
         best = updater(best, nextValue);
         param = updater(param, best);
