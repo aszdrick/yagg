@@ -5,11 +5,22 @@
 #define GOMOKU_BOARD_ANALYZER_HPP
 
 #include "CommonTypes.hpp"
+#include "gomoku/Traits.hpp"
 #include <functional>
+#include <set>
 #include <stack>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+
+struct PositionComparator {
+    bool operator()(const go::Position& lhs, const go::Position& rhs) const {
+        constexpr static auto size = GomokuTraits::BOARD_DIMENSION;
+        auto first = lhs.row * size + lhs.column;
+        auto second = rhs.row * size + rhs.column;
+        return first < second;
+    }
+};
 
 class BoardAnalyzer {
  private:
@@ -48,7 +59,7 @@ class BoardAnalyzer {
     std::unordered_map<StoneGroup*, std::vector<Sequence>> sequences;
     bool hasQuintuple = false;
     std::stack<go::Position> history;
-    std::unordered_set<go::Position> freeSquares;
+    std::set<go::Position, PositionComparator> freeSquares;
 
     void recalculate(const go::Position&);
     Report findSequences(const StoneGroup&, const go::Position&);

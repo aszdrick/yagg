@@ -5,7 +5,6 @@
 #include <cmath>
 #include "extra/macros.hpp"
 #include "gomoku/BoardAnalyzer.hpp"
-#include "gomoku/Traits.hpp"
 
 BoardAnalyzer::BoardAnalyzer() {
     auto boardDimension = GomokuTraits::BOARD_DIMENSION;
@@ -111,9 +110,12 @@ unsigned BoardAnalyzer::countEmptySquares() const {
 }
 
 void BoardAnalyzer::undo() {
-    if (over() || history.empty()) {
+    if (history.empty()) {
         return;
     }
+
+    bool invalidate = over();
+
     auto& position = history.top();
     auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     unsigned row = position.row;
@@ -131,6 +133,18 @@ void BoardAnalyzer::undo() {
     freeSquares.insert(position);
     recalculate(position);
     history.pop();
+
+    if (invalidate) {
+        hasQuintuple = false;
+        for (auto& pair : sequences) {
+            for (auto& seq : pair.second) {
+                if (seq.stones.size() >= 5) {
+                    hasQuintuple = true;
+                    break;
+                }
+            }
+        }
+    }
 }
 
 void BoardAnalyzer::recalculate(const go::Position& position) {
