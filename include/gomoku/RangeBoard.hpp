@@ -25,10 +25,6 @@ struct Sequence {
     bool updateSequentiality();
 };
 
-enum class Operation {
-    CREATE, RESIZE, SPLIT
-};
-
 using Undo = std::function<void(void)>;
 using IvMap = std::map<Interval, unsigned short>;
 using assoc = std::pair<Interval, unsigned short>;
@@ -37,24 +33,6 @@ using IntervalMap = std::unordered_map<unsigned short, IvMap>;
 using IndexMapper = std::function<short(unsigned short, unsigned short)>;
 using RangeChooser = std::function<Interval(unsigned short, unsigned short)>;
 using ClassifierMap = std::array<std::unordered_set<unsigned short>, 8>;
-
-struct CreateContext {
-    std::reference_wrapper<IvMap> map;
-    Interval created;
-};
-
-struct ResizeContext {
-    std::reference_wrapper<IvMap> map;
-    Interval original;
-    Interval resized;
-};
-
-struct SplitContext {
-    std::reference_wrapper<IvMap> map;
-    Interval original;
-    Interval lower;
-    Interval upper;
-};
 
 class RangeBoard {
  public:
@@ -68,15 +46,7 @@ class RangeBoard {
     static const std::array<IndexMapper, 4> mappers;
     static const std::array<RangeChooser, 4> choosers;
 
-    std::stack<go::Stone> stones;
-    // std::stack<Undo> undos;
-    // std::stack<unsigned> undo_groupings;
-    
-    std::stack<Operation> operations;
-    std::stack<unsigned> operations_count;
-    std::stack<CreateContext> create_contexts;
-    std::stack<ResizeContext> resize_contexts;    
-    std::stack<SplitContext> split_contexts;
+    std::list<go::Stone> stones;
 
     unsigned short currentSequence = 0;
     std::array<IntervalMap, 4> lines;
@@ -94,11 +64,15 @@ class RangeBoard {
     bool resize(IvMap&, const IvMap::iterator&, Interval&);
     assoc premerge(IvMap&, const IvMap::iterator&);
 
-    void undoCreate();
-    void undoIncrease(IvMap&, Interval);
+    void undoCreate(IvMap&, const IvMap::iterator&);
+    void undoIncrease(IvMap&, const IvMap::iterator&, const Interval&);
+    void undoSplit(IvMap&, const IvMap::iterator&);
+    void undoSplit(IvMap&, const IvMap::iterator&, const IvMap::iterator&);
+    void undoResize(IvMap&, const IvMap::iterator&,
+        const Interval&, const Interval&);
+    void undoResize(IvMap&, const IvMap::iterator&,
+        const Interval&, unsigned short);
     void undoMerge(IvMap&, Interval);
-    void undoSplit();
-    void undoResize();
 };
 
 #endif /* RANGE_BOARD_HPP */

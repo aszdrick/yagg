@@ -13,7 +13,7 @@ inline short Interval::center_distance(const Interval& iv) const {
 }
 
 inline ushort Interval::size() const {
-    return high - low;
+    return high - low + 1;
 }
 
 inline bool operator<(const Interval& lhs, const Interval& rhs) {

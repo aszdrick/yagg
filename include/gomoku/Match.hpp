@@ -49,7 +49,7 @@ class Match : public mbe::Game::State {
 };
 
 struct Match::Request {
-    enum class Type { NONE, PAUSE, PLAY };
+    enum class Type { NONE, PAUSE, PLAY, UNDO };
     Type type;
     go::Position position;   
 };

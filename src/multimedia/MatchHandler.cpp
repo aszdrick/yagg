@@ -9,6 +9,9 @@ Match::Handler::Product Match::Handler::doUpdate(Agent& window, Element& event) 
     auto position = MatchTraits::SUP_BOARD_LIMIAR + go::Position{1,1};
     switch(event.type) {
         case sf::Event::MouseButtonPressed: {
+            if (event.mouseButton.button == sf::Mouse::Button::Right) {
+                return {Request::Type::UNDO, position};
+            }
             auto coords = window.mapPixelToCoords({
                 event.mouseButton.x, 
                 event.mouseButton.y
