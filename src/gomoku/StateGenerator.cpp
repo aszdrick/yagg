@@ -18,29 +18,31 @@ bool StateGenerator::hasNext() const {
 
 const go::State& StateGenerator::generateNext(bool set) {
     auto currentPlayer = state.currentPlayer();
-    // auto newState = state;
     const auto& position = nextPosition();
     if (set) {
-        first = position;
+        last = position;
     }
     generationIDs.back()++;
 
     state.play(position, static_cast<go::Team>(currentPlayer));
-    // state.emptySquares().pop();
     generations++;
     generationIDs.push_back(0);
     return state;
 }
 
-Player::Move StateGenerator::command(const go::State& target) const {
-    Player::Move command(static_cast<go::Team>(state.currentPlayer()));
-    command.setPosition(first);
-    return command;
-}
-
 void StateGenerator::undo() {
     state.undo();
     generationIDs.pop_back();
+}
+
+void StateGenerator::remember() {
+    chosen = last;
+}
+
+Player::Move StateGenerator::command() const {
+    Player::Move command(static_cast<go::Team>(state.currentPlayer()));
+    command.setPosition(chosen);
+    return command;
 }
 
 const go::Position& StateGenerator::nextPosition() const {

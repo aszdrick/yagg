@@ -18,7 +18,7 @@ minimax::AnalysisReport<T>
 MiniMaxTree<T, Args...>::analyze(T& currentState, Args... args) {
     maxDepth = AITraits::MAX_DEPTH;
     double bestValue = -INT_MAX;
-    T bestState;
+
     Generator::reset();
     Generator generator(currentState);
     while (generator.hasNext()) {
@@ -26,12 +26,12 @@ MiniMaxTree<T, Args...>::analyze(T& currentState, Args... args) {
         auto value = calculate(generator, next, maxDepth - 1, args...);
         if (value > bestValue) {
             bestValue = value;
-            bestState = next;
+            generator.remember();
         }
         generator.undo();
     }
 
-    return {generator.command(bestState), Generator::generationCount()};
+    return {generator.command(), Generator::generationCount()};
 }
 
 template<typename T, typename... Args>
