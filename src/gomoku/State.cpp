@@ -6,8 +6,8 @@
 
 void go::State::play(const go::Position& position, go::Team team) {
     if (!analyzer.occupied(position)) {
+        ranger.play(position, team);
         analyzer.play(position, team);
-        // ranger.play(position, team);
 
         if (analyzer.hasWinner()) {
             winner = player;

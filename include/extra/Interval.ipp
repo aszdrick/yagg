@@ -6,7 +6,7 @@ inline Interval Interval::unitary(unsigned short value) {
 }
 
 inline short Interval::center_distance(const Interval& iv) const {
-    if (center_low > iv.center_high)
+    if (center_low >= iv.center_high)
         return center_low - iv.center_high - 1;
     else
         return iv.center_low - center_high - 1;

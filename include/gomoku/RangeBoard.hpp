@@ -65,6 +65,8 @@ class RangeBoard {
     assoc premerge(IvMap&, const IvMap::iterator&);
 
     void undoCreate(IvMap&, const IvMap::iterator&);
+    void undoCentralMove(IvMap&, const IvMap::iterator&, const Interval&);
+    void undoMerge(IvMap&, const IvMap::iterator&);
     void undoIncrease(IvMap&, const IvMap::iterator&, const Interval&);
     void undoSplit(IvMap&, const IvMap::iterator&);
     void undoSplit(IvMap&, const IvMap::iterator&, const IvMap::iterator&);
@@ -72,7 +74,6 @@ class RangeBoard {
         const Interval&, const Interval&);
     void undoResize(IvMap&, const IvMap::iterator&,
         const Interval&, unsigned short);
-    void undoMerge(IvMap&, Interval);
 };
 
 #endif /* RANGE_BOARD_HPP */
