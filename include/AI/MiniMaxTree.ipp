@@ -23,6 +23,12 @@ MiniMaxTree<T, Args...>::analyze(T& currentState, Args... args) {
     Generator generator(currentState);
     while (generator.hasNext()) {
         const T& next = generator.generateNext(true);
+        if (next.over()) {
+            bestValue = INT_MAX;
+            generator.remember();
+            generator.undo();
+            break;
+        }
         auto value = calculate(generator, next, maxDepth - 1, args...);
         if (value > bestValue) {
             bestValue = value;
@@ -31,6 +37,7 @@ MiniMaxTree<T, Args...>::analyze(T& currentState, Args... args) {
         generator.undo();
     }
 
+    // TRACE(bestValue);
     return {generator.command(), Generator::generationCount()};
 }
 

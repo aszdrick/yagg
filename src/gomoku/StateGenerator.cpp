@@ -12,10 +12,6 @@ StateGenerator::StateGenerator(go::State& state) : state(state) {
     generationIDs.push_back(0);
 }
 
-bool StateGenerator::hasNext() const {
-    return state.emptySquares().size() > generationIDs.back();
-}
-
 const go::State& StateGenerator::generateNext(bool set) {
     auto currentPlayer = state.currentPlayer();
     const auto& position = nextPosition();
@@ -35,10 +31,6 @@ void StateGenerator::undo() {
     generationIDs.pop_back();
 }
 
-void StateGenerator::remember() {
-    chosen = last;
-}
-
 Player::Move StateGenerator::command() const {
     Player::Move command(static_cast<go::Team>(state.currentPlayer()));
     command.setPosition(chosen);
@@ -47,8 +39,5 @@ Player::Move StateGenerator::command() const {
 
 const go::Position& StateGenerator::nextPosition() const {
     auto& skip = generationIDs.back();
-    // for (size_t i = 0; i < skip; i++) {
-    //     ++iterator;
-    // }
     return *std::next(state.emptySquares().begin(), skip);
 }

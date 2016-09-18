@@ -15,6 +15,7 @@ namespace go {
     struct Position {
         int row;
         int column;
+        // Calculates the Chebyshev distance between two positions
         static unsigned distance(const go::Position& first,
                                  const go::Position& second) {
             unsigned r1 = first.row;
@@ -23,13 +24,7 @@ namespace go {
             unsigned c2 = second.column;
             auto deltaRow = (r1 > r2) ? r1 - r2 : r2 - r1;
             auto deltaColumn = (c1 > c2) ? c1 - c2 : c2 - c1;
-            if (deltaRow == deltaColumn) {
-                // same diagonal
-                return deltaRow;
-            }
-        
-            // manhattan distance
-            return deltaRow + deltaColumn;
+            return std::max(deltaRow, deltaColumn);
         }
     };
 

@@ -2,7 +2,6 @@
                   Marleson Graf <aszdrick@gmail.com> */
 
 #include <chrono>
-#include <type_traits>
 #include "AI/ai_utils.hpp"
 // #include "AI/AIHandler.hpp"
 #include "extra/macros.hpp"

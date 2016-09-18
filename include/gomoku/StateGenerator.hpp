@@ -4,7 +4,6 @@
 #ifndef STATE_GENERATOR_HPP
 #define STATE_GENERATOR_HPP
 
-#include <queue>
 #include "gomoku/CommonTypes.hpp"
 #include "gomoku/Player.hpp"
 #include "gomoku/State.hpp"
@@ -12,13 +11,19 @@
 class StateGenerator {
  public:
     explicit StateGenerator(go::State&);
-    bool hasNext() const;
     const go::State& generateNext(bool = false);
     void undo();
-    void remember();
     Player::Move command() const;
     static void reset() { generations = 0; }
     static unsigned generationCount() { return generations; }
+
+    bool hasNext() const {
+        return state.emptySquares().size() > generationIDs.back();
+    }
+
+    void remember() {
+        chosen = last;
+    }
 
  private:
     std::vector<unsigned> generationIDs;

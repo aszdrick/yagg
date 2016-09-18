@@ -115,6 +115,7 @@ void BoardAnalyzer::undo() {
     }
 
     bool invalidate = over();
+    hasQuintuple = false;
 
     auto& position = history.top();
     auto boardDimension = GomokuTraits::BOARD_DIMENSION;
@@ -131,11 +132,8 @@ void BoardAnalyzer::undo() {
         }
     }
     freeSquares.insert(position);
-    recalculate(position);
-    history.pop();
 
     if (invalidate) {
-        hasQuintuple = false;
         for (auto& pair : sequences) {
             for (auto& seq : pair.second) {
                 if (seq.stones.size() >= 5) {
@@ -145,6 +143,9 @@ void BoardAnalyzer::undo() {
             }
         }
     }
+
+    recalculate(position);
+    history.pop();
 }
 
 void BoardAnalyzer::recalculate(const go::Position& position) {
