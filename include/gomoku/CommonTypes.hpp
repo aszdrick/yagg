@@ -96,9 +96,13 @@ namespace go {
         return stream;
     }
 
+    inline std::ostream& operator<<(std::ostream& stream, const go::Position& pos) {
+        return stream << "{" << pos.row << "," << pos.column << "}";
+    }
+
     inline std::ostream& operator<<(std::ostream& stream, const go::Stone& stone) {
         auto pos = stone.position;
-        return stream << "{" << pos.row << "," << pos.column << "}" << ", "
+        return stream << pos << ", "
                << ((stone.team == go::Team::BLACK) ? "BLACK" : "WHITE");
     }
 }

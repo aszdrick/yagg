@@ -39,5 +39,5 @@ Player::Move StateGenerator::command() const {
 
 const go::Position& StateGenerator::nextPosition() const {
     auto& skip = generationIDs.back();
-    return *std::next(state.emptySquares().begin(), skip);
+    return *std::next(state.possibleSquares().begin(), skip);
 }

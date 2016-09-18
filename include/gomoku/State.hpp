@@ -64,8 +64,8 @@ class go::State {
         player = 1 - player;
     }
 
-    auto& emptySquares() {
-        return analyzer.emptySquares();
+    auto& possibleSquares() {
+        return analyzer.possibleSquares();
     }
 
     void print() const {

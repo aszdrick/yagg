@@ -113,15 +113,15 @@ void Match::Graphics::highlight(Agent& match, Element& window) const {
     };
 
     match.state.quadrupletIteration([&](auto& sequence) {
-        go::Stone& first = *sequence.stones.front();
-        go::Stone& last = *sequence.stones.back();
+        auto& first = *sequence.stones.front();
+        auto& last = *sequence.stones.back();
         unsigned distance = go::Position::distance(first.position, last.position);
         if (distance == 4) {
             go::Position hole;
-            go::Position* prev = &first.position;
+            auto prev = &first.position;
             for (unsigned i = 1; i < sequence.stones.size(); i++) {
-                go::Stone& stone = *sequence.stones[i];
-                go::Position& position = stone.position;
+                auto& stone = *sequence.stones[i];
+                auto& position = stone.position;
                 if (go::Position::distance(position, *prev) > 1) {
                     hole = (position + *prev) / 2;
                     break;

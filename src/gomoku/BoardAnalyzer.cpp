@@ -23,24 +23,28 @@ BoardAnalyzer::BoardAnalyzer() {
 
     stoneContainer.reserve(boardDimension * boardDimension);
 
-    using BoardType = std::decay_t<decltype(boardDimension)>;
-    for (BoardType row = 0; row < boardDimension; row++) {
-        for (BoardType col = 0; col < boardDimension; col++) {
-            go::Position position{
-                static_cast<int>(row),
-                static_cast<int>(col)
-            };
-            freeSquares.insert(std::move(position));
-        }
-    }
+    // using BoardType = std::decay_t<decltype(boardDimension)>;
+    // for (BoardType row = 0; row < boardDimension; row++) {
+    //     for (BoardType col = 0; col < boardDimension; col++) {
+    //         go::Position position{
+    //             static_cast<int>(row),
+    //             static_cast<int>(col)
+    //         };
+    //         freeSquares.insert(std::move(position));
+    //     }
+    // }
 }
 
 void BoardAnalyzer::play(const go::Position& position, go::Team team) {
     auto start = std::chrono::system_clock::now().time_since_epoch();
     history.push(position);
-    freeSquares.erase(position);
+    // freeSquares.erase(position);
+    searchSpace.play(position);
     stoneContainer.push_back(go::Stone{position, team});
     go::Stone* stone = &stoneContainer.back();
+    // go::Stone newStone{position, team};
+    // stoneContainer.insert(newStone);
+    // const go::Stone* stone = &*stoneContainer.find(newStone);
 
     auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     unsigned row = position.row;
@@ -86,10 +90,10 @@ void BoardAnalyzer::sequenceIteration(const SequenceCallback& fn) const {
 }
 
 bool BoardAnalyzer::occupied(const go::Position& position) const {
-    // unsigned row = position.row;
-    // unsigned column = position.column;
-    // return rows.count(row) && rows.at(row).count(column);
-    return !freeSquares.count(position);
+    unsigned row = position.row;
+    unsigned column = position.column;
+    return rows.count(row) && rows.at(row).count(column);
+    // return !freeSquares.count(position);
 }
 
 bool BoardAnalyzer::over() const {
@@ -114,9 +118,6 @@ void BoardAnalyzer::undo() {
         return;
     }
 
-    bool invalidate = over();
-    hasQuintuple = false;
-
     auto& position = history.top();
     auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     unsigned row = position.row;
@@ -125,15 +126,20 @@ void BoardAnalyzer::undo() {
     columns[column].erase(row);
     mainDiagonals[boardDimension + row - column].erase(row);
     secondaryDiagonals[row + column].erase(row);
-    for (auto it = stoneContainer.begin(); it != stoneContainer.end(); ++it) {
-        if (it->position == position) {
-            stoneContainer.erase(it);
-            break;
-        }
-    }
-    freeSquares.insert(position);
+    auto it = std::find_if(stoneContainer.begin(),
+        stoneContainer.end(), [&position](const auto& stone) {
+            return stone.position == position;
+        });
+    stoneContainer.erase(it);
+    // go::Stone target{position, go::Team::BLACK};
+    // stoneContainer.erase(target);
+    // freeSquares.insert(position);
+    searchSpace.undo(position);
 
-    if (invalidate) {
+    bool invalidate = over();
+    hasQuintuple = false;
+    recalculate(position);
+    if (invalidate && !over()) {
         for (auto& pair : sequences) {
             for (auto& seq : pair.second) {
                 if (seq.stones.size() >= 5) {
@@ -144,7 +150,6 @@ void BoardAnalyzer::undo() {
         }
     }
 
-    recalculate(position);
     history.pop();
 }
 

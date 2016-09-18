@@ -19,14 +19,16 @@ int main(int argc, char** argv) {
     engine.run();
 
     // go::State state;
-    // StateGenerator generator(state);
-    // int i = 0;
-    // while (generator.hasNext()) {
-    //     generator.generateNext();
-    //     i++;
-    //     ECHO(i);
-    //     generator.undo();
-    // }
+    // TRACE_IT(state.possibleSquares());
+    // BLANK
+    // state.play(go::Position{7, 7}, go::Team::BLACK);
+    // TRACE_IT(state.possibleSquares());
+    // BLANK
+    // state.play(go::Position{9, 8}, go::Team::WHITE);
+    // TRACE_IT(state.possibleSquares());
+    // BLANK
+    // state.undo();
+    // TRACE_IT(state.possibleSquares());
 
     // auto fn = [](const go::State&) {
     //     return 0;

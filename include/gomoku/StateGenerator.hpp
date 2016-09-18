@@ -18,7 +18,7 @@ class StateGenerator {
     static unsigned generationCount() { return generations; }
 
     bool hasNext() const {
-        return state.emptySquares().size() > generationIDs.back();
+        return state.possibleSquares().size() > generationIDs.back();
     }
 
     void remember() {
