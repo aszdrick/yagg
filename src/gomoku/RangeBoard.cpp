@@ -177,6 +177,8 @@ void RangeBoard::merge(IvMap& map, std::array<assoc,2>& merges,
         high = 0;
     }
 
+    merge_keys.push(merges[high].second);
+
     auto& low_piv = merges[low].first;
     auto& high_piv = merges[high].first;
     auto& low_sequence = sequences[merges[low].second];
@@ -402,6 +404,8 @@ void RangeBoard::undoMerge(IvMap& map,
     auto lower_it = std::prev(seq_it);
     auto upper_it = std::next(seq_it);
     auto begin = upper_sequence.placedPositions.begin();
+    auto old_key = merge_keys.top();
+    merge_keys.pop();
 
     upper_iv.center_low = *upper_it;
     lower_iv.center_high = *lower_it;
@@ -415,7 +419,7 @@ void RangeBoard::undoMerge(IvMap& map,
     upper_sequence.totalSize = upper_sequence.placedPositions.size();
     upper_sequence.capacity = upper_iv.size();
 
-    sequences[currentSequence] = {
+    sequences[old_key] = {
         upper_sequence.team,
         static_cast<unsigned short>(positions.size()),
         lower_iv.size(),
@@ -424,17 +428,15 @@ void RangeBoard::undoMerge(IvMap& map,
         positions
     };
 
-    sequences[currentSequence].updateSequentiality();
+    sequences[old_key].updateSequentiality();
     upper_sequence.openings.first = true;
 
     // TRACE(lower_iv);
     // TRACE(upper_iv);
 
     auto hint = map.erase(it);
-    hint = map.insert(hint, {lower_iv, currentSequence});
+    hint = map.insert(hint, {lower_iv, old_key});
     map.insert(hint, {upper_iv, key});
-
-    ++currentSequence;
 }
 
 void RangeBoard::undoSideMove(IvMap& map, const IvMap::iterator& it,
@@ -583,9 +585,6 @@ void RangeBoard::undoSplit(IvMap& map,
     // ECHO("undo split");
     auto original = upper_it->first;
     auto lower_iv = lower_it->first;
-    // TRACE(original);
-    assert(original.low <= original.center_low && original.center_low <= original.center_high && original.center_high <= original.high);
-    // TRACE(lower_iv);
     auto upper_key = upper_it->second;
     auto lower_key = lower_it->second;
     auto& upper_sequence = sequences[upper_key];
@@ -616,6 +615,7 @@ void RangeBoard::undoSplit(IvMap& map,
     // TRACE(original);
     assert(original.low <= original.center_low && original.center_low <= original.center_high && original.center_high <= original.high);
     map.insert({original, upper_key});
+    --currentSequence;
 }
 
 bool RangeBoard::occupied(const go::Position& position) const {

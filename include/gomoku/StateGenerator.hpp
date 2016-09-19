@@ -18,7 +18,7 @@ class StateGenerator {
     static unsigned generationCount() { return generations; }
 
     bool hasNext() const {
-        return state.possibleSquares().size() > generationIDs.back();
+        return state.possibleSquares().size() > generatedPositions.back().size();
     }
 
     void remember() {
@@ -26,7 +26,7 @@ class StateGenerator {
     }
 
  private:
-    std::vector<unsigned> generationIDs;
+    std::list<std::set<go::Position>> generatedPositions;
     static unsigned generations;
     go::State& state;
     go::Position last;

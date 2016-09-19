@@ -6,21 +6,9 @@
 
 #include <deque>
 #include <set>
+#include <stack>
 #include "CommonTypes.hpp"
 #include "extra/macros.hpp"
-
-struct PositionComparator {
-    bool operator()(const go::Position& lhs, const go::Position& rhs) const {
-        constexpr static auto ref = go::Position{7, 7};
-        auto d1 = go::Position::distance(ref, lhs) + lhs.row/100.0 + lhs.column/1000.0;
-        auto d2 = go::Position::distance(ref, rhs) + rhs.row/100.0 + rhs.column/1000.0;
-        return d1 < d2;
-        // constexpr static auto size = GomokuTraits::BOARD_DIMENSION;
-        // auto first = lhs.row * size + lhs.column;
-        // auto second = rhs.row * size + rhs.column;
-        // return first < second;
-    }
-};
 
 class SearchSpace {
  public:
@@ -33,9 +21,10 @@ class SearchSpace {
     }
 
  private:
-    std::deque<go::Position> history;
-    std::set<go::Position, PositionComparator> space;
-    // std::set<go::Position, PositionComparator> fragile;
+    // std::deque<go::Position> history;
+    std::stack<bool> magicEntity;
+    std::set<go::Position> space;
+    // std::set<go::Position> fragile;
 
     void init();
 };

@@ -13,9 +13,10 @@ void base::Command<go::State>::setTeam(const go::Team& t) {
 }
 
 void base::Command<go::State>::setPosition(const go::Position& pos) {
+    constexpr static auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     position = pos;
-    valid = (position >= MatchTraits::INF_BOARD_LIMIAR
-             && position <= MatchTraits::SUP_BOARD_LIMIAR);
+    valid = (position.row >= 0 && position.row < boardDimension
+          && position.column >= 0 && position.column < boardDimension);
 }
 
 bool base::Command<go::State>::isValid() const {

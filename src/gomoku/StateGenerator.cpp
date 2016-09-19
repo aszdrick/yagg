@@ -9,7 +9,7 @@
 unsigned StateGenerator::generations = 0;
 
 StateGenerator::StateGenerator(go::State& state) : state(state) {
-    generationIDs.push_back(0);
+    generatedPositions.emplace_back();
 }
 
 const go::State& StateGenerator::generateNext(bool set) {
@@ -18,17 +18,17 @@ const go::State& StateGenerator::generateNext(bool set) {
     if (set) {
         last = position;
     }
-    generationIDs.back()++;
+    generatedPositions.back().insert(position);
 
     state.play(position, static_cast<go::Team>(currentPlayer));
     generations++;
-    generationIDs.push_back(0);
+    generatedPositions.emplace_back();
     return state;
 }
 
 void StateGenerator::undo() {
     state.undo();
-    generationIDs.pop_back();
+    generatedPositions.pop_back();
 }
 
 Player::Move StateGenerator::command() const {
@@ -38,6 +38,12 @@ Player::Move StateGenerator::command() const {
 }
 
 const go::Position& StateGenerator::nextPosition() const {
-    auto& skip = generationIDs.back();
-    return *std::next(state.possibleSquares().begin(), skip);
+    auto& space = state.possibleSquares();
+    auto it = space.begin();
+    auto& context = generatedPositions.back();
+    while (context.count(*it)) {
+        assert(it != space.end());
+        std::advance(it, 1);
+    }
+    return *it;
 }

@@ -20,6 +20,8 @@ int main(int argc, char** argv) {
 
     // go::State state;
     // TRACE_IT(state.possibleSquares());
+    // state.play(go::Position{7, 7}, go::Team::BLACK);
+    // state.undo();
     // BLANK
     // state.play(go::Position{7, 7}, go::Team::BLACK);
     // TRACE_IT(state.possibleSquares());
