@@ -26,7 +26,7 @@ struct Sequence {
 };
 
 using Undo = std::function<void(void)>;
-using IvMap = std::map<Interval, unsigned short>;
+using IvMap = std::map<Interval, unsigned>;
 using assoc = std::pair<Interval, unsigned short>;
 using SequenceMap = std::unordered_map<unsigned short, Sequence>;
 using IntervalMap = std::unordered_map<unsigned short, IvMap>;
@@ -48,13 +48,14 @@ class RangeBoard {
 
     std::list<go::Stone> stones;
 
-    unsigned short currentSequence = 0;
+    unsigned currentSequence = 0;
     std::array<IntervalMap, 4> lines;
     std::array<unsigned, 2> dominations;
     std::array<ClassifierMap, 2> classified_sequences;
     SequenceMap sequences;
     bool ended = false;
     std::stack<std::string> sanity;
+    std::stack<unsigned short> merge_keys;
 
     void solve(IvMap&, Interval, go::Team);
     

@@ -36,7 +36,10 @@ namespace go {
     class State;
 
     inline bool operator<(const Position& lhs, const Position& rhs) {
-        return lhs.row < rhs.row || lhs.column < rhs.column;
+        constexpr static auto ref = go::Position{7, 7};
+        auto d1 = go::Position::distance(ref, lhs) + lhs.row/100.0 + lhs.column/1000.0;
+        auto d2 = go::Position::distance(ref, rhs) + rhs.row/100.0 + rhs.column/1000.0;
+        return d1 < d2;
     }
 
     inline bool operator>(const Position& lhs, const Position& rhs) {
@@ -85,15 +88,7 @@ namespace go {
     }
 
     inline std::ostream& operator<<(std::ostream& stream, const go::Team& team) {
-        switch (team) {
-            case go::Team::BLACK:
-                stream << "Black";
-                break;
-            case go::Team::WHITE:
-                stream << "White";
-                break;
-        }
-        return stream;
+        return stream << to_string(team);
     }
 
     inline std::ostream& operator<<(std::ostream& stream, const go::Position& pos) {
@@ -102,8 +97,7 @@ namespace go {
 
     inline std::ostream& operator<<(std::ostream& stream, const go::Stone& stone) {
         auto pos = stone.position;
-        return stream << pos << ", "
-               << ((stone.team == go::Team::BLACK) ? "BLACK" : "WHITE");
+        return stream << pos << ", " << to_string(stone.team);
     }
 }
 

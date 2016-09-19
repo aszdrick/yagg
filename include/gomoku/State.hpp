@@ -60,7 +60,7 @@ class go::State {
 
     void undo() {
         analyzer.undo();
-        ranger.undo();
+        // ranger.undo();
         player = 1 - player;
     }
 
@@ -81,7 +81,7 @@ class go::State {
     short player = 0;
     decltype(player) winner = 0;
     BoardAnalyzer analyzer;
-    RangeBoard ranger;
+    // RangeBoard ranger;
 };
 
 #endif /* GO_STATE_HPP */
