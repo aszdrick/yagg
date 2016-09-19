@@ -10,17 +10,17 @@
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
-#include "gomoku/CommonTypes.hpp"
-#include "extra/Matrix.hpp"
+#include "CommonTypes.hpp"
 #include "extra/Interval.hpp"
+#include "SearchSpace.hpp"
 
 struct Sequence {
     go::Team team;
     unsigned short totalSize;
     unsigned short capacity;
-    bool sequential;
+    unsigned short fragmentation;
     std::pair<bool, bool> openings;
-    std::set<unsigned short> placedPositions;
+    std::set<unsigned short> positions;
 
     bool updateSequentiality();
 };
@@ -32,13 +32,18 @@ using SequenceMap = std::unordered_map<unsigned short, Sequence>;
 using IntervalMap = std::unordered_map<unsigned short, IvMap>;
 using IndexMapper = std::function<short(unsigned short, unsigned short)>;
 using RangeChooser = std::function<Interval(unsigned short, unsigned short)>;
-using ClassifierMap = std::array<std::unordered_set<unsigned short>, 8>;
+using ClassifierMap = std::unordered_map<unsigned short, 
+                        std::unordered_map<unsigned short,
+                            std::array<std::unordered_set<unsigned short>,3>>>;
+using StoneCallback = std::function<void(const go::Stone&)>;
 
 class RangeBoard {
  public:
-    bool finished() const { return ended; }
+    bool tie() const;
+    bool finished() const;
     bool occupied(const go::Position& position) const;
 
+    void iterate(const StoneCallback&) const;
     void play(const go::Position&, go::Team);
     void undo();
 
@@ -46,8 +51,9 @@ class RangeBoard {
     static const std::array<IndexMapper, 4> mappers;
     static const std::array<RangeChooser, 4> choosers;
 
+    SearchSpace search_space;
     std::list<go::Stone> stones;
-
+    std::set<go::Position> placed_positions;
     unsigned currentSequence = 0;
     std::array<IntervalMap, 4> lines;
     std::array<unsigned, 2> dominations;
@@ -56,12 +62,16 @@ class RangeBoard {
     bool ended = false;
     std::stack<std::string> sanity;
     std::stack<unsigned short> merge_keys;
+    std::stack<bool> ended_values;
+
+
+    void classify(unsigned short, const Sequence&);
+    void unclassify(unsigned short, const Sequence&);
 
     void solve(IvMap&, Interval, go::Team);
-    
     void create(IvMap&, Interval&, go::Team);
-    void increase(IvMap&, assoc&, Interval&, go::Team);
-    void merge(IvMap&, std::array<assoc, 2>&, Interval&, go::Team);
+    void increase(IvMap&, assoc&, Interval&);
+    void merge(IvMap&, std::array<assoc, 2>&, Interval&);
     void split(IvMap& map, const IvMap::iterator&, Interval&);
     bool resize(IvMap&, const IvMap::iterator&, Interval&);
     assoc premerge(IvMap&, const IvMap::iterator&);
@@ -79,5 +89,17 @@ class RangeBoard {
     void undoResize(IvMap&, const IvMap::iterator&, const Interval&,
         unsigned short);
 };
+
+inline bool RangeBoard::finished() const {
+    return ended || tie();
+}
+
+inline bool RangeBoard::tie() const {
+    return false;
+}
+
+inline bool RangeBoard::occupied(const go::Position& position) const {
+    return placed_positions.count(position);
+}
 
 #endif /* RANGE_BOARD_HPP */

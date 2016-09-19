@@ -6,6 +6,7 @@
 
 #include <ostream>
 #include <map>
+#include "gomoku/CommonTypes.hpp"
 
 struct Interval {
     unsigned short low;
@@ -15,6 +16,7 @@ struct Interval {
 
     static Interval unitary(unsigned short);
     short center_distance(const Interval&) const;
+    unsigned short extract(const go::Position&) const;
     ushort size() const;
 };
 

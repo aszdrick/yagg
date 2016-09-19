@@ -25,3 +25,12 @@ inline std::ostream& operator<<(std::ostream& out, const Interval& iv) {
     out << iv.center_high << ")" << iv.high << "]";
     return out;
 }
+
+inline unsigned short Interval::extract(const go::Position& position) const {
+    if (position.row == center_low || position.row == center_high) {
+        return position.column;
+    } else if (position.column == center_low || position.column == center_high) {
+        return position.row;
+    }
+    return -1;
+}

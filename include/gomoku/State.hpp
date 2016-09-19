@@ -16,7 +16,8 @@ class go::State {
     void play(const go::Position&, go::Team);
 
     void iterate(const std::function<void(const Stone&)>& fn) const {
-        analyzer.iterate(fn);
+        // analyzer.iterate(fn);
+        ranger.iterate(fn);
     }
 
     void quadrupletIteration(const BoardAnalyzer::SequenceCallback& fn) const {
@@ -40,27 +41,28 @@ class go::State {
     }
 
     bool occupied(const go::Position& pos) const {
-        return analyzer.occupied(pos);
-        // return ranger.occupied(pos);
+        // return analyzer.occupied(pos);
+        return ranger.occupied(pos);
     }
 
     bool over() const { 
-        return analyzer.over();
-        // return ranger.finished();
+        // return analyzer.over();
+        return ranger.finished();
     }
 
     bool hasWinner() const {
-        return analyzer.hasWinner();
-        // return ranger.finished();
+        // return analyzer.hasWinner();
+        return ranger.finished() && !ranger.tie();
     }
 
     bool full() const {
-        return analyzer.full();
+        // return analyzer.full();
+        return ranger.tie();
     }
 
     void undo() {
         analyzer.undo();
-        // ranger.undo();
+        ranger.undo();
         player = 1 - player;
     }
 
@@ -81,7 +83,7 @@ class go::State {
     short player = 0;
     decltype(player) winner = 0;
     BoardAnalyzer analyzer;
-    // RangeBoard ranger;
+    RangeBoard ranger;
 };
 
 #endif /* GO_STATE_HPP */
