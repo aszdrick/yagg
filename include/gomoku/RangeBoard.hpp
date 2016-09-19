@@ -54,6 +54,7 @@ class RangeBoard {
     std::array<ClassifierMap, 2> classified_sequences;
     SequenceMap sequences;
     bool ended = false;
+    std::stack<std::string> sanity;
 
     void solve(IvMap&, Interval, go::Team);
     
@@ -66,14 +67,16 @@ class RangeBoard {
 
     void undoCreate(IvMap&, const IvMap::iterator&);
     void undoCentralMove(IvMap&, const IvMap::iterator&, const Interval&);
-    void undoMerge(IvMap&, const IvMap::iterator&);
-    void undoIncrease(IvMap&, const IvMap::iterator&, const Interval&);
+    void undoMerge(IvMap&, const IvMap::iterator&, const Interval&);
+    void undoSideMove(IvMap&, const IvMap::iterator&, const Interval&,
+        const Interval&, const Interval&);
+    Interval undoIncrease(IvMap&, const IvMap::iterator&, const Interval&);
     void undoSplit(IvMap&, const IvMap::iterator&);
     void undoSplit(IvMap&, const IvMap::iterator&, const IvMap::iterator&);
-    void undoResize(IvMap&, const IvMap::iterator&,
-        const Interval&, const Interval&);
-    void undoResize(IvMap&, const IvMap::iterator&,
-        const Interval&, unsigned short);
+    void undoResize(IvMap&, const IvMap::iterator&, const Interval&,
+        const Interval&);
+    void undoResize(IvMap&, const IvMap::iterator&, const Interval&,
+        unsigned short);
 };
 
 #endif /* RANGE_BOARD_HPP */

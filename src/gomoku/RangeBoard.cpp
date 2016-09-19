@@ -21,10 +21,17 @@ void RangeBoard::play(const go::Position& position, go::Team team) {
         auto index = mappers[i](row, column);
         if (index > -1) {
             auto iv = choosers[i](row, column);
+            TRACE(iv);
             if (!lines[i][index].count(iv)) {
+                ECHO("create");
                 create(lines[i][index], iv, team);
+                sanity.push("create");
             } else {
                 solve(lines[i][index], iv, team);
+            }
+            std::cout << "--------------- MAP " << i << " -----------------" << std::endl;
+            for (auto interval : lines[i][index]) {
+                TRACE(interval.first);
             }
         }
     }
@@ -42,7 +49,7 @@ void RangeBoard::undo() {
     if (!stones.empty()) {
         auto& stone = stones.back();
         auto& position = stone.position;
-        for (auto i = 0; i < 4; i++) {
+        for (auto i = 3; i > -1; i--) {
             std::cout << "------------------ " << i << " ------------------" << std::endl;
             auto index = mappers[i](position.row, position.column);
             auto& map = lines[i][index];
@@ -52,32 +59,42 @@ void RangeBoard::undo() {
                 auto desired = choosers[i](position.row, position.column);
                 TRACE(desired);
                 auto atom = Interval::unitary(desired.center_low);
+                TRACE(atom);
+                assert(map.count(atom));
                 auto it = map.find(atom);
                 auto iv = it->first;
                 auto size = iv.size();
                 TRACE(iv);
-                TRACE(atom);
                 TRACE(size);
                 TRACE(desired.size());
                 auto distance = iv.center_distance(atom);
                 TRACE(distance);
                 if (distance >= -1) {
                     if (iv.center_low != iv.center_high) {
-                        if (size > desired.size()){
-                            // SEQUENCE INCREASED
-                            undoIncrease(map, it, atom);
-                        } else {
-                            // SEQUENCE(S) RESIZED
-                            undoResize(map, it, iv, atom);
-                        }
+                        TRACE(sanity.top());
+                        assert(sanity.top() == "increase");
+                        sanity.pop();
+                        undoSideMove(map, it, iv, atom, desired);
                     } else if (size == desired.size()) {
                         // SEQUENCE ONLY CREATED
+                        TRACE(sanity.top());
+                        assert(sanity.top() == "create");
+                        sanity.pop();
                         undoCreate(map, it);
-                    } else if (size < 4) {
+                    } else if (size < 4 
+                               && it != map.begin() 
+                               && std::next(it) != map.end()) {
                         // SEQUENCE SPLITED
+                        TRACE(sanity.top());
+                        assert(sanity.top() == "split");
+                        sanity.pop();
                         undoSplit(map, it);
                     } else {
                         // SEQUENCE(S) RESIZED
+                        TRACE(sanity.top());
+                        TRACE(sanity.size());
+                        assert(sanity.top() == "resize");
+                        sanity.pop();
                         undoResize(map, it, iv, atom);
                     }
                 } else {
@@ -85,6 +102,10 @@ void RangeBoard::undo() {
                     // STONE PLACED IN CENTER
                     undoCentralMove(map, it, atom);
                 }
+            }
+            std::cout << "--------------- MAP " << i << " -----------------" << std::endl;
+            for (auto interval : map) {
+                TRACE(interval.first);
             }
         }
         stones.pop_back();
@@ -117,6 +138,7 @@ void RangeBoard::solve(IvMap& map, Interval iv, go::Team team) {
             noMerges = false;
             ++mergeCount;
         } else if (!resize(map, it, iv)) {
+            sanity.push("split");
             ECHO("split");
             split(map, it, iv);
             return;
@@ -125,13 +147,16 @@ void RangeBoard::solve(IvMap& map, Interval iv, go::Team team) {
     }
     
     if (noMerges) {
-        ECHO("double resize");
+        ECHO("resize");
+        sanity.push("resize");
         create(map, iv, team);
     } else if (mergeCount > 1) {
         ECHO("merge");
+        sanity.push("merge");
         merge(map, merges, iv, team);
     } else {
         ECHO("increase");
+        sanity.push("increase");
         increase(map, merges[0], iv, team);
     }
 }
@@ -244,7 +269,7 @@ void RangeBoard::split(IvMap& map, const IvMap::iterator& it, Interval& iv) {
     auto lowerOpening = sequence.openings.first;
     
     sequence.placedPositions.erase(begin, upper);
-    sequence.totalSize -= std::distance(begin, upper);
+    sequence.totalSize = sequence.placedPositions.size();
     sequence.capacity -= capacity;
     sequence.openings.first = (upper_iv.center_low - iv.center_high) > 1;
     sequence.updateSequentiality();
@@ -290,6 +315,7 @@ bool RangeBoard::resize(IvMap& map, const IvMap::iterator& it, Interval& iv) {
     }
 
     auto hint = map.erase(it);
+    TRACE(resized);
     map.insert(hint, {resized, it->second});
 
     auto decrement = size - resized.size();
@@ -344,47 +370,118 @@ void RangeBoard::undoCentralMove(IvMap& map,
     assert(upper_it != sequence.placedPositions.end());
 
     if (*upper_it - *lower_it > 4) {
-        undoMerge(map, it);
+        TRACE(sanity.top());
+        assert(sanity.top() == "merge");
+        sanity.pop();
+        undoMerge(map, it, atom);
     } else {
+        TRACE(sanity.top());
+        assert(sanity.top() == "increase");
+        sanity.pop();
         sequence.placedPositions.erase(seq_it);
+        sequence.updateSequentiality();
         --sequence.totalSize;
     }
 }
 
-void RangeBoard::undoMerge(IvMap& map, const IvMap::iterator& it) {
+void RangeBoard::undoMerge(IvMap& map,
+                           const IvMap::iterator& it,
+                           const Interval& atom) {
     ECHO("undo merge");
-    auto iv = it->first;
+    auto lower_iv = it->first;
+    auto upper_iv = lower_iv;
     auto key = it->second;
-    auto& sequence = sequences[key];
-    
+    auto& upper_sequence = sequences[key];
+    auto seq_it = upper_sequence.placedPositions.find(atom.center_low);
+    auto lower_it = std::prev(seq_it);
+    auto upper_it = std::next(seq_it);
+    auto begin = upper_sequence.placedPositions.begin();
+
+    upper_iv.center_low = *upper_it;
+    lower_iv.center_high = *lower_it;
+
+    upper_iv.low = lower_iv.center_high + 1;
+    lower_iv.high = upper_iv.center_low - 1;
+
+    auto positions = std::set<unsigned short>(begin, seq_it);
+
+    upper_sequence.placedPositions.erase(begin, upper_it);
+    upper_sequence.totalSize = upper_sequence.placedPositions.size();
+    upper_sequence.capacity = upper_iv.size();
+
+    sequences[currentSequence] = {
+        upper_sequence.team,
+        static_cast<unsigned short>(positions.size()),
+        lower_iv.size(),
+        true,
+        {upper_sequence.openings.first, true},
+        positions
+    };
+
+    sequences[currentSequence].updateSequentiality();
+    upper_sequence.openings.first = true;
+
+    TRACE(lower_iv);
+    TRACE(upper_iv);
+
+    auto hint = map.erase(it);
+    hint = map.insert(hint, {lower_iv, currentSequence});
+    map.insert(hint, {upper_iv, key});
+
+    ++currentSequence;
 }
 
-void RangeBoard::undoResize(IvMap& map,
-                            const IvMap::iterator& it,
-                            const Interval& iv,
-                            const Interval& atom) {
+void RangeBoard::undoSideMove(IvMap& map, const IvMap::iterator& it,
+                              const Interval& iv, const Interval& atom,
+                              const Interval& desired) {
+    auto upper_it = std::next(it);
+    auto lower_it = std::prev(it);
+    // SEQUENCE INCREASED
+    auto original = undoIncrease(map, it, atom);
+
+    if (iv.center_low == atom.center_low) {
+        if (iv.low > desired.low) {
+            assert(it != map.begin());
+            // LOWER SEQUENCE RESIZED
+            auto piv = lower_it->first;
+            auto old = piv.high;
+            piv.high = std::min(piv.center_high + 4, original.center_low - 1);
+            undoResize(map, lower_it, piv, piv.high - old);
+        }
+    } else if (iv.center_high == atom.center_high) {
+        if (iv.high < desired.high) {
+            assert(upper_it != map.end());
+            // UPPER SEQUENCE RESIZED
+            auto piv = upper_it->first;
+            auto old = piv.low;
+            piv.low = std::max(piv.center_low - 4, original.center_high + 1);
+            undoResize(map, upper_it, piv, old - piv.low);
+        }
+    }
+}
+
+void RangeBoard::undoResize(IvMap& map, const IvMap::iterator& it,
+                            const Interval& iv, const Interval& atom) {
     ECHO("undo resize");
     auto lower_diff = iv.center_low - iv.low;
     auto upper_diff = iv.high - iv.center_high;
     auto sanityCheck = false;
     auto upper_it = std::next(it);
+    auto lower_it = std::prev(it);
     auto has_lower = it != map.begin();
     auto has_upper = upper_it != map.end();
 
-
-    if (iv.center_low != iv.center_high) {
-        undoIncrease(map, it, atom);
-    } else {
-        undoCreate(map, it);
-    }
+    undoCreate(map, it);
 
     if (lower_diff < 4 && has_lower) {
         ECHO("lower resize");
-        auto lower_it = std::prev(it);
         auto piv = lower_it->first;
         auto diff = 4 - (piv.high - piv.center_high);
-        piv.high += std::min(diff, upper_diff + 1);
-        auto increment = std::min(diff, lower_diff + 1);
+        TRACE(piv);
+        TRACE(diff);
+        TRACE(upper_diff);
+        auto increment = std::min(diff, upper_diff + 1);
+        piv.high += increment;
         undoResize(map, lower_it, piv, increment);
         sanityCheck = true;
     }
@@ -393,10 +490,8 @@ void RangeBoard::undoResize(IvMap& map,
         ECHO("upper resize");
         auto piv = upper_it->first;
         auto diff = 4 - (piv.center_low - piv.low);
-        TRACE(diff);
-        TRACE(lower_diff);
         auto increment = std::min(diff, lower_diff + 1);
-        piv.low -= std::min(diff, lower_diff + 1);
+        piv.low -= increment;
         undoResize(map, upper_it, piv, increment);
         sanityCheck = true;
     }
@@ -413,6 +508,7 @@ void RangeBoard::undoResize(IvMap& map,
     auto& sequence = sequences[key];
     auto team = static_cast<unsigned short>(sequence.team);
     TRACE(original);
+    assert(original.low <= original.center_low && original.center_low <= original.center_high && original.center_high <= original.high);
     auto hint = map.erase(it);
     map.insert(hint, {original, key});
     
@@ -420,7 +516,7 @@ void RangeBoard::undoResize(IvMap& map,
     sequence.capacity += increment;
 }
 
-void RangeBoard::undoIncrease(IvMap& map,
+Interval RangeBoard::undoIncrease(IvMap& map,
                               const IvMap::iterator& it,
                               const Interval& atom) {
     ECHO("undo increase");
@@ -432,29 +528,37 @@ void RangeBoard::undoIncrease(IvMap& map,
     auto end = std::prev(sequence.placedPositions.end());
     auto decrement = 0;
 
+    TRACE(*begin);
     if (atom.center_low == *begin) {
         auto next = std::next(begin);
         sequence.placedPositions.erase(begin);
         original.center_low = *next;
         int old = original.low;
+        assert((original.center_low - 4) < 15);
         original.low = std::max(old, original.center_low - 4);
         decrement = original.low - old;
     } else {
+        TRACE(atom.center_low);
+        TRACE(*end);
         assert(atom.center_low == *end);
         auto prev = std::prev(end);
         sequence.placedPositions.erase(end);
         original.center_high = *prev;
         int old = original.high;
+        assert((original.center_high + 4) < 15);
         original.high = std::min(old, original.center_high + 4);
         decrement = old - original.high;
     }
 
     auto hint = map.erase(it);
     TRACE(original);
+    assert(original.low <= original.center_low && original.center_low <= original.center_high && original.center_high <= original.high);
     map.insert(hint, {original, key});
     
     --sequence.totalSize;
     dominations[team] -= decrement;
+
+    return original;
 }
 
 void RangeBoard::undoSplit(IvMap& map, const IvMap::iterator& it) {
@@ -477,6 +581,7 @@ void RangeBoard::undoSplit(IvMap& map,
     auto original = upper_it->first;
     auto lower_iv = lower_it->first;
     TRACE(original);
+    assert(original.low <= original.center_low && original.center_low <= original.center_high && original.center_high <= original.high);
     TRACE(lower_iv);
     auto upper_key = upper_it->second;
     auto lower_key = lower_it->second;
@@ -506,6 +611,7 @@ void RangeBoard::undoSplit(IvMap& map,
 
     sequences.erase(lower_key);
     TRACE(original);
+    assert(original.low <= original.center_low && original.center_low <= original.center_high && original.center_high <= original.high);
     map.insert({original, upper_key});
 }
 
