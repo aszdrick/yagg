@@ -13,18 +13,20 @@ void SearchSpace::play(const go::Position& position) {
     constexpr static auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     bool inserted;
     for (int i = -tolerance; i <= tolerance; i++) {
-        if (i < 0 || i >= boardDimension) continue;
+        auto row = position.row + i;
+        if (row < 0 || row >= boardDimension) continue;
         for (int j = -tolerance; j <= tolerance; j++) {
-            if (j < 0 || j >= boardDimension) continue;
             if ((i | j) == 0) continue;
-            std::tie(std::ignore, inserted) = space.insert(position + go::Position{i, j});
+            auto column = position.column + j;
+            if (column < 0 || column >= boardDimension) continue;
+            std::tie(std::ignore, inserted) = space.insert(go::Position{row, column});
             magicEntity.push(inserted);
         }
     }
     // history.push_back(position);
     magicEntity.push(space.erase(position));
     BLANK
-    ECHO("PLAY");
+    ECHO("PLAY (" + std::to_string(space.size()) + ")");
     TRACE_IT(space);
     // ECHO("[INSERT] " + std::to_string(space.size()));
     // space.erase(position);
@@ -38,19 +40,21 @@ void SearchSpace::undo(const go::Position& position) {
     }
     magicEntity.pop();
     for (int i = tolerance; i >= -tolerance; i--) {
-        if (i < 0 || i >= boardDimension) continue;
+        auto row = position.row + i;
+        if (row < 0 || row >= boardDimension) continue;
         for (int j = tolerance; j >= -tolerance; j--) {
-            if (j < 0 || j >= boardDimension) continue;
             if ((i | j) == 0) continue;
+            auto column = position.column + j;
+            if (column < 0 || column >= boardDimension) continue;
             auto inserted = magicEntity.top();
             if (inserted) {
-                space.erase(position + go::Position{i, j});
+                space.erase(go::Position{row, column});
             }
             magicEntity.pop();
         }
     }
     BLANK
-    ECHO("UNDO");
+    ECHO("UNDO (" + std::to_string(space.size()) + ")");
     TRACE_IT(space);
     // for (int i = -tolerance; i <= tolerance; i++) {
     //     if (i < 0 || i >= boardDimension) continue;
