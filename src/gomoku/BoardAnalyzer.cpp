@@ -39,7 +39,7 @@ void BoardAnalyzer::play(const go::Position& position, go::Team team) {
     auto start = std::chrono::system_clock::now().time_since_epoch();
     history.push(position);
     // freeSquares.erase(position);
-    searchSpace.play(position);
+    searchSpace.play(position, *this);
     stoneContainer.push_back(go::Stone{position, team});
     go::Stone* stone = &stoneContainer.back();
     // go::Stone newStone{position, team};
@@ -134,7 +134,7 @@ void BoardAnalyzer::undo() {
     // go::Stone target{position, go::Team::BLACK};
     // stoneContainer.erase(target);
     // freeSquares.insert(position);
-    searchSpace.undo(position);
+    searchSpace.undo(position, *this);
 
     bool invalidate = over();
     hasQuintuple = false;

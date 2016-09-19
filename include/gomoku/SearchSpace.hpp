@@ -5,6 +5,7 @@
 #define GOMOKU_SEARCH_SPACE_HPP
 
 #include <deque>
+#include <functional>
 #include <set>
 #include <stack>
 #include "CommonTypes.hpp"
@@ -12,9 +13,15 @@
 
 class SearchSpace {
  public:
-    SearchSpace();
-    void play(const go::Position&);
-    void undo(const go::Position&);
+    SearchSpace() {
+        init();
+    }
+
+    template<typename T>
+    void play(const go::Position&, const T&);
+
+    template<typename T>
+    void undo(const go::Position&, const T&);
 
     auto& squares() const {
         return space;
@@ -28,5 +35,7 @@ class SearchSpace {
 
     void init();
 };
+
+#include "gomoku/SearchSpace.ipp"
 
 #endif /* GOMOKU_SEARCH_SPACE_HPP */

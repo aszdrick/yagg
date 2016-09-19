@@ -19,8 +19,15 @@ int main(int argc, char** argv) {
     engine.run();
 
     // go::State state;
+    // state.play(go::Position{7, 7}, go::Team::BLACK);
+    // state.play(go::Position{6, 6}, go::Team::BLACK);
+    // StateGenerator generator(state);
+
+    // go::State state;
     // TRACE_IT(state.possibleSquares());
     // state.play(go::Position{7, 7}, go::Team::BLACK);
+    // state.play(go::Position{5, 5}, go::Team::WHITE);
+    // state.undo();
     // state.undo();
     // BLANK
     // state.play(go::Position{7, 7}, go::Team::BLACK);

@@ -43,6 +43,11 @@ const go::Position& StateGenerator::nextPosition() const {
     auto& context = generatedPositions.back();
     while (context.count(*it)) {
         assert(it != space.end());
+        if (state.occupied(*it)) {
+            ECHO("------------------- WARNING -------------------");
+            TRACE(*it);
+        }
+        // TRACE(state.occupied(*it));
         std::advance(it, 1);
     }
     return *it;
