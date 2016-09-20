@@ -74,13 +74,13 @@ void RangeBoard::play(const go::Position& position, go::Team team) {
     assert(position.row < 15 && position.column < 15);
     auto start = std::chrono::system_clock::now().time_since_epoch();
 
-    TRACE(position);
+    // TRACE(position);
     stones.push_back({position, team});
     placed_positions.insert(position);
 
     search_space.play(position, *this);
-    BLANK
-    TRACE(position);
+    // BLANK
+    // TRACE(position);
 
     for (auto i = 0; i < 4; i++) {
         auto index = mappers[i](position.row, position.column);
@@ -107,7 +107,7 @@ void RangeBoard::undo() {
     if (!stones.empty()) {
         auto& stone = stones.back();
         auto& position = stone.position;
-        TRACE(position);
+        // TRACE(position);
         placed_positions.erase(position);
         search_space.undo(position, *this);
         for (auto i = 3; i > -1; i--) {
@@ -116,7 +116,7 @@ void RangeBoard::undo() {
             if (index > -1) {
                 auto desired = choosers[i](position.row, position.column);
                 auto atom = Interval::unitary(desired.center_low);
-                TRACE(atom);
+                // TRACE(atom);
                 assert(map.count(atom));
                 auto it = map.find(atom);
                 auto iv = it->first;
@@ -247,10 +247,6 @@ void RangeBoard::merge(IvMap& map, std::array<assoc,2>& merges, Interval& iv) {
 
     ended_values.push(ended);
     ended = ended || low_sequence.checkWinCondition();
-    if (low_sequence.checkWinCondition()) {
-        TRACE(low_piv);
-        TRACE_IT(low_sequence.positions);
-    }
 }
 
 void RangeBoard::increase(IvMap& map, assoc& pair, Interval& iv) {
@@ -290,10 +286,6 @@ void RangeBoard::increase(IvMap& map, assoc& pair, Interval& iv) {
 
     ended_values.push(ended);
     ended = ended || sequence.checkWinCondition();
-    if (sequence.checkWinCondition()) {
-        TRACE(piv);
-        TRACE_IT(sequence.positions);
-    }
 }
 
 void RangeBoard::split(IvMap& map, const IvMap::iterator& it, Interval& iv) {

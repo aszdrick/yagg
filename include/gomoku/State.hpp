@@ -32,6 +32,10 @@ class go::State {
         analyzer.sequenceIteration(fn);
     }
 
+    const std::array<RangeBoard::ClassifierMap, 2> retrieveClassifiers() const {
+        return ranger.retrieveClassifiers();
+    }
+
     auto currentPlayer() const {
         return player;
     }
@@ -72,8 +76,8 @@ class go::State {
     }
 
     const auto& possibleSquares() const {
-        // return analyzer.possibleSquares();
-        return ranger.possibleSquares();
+        return analyzer.possibleSquares();
+        // return ranger.possibleSquares();
     }
 
     void print() const {

@@ -40,15 +40,17 @@ class RangeBoard {
     using IndexMapper = std::function<short(unsigned short, unsigned short)>;
     using IndexUnmapper = std::function<go::Position(unsigned short, unsigned short)>;
     using RangeChooser = std::function<Interval(unsigned short, unsigned short)>;
-    using ClassifierMap = std::unordered_map<unsigned short, 
-                            std::unordered_map<unsigned short,
-                                std::array<std::unordered_set<unsigned short>,3>>>;
+    using ClassifierMap = std::array<std::array<std::array<std::unordered_set<unsigned short>,3>,8>,15>;
 
     bool tie() const;
     bool finished() const;
     bool occupied(const go::Position& position) const;
     unsigned countEmptySquares() const;
     const auto& possibleSquares() const;
+
+    const std::array<ClassifierMap, 2> retrieveClassifiers() const {
+        return classified_sequences;
+    }
 
     void iterate(const StoneCallback&) const;
     void iterateCriticalZone(const PositionCallback&) const;

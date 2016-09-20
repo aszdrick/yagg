@@ -56,10 +56,34 @@ namespace ai_utils {
         return props;
     }
 
-    inline auto boardProperties(const go::State& state) {
-        TeamValues props;
-        
-    }
+    // inline auto properties(const go::State& state) {
+    //     TeamValues props;
+    //     const auto& classifiers = state.retrieveClassifiers();
+
+    //     for (auto i = 0; i < 2; i++) {
+    //         auto team = static_cast<go::Team>(i);
+    //         props[team].groups[0] = classifiers.at(i).at(2).at(0).at(1).size();
+    //         props[team].groups[0] += classifiers.at(i).at(2).at(1).at(1).size();
+    //         props[team].groups[1] = classifiers.at(i).at(2).at(0).at(2).size();
+    //         props[team].groups[1] += classifiers.at(i).at(2).at(1).at(2).size();
+
+    //         props[team].groups[2] = classifiers.at(i).at(3).at(0).at(1).size();
+    //         props[team].groups[2] += classifiers.at(i).at(3).at(1).at(1).size();
+    //         props[team].groups[3] = classifiers.at(i).at(3).at(0).at(2).size();
+    //         props[team].groups[3] += classifiers.at(i).at(3).at(1).at(2).size();
+
+    //         props[team].groups[4] = classifiers.at(i).at(4).at(0).at(1).size();
+    //         props[team].groups[4] += classifiers.at(i).at(4).at(1).at(1).size();
+    //         props[team].groups[5] = classifiers.at(i).at(4).at(0).at(2).size();
+    //         props[team].groups[5] += classifiers.at(i).at(4).at(1).at(2).size();
+
+    //         props[team].groups[6] = classifiers.at(i).at(5).at(0).at(1).size();
+    //         props[team].groups[6] += classifiers.at(i).at(5).at(1).at(1).size();
+    //         props[team].groups[7] = classifiers.at(i).at(5).at(0).at(2).size();
+    //         props[team].groups[7] += classifiers.at(i).at(5).at(1).at(2).size();
+    //     }
+    //     return props;
+    // }
 
     template<typename Iterable>
     inline auto applyWeights(const TeamValues& props,
