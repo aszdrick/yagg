@@ -40,6 +40,7 @@ const std::array<Gomoku::NewGameMenu::Option, 3> Gomoku::subOptions = {
         sf::Color::Black,
         [](Gomoku& gomoku) {
             gomoku.newGame<Gomoku::AIHandler<4>, Gomoku::AIHandler<6>>();
+            // gomoku.newGame<RandomHandler>();
         }
     }
 };

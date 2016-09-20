@@ -24,6 +24,10 @@ class go::State {
         analyzer.quadrupletIteration(fn);
     }
 
+    void iterateCriticalZone(const RangeBoard::PositionCallback& fn) const {
+        ranger.iterateCriticalZone(fn);
+    }
+
     void sequenceIteration(const BoardAnalyzer::SequenceCallback& fn) const {
         analyzer.sequenceIteration(fn);
     }
@@ -37,7 +41,8 @@ class go::State {
     }
     
     auto countEmptySquares() const {
-        return analyzer.countEmptySquares();
+        // return analyzer.countEmptySquares();
+        return ranger.countEmptySquares();
     }
 
     bool occupied(const go::Position& pos) const {
@@ -66,8 +71,9 @@ class go::State {
         player = 1 - player;
     }
 
-    auto& possibleSquares() {
-        return analyzer.possibleSquares();
+    const auto& possibleSquares() const {
+        // return analyzer.possibleSquares();
+        return ranger.possibleSquares();
     }
 
     void print() const {

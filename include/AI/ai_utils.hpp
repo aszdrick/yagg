@@ -56,6 +56,11 @@ namespace ai_utils {
         return props;
     }
 
+    inline auto boardProperties(const go::State& state) {
+        TeamValues props;
+        
+    }
+
     template<typename Iterable>
     inline auto applyWeights(const TeamValues& props,
         const Iterable& weightList, short player, double w1 = 1, double w2 = 1) {

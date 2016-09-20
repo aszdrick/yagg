@@ -5,6 +5,7 @@
 #define RANGE_BOARD_HPP
 
 #include <array>
+#include <cmath>
 #include <ostream>
 #include <stack>
 #include <set>
@@ -23,50 +24,58 @@ struct Sequence {
     std::set<unsigned short> positions;
 
     bool updateSequentiality();
+    bool checkWinCondition() const;
+    std::list<unsigned short> findCriticalHoles() const;
 };
-
-using Undo = std::function<void(void)>;
-using IvMap = std::map<Interval, unsigned>;
-using assoc = std::pair<Interval, unsigned short>;
-using SequenceMap = std::unordered_map<unsigned short, Sequence>;
-using IntervalMap = std::unordered_map<unsigned short, IvMap>;
-using IndexMapper = std::function<short(unsigned short, unsigned short)>;
-using RangeChooser = std::function<Interval(unsigned short, unsigned short)>;
-using ClassifierMap = std::unordered_map<unsigned short, 
-                        std::unordered_map<unsigned short,
-                            std::array<std::unordered_set<unsigned short>,3>>>;
-using StoneCallback = std::function<void(const go::Stone&)>;
 
 class RangeBoard {
  public:
+    using StoneCallback = std::function<void(const go::Stone&)>;
+    using PositionCallback = std::function<void(const go::Position&)>;
+    using Undo = std::function<void(void)>;
+    using IvMap = std::map<Interval, unsigned>;
+    using assoc = std::pair<Interval, unsigned short>;
+    using SequenceMap = std::unordered_map<unsigned short, Sequence>;
+    using IntervalMap = std::unordered_map<unsigned short, IvMap>;
+    using IndexMapper = std::function<short(unsigned short, unsigned short)>;
+    using IndexUnmapper = std::function<go::Position(unsigned short, unsigned short)>;
+    using RangeChooser = std::function<Interval(unsigned short, unsigned short)>;
+    using ClassifierMap = std::unordered_map<unsigned short, 
+                            std::unordered_map<unsigned short,
+                                std::array<std::unordered_set<unsigned short>,3>>>;
+
     bool tie() const;
     bool finished() const;
     bool occupied(const go::Position& position) const;
+    unsigned countEmptySquares() const;
+    const auto& possibleSquares() const;
 
     void iterate(const StoneCallback&) const;
+    void iterateCriticalZone(const PositionCallback&) const;
     void play(const go::Position&, go::Team);
     void undo();
 
  private:
     static const std::array<IndexMapper, 4> mappers;
+    static const std::array<IndexUnmapper, 4> unmappers;
     static const std::array<RangeChooser, 4> choosers;
 
-    SearchSpace search_space;
     std::list<go::Stone> stones;
     std::set<go::Position> placed_positions;
-    unsigned currentSequence = 0;
     std::array<IntervalMap, 4> lines;
     std::array<unsigned, 2> dominations;
     std::array<ClassifierMap, 2> classified_sequences;
     SequenceMap sequences;
+    SearchSpace search_space;
+    unsigned currentSequence = 0;
+    unsigned sequencesCount = 0;
+    unsigned deadSequences = 0;
     bool ended = false;
-    std::stack<std::string> sanity;
     std::stack<unsigned short> merge_keys;
     std::stack<bool> ended_values;
 
-
-    void classify(unsigned short, const Sequence&);
-    void unclassify(unsigned short, const Sequence&);
+    void classify(unsigned short, const Sequence&, const Interval&);
+    void unclassify(unsigned short, const Sequence&, const Interval&);
 
     void solve(IvMap&, Interval, go::Team);
     void create(IvMap&, Interval&, go::Team);
@@ -95,11 +104,20 @@ inline bool RangeBoard::finished() const {
 }
 
 inline bool RangeBoard::tie() const {
-    return false;
+    return sequencesCount != 0 && sequencesCount == deadSequences;
 }
 
 inline bool RangeBoard::occupied(const go::Position& position) const {
     return placed_positions.count(position);
+}
+
+inline unsigned RangeBoard::countEmptySquares() const {
+    static constexpr auto maxStones = std::pow(GomokuTraits::BOARD_DIMENSION, 2);
+    return maxStones - stones.size();    
+}
+
+inline const auto& RangeBoard::possibleSquares() const {
+    return search_space.squares();
 }
 
 #endif /* RANGE_BOARD_HPP */

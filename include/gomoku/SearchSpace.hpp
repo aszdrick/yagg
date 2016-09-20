@@ -23,7 +23,7 @@ class SearchSpace {
     template<typename T>
     void undo(const go::Position&, const T&);
 
-    auto& squares() const {
+    const std::set<go::Position>& squares() const {
         return space;
     }
 

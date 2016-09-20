@@ -41,7 +41,7 @@ class BoardAnalyzer {
     unsigned countEmptySquares() const;
     void undo();
 
-    auto& possibleSquares() {
+    const auto& possibleSquares() const {
         return searchSpace.squares();
     }
 
