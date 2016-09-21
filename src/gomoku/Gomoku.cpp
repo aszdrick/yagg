@@ -31,22 +31,21 @@ const std::array<Gomoku::NewGameMenu::Option, 4> Gomoku::subOptions = {
         sf::Text("Player vs Computer", sf::Font()),
         sf::Color::Black,
         [](Gomoku& gomoku) {
-            gomoku.newGame<Player::InputHandler, Gomoku::AIHandler<4>>();
+            gomoku.newGame<Player::InputHandler, Gomoku::AIHandler<7>>();
         }
     },
     Gomoku::NewGameMenu::Option{
         sf::Text("Computer vs Player", sf::Font()),
         sf::Color::Black,
         [](Gomoku& gomoku) {
-            gomoku.newGame<Gomoku::AIHandler<4>, Player::InputHandler>();
+            gomoku.newGame<Gomoku::AIHandler<7>, Player::InputHandler>();
         }
     },
     Gomoku::NewGameMenu::Option{
         sf::Text("Computer vs Computer", sf::Font()),
         sf::Color::Black,
         [](Gomoku& gomoku) {
-            gomoku.newGame<Gomoku::AIHandler<4>, Gomoku::AIHandler<6>>();
-            // gomoku.newGame<RandomHandler>();
+            gomoku.newGame<Gomoku::AIHandler<6>, Gomoku::AIHandler<8>>();
         }
     }
 };

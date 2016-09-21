@@ -17,7 +17,6 @@ class Gomoku::AIHandler : public Player::InputComponent {
  private:
     static RatingFunction<go::State, short> heuristicFn;
     static RatingFunction<go::State, short> utilityFn;
-    // MiniMaxTree<go::State> decisionTree;
     decltype(make_minimax(heuristicFn, utilityFn)) decisionTree;
 
     Product doUpdate(Agent&, Element&) override;

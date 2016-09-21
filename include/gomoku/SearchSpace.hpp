@@ -28,10 +28,8 @@ class SearchSpace {
     }
 
  private:
-    // std::deque<go::Position> history;
-    std::stack<bool> magicEntity;
+    std::stack<bool> keeper;
     std::set<go::Position> space;
-    // std::set<go::Position> fragile;
 
     void init();
 };

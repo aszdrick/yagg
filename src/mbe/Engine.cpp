@@ -37,7 +37,7 @@ void mbe::Engine::run() {
         // Process events & update logic
         processEvents();
         // Some day this call will become periodic
-        // for some "usefull" stuff like in-game clock
+        // for some "useful" stuff like in-game clock
         game.periodicUpdate();
 
         if (game.switchScreenModeRequested()) {
@@ -82,17 +82,6 @@ void mbe::Engine::processEvents() {
 }
 
 void mbe::Engine::resize(double width, double height) {
-    // double aspectRatio = currWidth / currHeight;
-    // double deltaWidth = std::abs(width - currWidth);
-    // double deltaHeight = std::abs(height - currHeight);
-    // if (deltaWidth > deltaHeight) {
-    //     currWidth = width;
-    //     currHeight = currWidth / aspectRatio;
-    // } else {
-    //     currHeight = height;
-    //     currWidth = currHeight * aspectRatio;
-    // }
-    // window.setView(sf::View(sf::FloatRect(0, 0, width, height)));
     game.resize(width, height);
 }
 
@@ -116,7 +105,5 @@ sf::ContextSettings mbe::Engine::desiredContextSettings() {
     settings.depthBits = 24;
     settings.stencilBits = 8;
     settings.antialiasingLevel = 2;
-    // settings.majorVersion = 3;
-    // settings.minorVersion = 2;
     return settings;
 }

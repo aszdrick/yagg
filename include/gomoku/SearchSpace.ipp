@@ -67,34 +67,25 @@ void SearchSpace::play(const go::Position& position, const T& verifier) {
         if (!verifier.occupied(pos)) {
             std::tie(std::ignore, inserted) = space.insert(pos);
         }
-        magicEntity.push(inserted);
+        keeper.push(inserted);
     });
-    // history.push_back(position);
-    magicEntity.push(space.erase(position));
-    // BLANK
-    // ECHO("PLAY (" + std::to_string(space.size()) + ")");
-    // TRACE_IT(space);
-    // ECHO("[INSERT] " + std::to_string(space.size()));
-    // space.erase(position);
+    keeper.push(space.erase(position));
 }
 
 template<typename T>
 void SearchSpace::undo(const go::Position& position, const T& verifier) {
     constexpr static auto tolerance = 2;
-    if (magicEntity.top()) {
+    if (keeper.top()) {
         space.insert(position);
     }
-    magicEntity.pop();
+    keeper.pop();
     traverse<tolerance, -tolerance>(position, [=](const auto& position) {
-        auto inserted = magicEntity.top();
+        auto inserted = keeper.top();
         if (inserted) {
             space.erase(position);
         }
-        magicEntity.pop();
+        keeper.pop();
     });
-    // BLANK
-    // ECHO("UNDO (" + std::to_string(space.size()) + ")");
-    // TRACE_IT(space);
 }
 
 inline void SearchSpace::init() {
@@ -104,9 +95,4 @@ inline void SearchSpace::init() {
             space.insert(go::Position{i, j});
         }
     }
-    // for (int i = 0; i < 15; i++) {
-    //     for (int j = 0; j < 15; j++) {
-    //         space.insert(go::Position{i,j});
-    //     }
-    // }
 }
