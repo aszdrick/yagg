@@ -69,9 +69,20 @@ void base::Game<I,R,A>::processInput(A& processor, I& provider) {
             case State::Response::Type::REPLACE:
                 replace(transition);
                 break;
+            case State::Response::Type::PAUSE:
+                pauseGame();
+                break;
         }
     }
 }
+
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::pauseGame() {
+    onPauseGame();
+}
+
+template<typename I, typename R, typename A>
+void base::Game<I,R,A>::onPauseGame() { }
 
 template<typename I, typename R, typename A>
 void base::Game<I,R,A>::resize(double width, double height) {

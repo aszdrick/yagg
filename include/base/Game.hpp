@@ -24,6 +24,7 @@ namespace base {
         void processInput(InputProcessor&, Input&);
         void resize(double, double);
         bool switchScreenModeRequested();
+        void pauseGame();
 
      protected:
         Game(State* const);
@@ -46,6 +47,7 @@ namespace base {
         bool _closed = false;
 
         virtual bool onClose();
+        virtual void onPauseGame();
         virtual void onPeriodicUpdate();
         virtual void onUpdateRenderer(Renderer&);
         virtual void onProcessInput(InputProcessor&, Input&);
