@@ -16,25 +16,25 @@ class go::State {
     void play(const go::Position&, go::Team);
 
     void iterate(const std::function<void(const Stone&)>& fn) const {
-        // analyzer.iterate(fn);
-        ranger.iterate(fn);
+        analyzer.iterate(fn);
+        // ranger.iterate(fn);
     }
 
     void quadrupletIteration(const BoardAnalyzer::SequenceCallback& fn) const {
         analyzer.quadrupletIteration(fn);
     }
 
-    void iterateCriticalZone(const RangeBoard::PositionCallback& fn) const {
-        ranger.iterateCriticalZone(fn);
-    }
+    // void iterateCriticalZone(const RangeBoard::PositionCallback& fn) const {
+    //     ranger.iterateCriticalZone(fn);
+    // }
 
     void sequenceIteration(const BoardAnalyzer::SequenceCallback& fn) const {
         analyzer.sequenceIteration(fn);
     }
 
-    const std::array<RangeBoard::ClassifierMap, 2> retrieveClassifiers() const {
-        return ranger.retrieveClassifiers();
-    }
+    // const std::array<RangeBoard::ClassifierMap, 2> retrieveClassifiers() const {
+    //     return ranger.retrieveClassifiers();
+    // }
 
     auto currentPlayer() const {
         return player;
@@ -45,33 +45,33 @@ class go::State {
     }
     
     auto countEmptySquares() const {
-        // return analyzer.countEmptySquares();
-        return ranger.countEmptySquares();
+        return analyzer.countEmptySquares();
+        // return ranger.countEmptySquares();
     }
 
     bool occupied(const go::Position& pos) const {
-        // return analyzer.occupied(pos);
-        return ranger.occupied(pos);
+        return analyzer.occupied(pos);
+        // return ranger.occupied(pos);
     }
 
     bool over() const { 
-        // return analyzer.over();
-        return ranger.finished();
+        return analyzer.over();
+        // return ranger.finished();
     }
 
     bool hasWinner() const {
-        // return analyzer.hasWinner();
-        return ranger.finished() && !ranger.tie();
+        return analyzer.hasWinner();
+        // return ranger.finished() && !ranger.tie();
     }
 
     bool full() const {
-        // return analyzer.full();
-        return ranger.tie();
+        return analyzer.full();
+        // return ranger.tie();
     }
 
     void undo() {
         analyzer.undo();
-        ranger.undo();
+        // ranger.undo();
         player = 1 - player;
     }
 
@@ -93,7 +93,7 @@ class go::State {
     short player = 0;
     decltype(player) winner = 0;
     BoardAnalyzer analyzer;
-    RangeBoard ranger;
+    // RangeBoard ranger;
 };
 
 #endif /* GO_STATE_HPP */

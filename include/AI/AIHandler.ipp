@@ -3,7 +3,6 @@
 
 #include <chrono>
 #include "AI/ai_utils.hpp"
-// #include "AI/AIHandler.hpp"
 #include "extra/macros.hpp"
 #include "gomoku/Command.hpp"
 #include "gomoku/StateGenerator.hpp"
@@ -23,11 +22,7 @@ Gomoku::AIHandler<id>::AIHandler()
 template<unsigned id>
 typename Gomoku::AIHandler<id>::Product
 Gomoku::AIHandler<id>::doUpdate(Agent& board, Element& events) {
-    auto start = std::chrono::system_clock::now().time_since_epoch();
     auto analysis = decisionTree.analyze<StateGenerator>(board, board.currentPlayer());
     analysis.move.setIterations(analysis.iterations);
-    auto end = std::chrono::system_clock::now().time_since_epoch();
-    auto delay = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    TRACE(delay);
     return analysis.move;
 }

@@ -47,7 +47,10 @@ void Match::Graphics::drawStatus(Agent& match, Element& window) const {
     sf::Text text;
     unsigned iterCount = match.iterations();
     if (iterCount > 0) {
-        text = prepareText(std::to_string(iterCount) + " iterations", 200);
+        text = prepareText(std::to_string(iterCount), 150);
+        window.draw(text);
+
+        text = prepareText("iterations", 200);
         window.draw(text);
     }
 
@@ -91,8 +94,8 @@ void Match::Graphics::drawStones(Agent& match, Element& window) const {
 }
 
 void Match::Graphics::highlight(Agent& match, Element& window) const {
-    // auto drawHighlightedSpot = [&](const go::Position& position) {
-    match.state.iterateCriticalZone([&](const go::Position& position) {
+    auto drawHighlightedSpot = [&](const go::Position& position) {
+    // match.state.iterateCriticalZone([&](const go::Position& position) {
         int signedDimension = static_cast<int>(GomokuTraits::BOARD_DIMENSION);
         if (position.row < 0 || position.column < 0
             || position.row >= signedDimension
@@ -111,37 +114,37 @@ void Match::Graphics::highlight(Agent& match, Element& window) const {
         shape.setOutlineColor(GomokuTraits::HIGHLIGHT_OUTLINE_COLOR);
         shape.setFillColor(GomokuTraits::HIGHLIGHT_COLOR);
         window.draw(shape);
+    };
+
+    match.state.quadrupletIteration([&](auto& sequence) {
+        auto& first = *sequence.stones.front();
+        auto& last = *sequence.stones.back();
+        unsigned distance = go::Position::distance(first.position, last.position);
+        if (distance == 4) {
+            go::Position hole;
+            auto prev = &first.position;
+            for (unsigned i = 1; i < sequence.stones.size(); i++) {
+                auto& stone = *sequence.stones[i];
+                auto& position = stone.position;
+                if (go::Position::distance(position, *prev) > 1) {
+                    hole = (position + *prev) / 2;
+                    break;
+                }
+                prev = &position;
+            }
+            drawHighlightedSpot(hole);
+        } else {
+            if (sequence.freeEnds.first) {
+                go::Position highlighted = first.position - sequence.delta;
+                drawHighlightedSpot(highlighted);
+            }
+
+            if (sequence.freeEnds.second) {
+                go::Position highlighted = last.position + sequence.delta;
+                drawHighlightedSpot(highlighted);
+            }            
+        }
     });
-
-    // match.state.quadrupletIteration([&](auto& sequence) {
-    //     auto& first = *sequence.stones.front();
-    //     auto& last = *sequence.stones.back();
-    //     unsigned distance = go::Position::distance(first.position, last.position);
-    //     if (distance == 4) {
-    //         go::Position hole;
-    //         auto prev = &first.position;
-    //         for (unsigned i = 1; i < sequence.stones.size(); i++) {
-    //             auto& stone = *sequence.stones[i];
-    //             auto& position = stone.position;
-    //             if (go::Position::distance(position, *prev) > 1) {
-    //                 hole = (position + *prev) / 2;
-    //                 break;
-    //             }
-    //             prev = &position;
-    //         }
-    //         drawHighlightedSpot(hole);
-    //     } else {
-    //         if (sequence.freeEnds.first) {
-    //             go::Position highlighted = first.position - sequence.delta;
-    //             drawHighlightedSpot(highlighted);
-    //         }
-
-    //         if (sequence.freeEnds.second) {
-    //             go::Position highlighted = last.position + sequence.delta;
-    //             drawHighlightedSpot(highlighted);
-    //         }            
-    //     }
-    // });
 }
 
 sf::Text Match::Graphics::prepareText(const std::string& content, unsigned y) const {

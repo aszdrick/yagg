@@ -72,15 +72,11 @@ void RangeBoard::unclassify(unsigned short key, const Sequence& sequence,
 
 void RangeBoard::play(const go::Position& position, go::Team team) {
     assert(position.row < 15 && position.column < 15);
-    auto start = std::chrono::system_clock::now().time_since_epoch();
 
-    // TRACE(position);
     stones.push_back({position, team});
     placed_positions.insert(position);
 
     search_space.play(position, *this);
-    // BLANK
-    // TRACE(position);
 
     for (auto i = 0; i < 4; i++) {
         auto index = mappers[i](position.row, position.column);
@@ -88,26 +84,18 @@ void RangeBoard::play(const go::Position& position, go::Team team) {
             auto iv = choosers[i](position.row, position.column);
             if (!lines[i][index].count(iv)) {
                 create(lines[i][index], iv, team);
-                // sanity.push("create");
+                sanity.push("create");
             } else {
                 solve(lines[i][index], iv, team);
             }
         }
     }
-    
-    auto end = std::chrono::system_clock::now().time_since_epoch();
-    auto play_delay = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    if (play_delay > 0) {
-        TRACE(play_delay);
-    }
 }
 
 void RangeBoard::undo() {
-    auto start = std::chrono::system_clock::now().time_since_epoch();
     if (!stones.empty()) {
         auto& stone = stones.back();
         auto& position = stone.position;
-        // TRACE(position);
         placed_positions.erase(position);
         search_space.undo(position, *this);
         for (auto i = 3; i > -1; i--) {
@@ -116,7 +104,6 @@ void RangeBoard::undo() {
             if (index > -1) {
                 auto desired = choosers[i](position.row, position.column);
                 auto atom = Interval::unitary(desired.center_low);
-                // TRACE(atom);
                 assert(map.count(atom));
                 auto it = map.find(atom);
                 auto iv = it->first;
@@ -124,22 +111,24 @@ void RangeBoard::undo() {
                 auto distance = iv.center_distance(atom);
                 if (distance >= -1) {
                     if (iv.center_low != iv.center_high) {
-                        // assert(sanity.top() == "increase");
-                        // sanity.pop();
+                        assert(sanity.top() == "increase");
+                        sanity.pop();
                         undoSideMove(map, it, iv, atom, desired);
                     } else if (size == desired.size()) {
-                        // assert(sanity.top() == "create");
-                        // sanity.pop();
+                        assert(sanity.top() == "create");
+                        sanity.pop();
                         undoCreate(map, it);
                     } else if (size < 4 
                                && it != map.begin() 
                                && std::next(it) != map.end()) {
-                        // assert(sanity.top() == "split");
-                        // sanity.pop();
+                        assert(sanity.top() == "split");
+                        sanity.pop();
                         undoSplit(map, it);
                     } else {
-                        // assert(sanity.top() == "resize");
-                        // sanity.pop();
+                        TRACE(iv);
+                        TRACE(sanity.top());
+                        assert(sanity.top() == "resize");
+                        sanity.pop();
                         undoResize(map, it, iv, atom);
                     }
                 } else {
@@ -148,11 +137,6 @@ void RangeBoard::undo() {
             }
         }
         stones.pop_back();
-    }
-    auto end = std::chrono::system_clock::now().time_since_epoch();
-    auto undo_delay = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    if (undo_delay > 0) {
-        TRACE(undo_delay);
     }
 }
 
@@ -175,7 +159,7 @@ void RangeBoard::solve(IvMap& map, Interval iv, go::Team team) {
             noMerges = false;
             ++mergeCount;
         } else if (!resize(map, it, iv)) {
-            // sanity.push("split");
+            sanity.push("split");
             split(map, it, iv);
             return;
         }
@@ -183,13 +167,13 @@ void RangeBoard::solve(IvMap& map, Interval iv, go::Team team) {
     }
     
     if (noMerges) {
-        // sanity.push("resize");
+        sanity.push("resize");
         create(map, iv, team);
     } else if (mergeCount > 1) {
-        // sanity.push("merge");
+        sanity.push("merge");
         merge(map, merges, iv);
     } else {
-        // sanity.push("increase");
+        sanity.push("increase");
         increase(map, merges[0], iv);
     }
 }
@@ -228,9 +212,6 @@ void RangeBoard::merge(IvMap& map, std::array<assoc,2>& merges, Interval& iv) {
         std::inserter(low_positions, low_positions.end())
     );
 
-    // low_sequence.fragmentation += (high_piv.low - low_piv.high - 1)
-    //     + high_sequence.fragmentation;
-
     low_sequence.updateSequentiality();
 
     low_piv.high = high_piv.high;
@@ -261,7 +242,6 @@ void RangeBoard::increase(IvMap& map, assoc& pair, Interval& iv) {
     sequence.positions.insert(iv.center_low);
 
     if (distance >= 0) {
-        // sequence.fragmentation += distance;
         if (piv.center_low > iv.center_high) {
             increment = piv.low - iv.low;
             piv.low = iv.low;
@@ -364,7 +344,6 @@ bool RangeBoard::resize(IvMap& map, const IvMap::iterator& it, Interval& iv) {
     }
 
     auto hint = map.erase(it);
-    // TRACE(resized);
     map.insert(hint, {resized, it->second});
 
     auto decrement = size - resized.size();
@@ -423,12 +402,12 @@ void RangeBoard::undoCentralMove(IvMap& map,
     assert(upper_it != sequence.positions.end());
 
     if (*upper_it - *lower_it > 4) {
-        // assert(sanity.top() == "merge");
-        // sanity.pop();
+        assert(sanity.top() == "merge");
+        sanity.pop();
         undoMerge(map, it, atom);
     } else {
-        // assert(sanity.top() == "increase");
-        // sanity.pop();
+        assert(sanity.top() == "increase");
+        sanity.pop();
 
         unclassify(key, sequence, it->first);
 
@@ -559,7 +538,9 @@ void RangeBoard::undoResize(IvMap& map,
     auto key = it->second;
     auto& sequence = sequences[key];
     auto team = static_cast<unsigned short>(sequence.team);
-    assert(original.low <= original.center_low && original.center_low <= original.center_high && original.center_high <= original.high);
+    assert(original.low <= original.center_low
+        && original.center_low <= original.center_high
+        && original.center_high <= original.high);
     auto hint = map.erase(it);
     map.insert(hint, {original, key});
     
@@ -585,7 +566,6 @@ Interval RangeBoard::undoIncrease(IvMap& map,
         sequence.positions.erase(begin);
         original.center_low = *next;
         int old = original.low;
-        // assert((original.center_low - 4) < 15);
         original.low = std::max(old, original.center_low - 4);
         decrement = original.low - old;
     } else {
@@ -594,13 +574,14 @@ Interval RangeBoard::undoIncrease(IvMap& map,
         sequence.positions.erase(end);
         original.center_high = *prev;
         int old = original.high;
-        // assert((original.center_high + 4) < 15);
         original.high = std::min(old, original.center_high + 4);
         decrement = old - original.high;
     }
 
     auto hint = map.erase(it);
-    assert(original.low <= original.center_low && original.center_low <= original.center_high && original.center_high <= original.high);
+    assert(original.low <= original.center_low
+        && original.center_low <= original.center_high
+        && original.center_high <= original.high);
     map.insert(hint, {original, key});
     
     --sequence.totalSize;
@@ -629,7 +610,6 @@ void RangeBoard::undoSplit(IvMap& map, const IvMap::iterator& it) {
 void RangeBoard::undoSplit(IvMap& map,
                            const IvMap::iterator& upper_it,
                            const IvMap::iterator& lower_it) {
-    // ECHO("undo split");
     auto original = upper_it->first;
     auto lower_iv = lower_it->first;
     auto upper_key = upper_it->second;
@@ -660,8 +640,9 @@ void RangeBoard::undoSplit(IvMap& map,
     upper_sequence.updateSequentiality();
 
     sequences.erase(lower_key);
-    // TRACE(original);
-    assert(original.low <= original.center_low && original.center_low <= original.center_high && original.center_high <= original.high);
+    assert(original.low <= original.center_low
+        && original.center_low <= original.center_high
+        && original.center_high <= original.high);
     map.insert({original, upper_key});
     --currentSequence;
     
@@ -703,28 +684,6 @@ bool Sequence::checkWinCondition() const {
 }
 
 std::list<unsigned short> Sequence::findCriticalHoles() const {
-    // auto prev = positions.begin();
-    // auto curr = std::next(prev);
-    // auto counter = 1;
-    // auto past = 1;
-    // auto hole = -1;
-    // while(curr != positions.end()) {
-    //     ++counter;
-    //     if (counter == 4) {
-
-    //     }
-    //     if (*curr - *prev == 1) {
-    //         ++past;
-    //     } else if (*curr - *prev == 2) {
-    //         hole = *prev + 1;
-    //     } else {
-    //         counter = 1;
-    //         past = 1;
-    //     }
-    //     prev = curr;
-    //     curr = std::next(prev);
-    // }
-    // return -1;
     return {};
 }
 

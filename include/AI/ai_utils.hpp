@@ -18,23 +18,19 @@ namespace ai_utils {
         BoardProperties() : groups() {}
         std::array<unsigned, 17> groups;
 
-        auto& score(unsigned seqSize, unsigned freeEnds, unsigned numSeqs = 1) {
+        auto& score(unsigned seqSize, unsigned freeEnds) {
             constexpr unsigned minSeqSize = 2;
             constexpr unsigned maxSeqSize = 5;
             assert(seqSize >= minSeqSize);
             assert(seqSize <= maxSeqSize);
-            assert(numSeqs >= 1);
-            assert(numSeqs <= 2);
-            const auto minFreeEnds = numSeqs;
-            const auto maxFreeEnds = 2 * numSeqs;
+            constexpr static auto minFreeEnds = 1;
+            constexpr static auto maxFreeEnds = 2;
             assert(freeEnds >= minFreeEnds);
             assert(freeEnds <= maxFreeEnds);
 
-            constexpr unsigned numSimpleSeqs = 2 * (maxSeqSize - minSeqSize + 1);
-            const auto baseOffset = numSimpleSeqs * (numSeqs - 1);
             const auto sizeOffset = (maxFreeEnds - minFreeEnds + 1) * (seqSize - 2);
             const auto freeEndOffset = freeEnds - minFreeEnds;
-            return groups[baseOffset + sizeOffset + freeEndOffset];
+            return groups[sizeOffset + freeEndOffset];
         }
     };
 
@@ -42,17 +38,12 @@ namespace ai_utils {
 
     inline auto properties(const go::State& state) {
         TeamValues props;
-        // BoardProperties props;
         state.sequenceIteration([&](const auto& sequence) {
-            // TODO: handle sequences in which numSeqs > 1
             auto size = sequence.stones.size();
             auto freeEnds = sequence.freeEnds.first + sequence.freeEnds.second;
             auto team = (*sequence.stones.front()).team;
-            props[team].score(size, freeEnds)++;
-            // props.score(size, freeEnds)++;
+            ++props[team].score(size, freeEnds);                
         });
-        // TRACE_IT(props.groups);
-        // BLANK
         return props;
     }
 
@@ -100,9 +91,6 @@ namespace ai_utils {
             }
             sumPerTeam[pair.first] = result;
         }
-        // TRACE(sumPerTeam[go::Team::WHITE] - sumPerTeam[go::Team::BLACK]);
-        // auto baseValue = sumPerTeam[go::Team::BLACK] - sumPerTeam[go::Team::WHITE];
-        // return baseValue * (1 - 2 * player); // flips the sum if white player
         auto self = sumPerTeam[go::Team::BLACK];
         auto other = sumPerTeam[go::Team::WHITE];
         if (player == 1) {
@@ -136,7 +124,6 @@ namespace ai_utils {
             2000., 3000., 4000., 2e5, 3e5, 4e5, 2e6, 3e6, 4e6
         };
         return applyWeights(state, weights, player);
-        // return 1.0;
     };
 
     template<>
@@ -224,6 +211,22 @@ namespace ai_utils {
     inline auto utility<6>(const go::State& state, unsigned level, short player) {
         return heuristic<6>(state, level, player) * (1 + 1.0/level);
     }
+
+    // ------------------------ Fourth AI ------------------------ //
+
+    // template<>
+    // inline auto heuristic<4>(const go::State& state, unsigned, short player) {
+    //     constexpr auto weights = {
+    //         1, 3, 3, 7, 0, 1000, 9999, 10000,
+    //         0, 0, 0, 0, 0, 0, 0, 0, 0
+    //     };
+    //     return applyWeights(state, weights, player, 1.5, 1);
+    // };
+
+    // template<>
+    // inline auto utility<6>(const go::State& state, unsigned level, short player) {
+    //     return heuristic<6>(state, level, player) * (1 + 1.0/level);
+    // }
 }
 
 #endif /* AI_UTILS_HPP */

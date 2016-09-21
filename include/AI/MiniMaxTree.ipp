@@ -37,7 +37,7 @@ MiniMaxTree<T, Args...>::analyze(T& currentState, Args... args) {
         generator.undo();
     }
 
-    // TRACE(bestValue);
+    TRACE(bestValue);
     return {generator.command(), Generator::generationCount()};
 }
 

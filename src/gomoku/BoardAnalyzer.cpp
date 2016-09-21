@@ -7,7 +7,7 @@
 #include "gomoku/BoardAnalyzer.hpp"
 
 BoardAnalyzer::BoardAnalyzer() {
-    auto boardDimension = GomokuTraits::BOARD_DIMENSION;
+    constexpr static auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     std::vector<SequenceGroup*> sequenceGroups = {
         &rows, &columns, &mainDiagonals, &secondaryDiagonals
     };
@@ -22,31 +22,15 @@ BoardAnalyzer::BoardAnalyzer() {
     }
 
     stoneContainer.reserve(boardDimension * boardDimension);
-
-    // using BoardType = std::decay_t<decltype(boardDimension)>;
-    // for (BoardType row = 0; row < boardDimension; row++) {
-    //     for (BoardType col = 0; col < boardDimension; col++) {
-    //         go::Position position{
-    //             static_cast<int>(row),
-    //             static_cast<int>(col)
-    //         };
-    //         freeSquares.insert(std::move(position));
-    //     }
-    // }
 }
 
 void BoardAnalyzer::play(const go::Position& position, go::Team team) {
-    auto start = std::chrono::system_clock::now().time_since_epoch();
     history.push(position);
-    // freeSquares.erase(position);
     searchSpace.play(position, *this);
     stoneContainer.push_back(go::Stone{position, team});
     go::Stone* stone = &stoneContainer.back();
-    // go::Stone newStone{position, team};
-    // stoneContainer.insert(newStone);
-    // const go::Stone* stone = &*stoneContainer.find(newStone);
 
-    auto boardDimension = GomokuTraits::BOARD_DIMENSION;
+    constexpr static auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     unsigned row = position.row;
     unsigned column = position.column;
     rows[row][column] = stone;
@@ -54,11 +38,6 @@ void BoardAnalyzer::play(const go::Position& position, go::Team team) {
     mainDiagonals[boardDimension + row - column][row] = stone;
     secondaryDiagonals[row + column][row] = stone;
     recalculate(position);
-    auto end = std::chrono::system_clock::now().time_since_epoch();
-    auto noob_delay = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    if (noob_delay > 0) {
-        TRACE(noob_delay);
-    }
 }
 
 void BoardAnalyzer::iterate(const StoneCallback& fn) const {
@@ -68,12 +47,6 @@ void BoardAnalyzer::iterate(const StoneCallback& fn) const {
 }
 
 void BoardAnalyzer::quadrupletIteration(const SequenceCallback& fn) const {
-    // for (auto& pair : quadruplets) {
-    //     auto& seq = sequences.at(const_cast<StoneGroup*>(pair.first)).at(pair.second);
-    //     if (seq.stones.size() == 4) {
-    //         fn(seq);
-    //     }
-    // }
     sequenceIteration([&fn](const auto& sequence) {
         if (sequence.stones.size() == 4) {
             fn(sequence);
@@ -93,7 +66,6 @@ bool BoardAnalyzer::occupied(const go::Position& position) const {
     unsigned row = position.row;
     unsigned column = position.column;
     return rows.count(row) && rows.at(row).count(column);
-    // return !freeSquares.count(position);
 }
 
 bool BoardAnalyzer::over() const {
@@ -119,7 +91,7 @@ void BoardAnalyzer::undo() {
     }
 
     auto& position = history.top();
-    auto boardDimension = GomokuTraits::BOARD_DIMENSION;
+    constexpr static auto boardDimension = GomokuTraits::BOARD_DIMENSION;
     unsigned row = position.row;
     unsigned column = position.column;
     rows[row].erase(column);
@@ -131,9 +103,6 @@ void BoardAnalyzer::undo() {
             return stone.position == position;
         });
     stoneContainer.erase(it);
-    // go::Stone target{position, go::Team::BLACK};
-    // stoneContainer.erase(target);
-    // freeSquares.insert(position);
     searchSpace.undo(position, *this);
 
     bool invalidate = over();
@@ -154,7 +123,7 @@ void BoardAnalyzer::undo() {
 }
 
 void BoardAnalyzer::recalculate(const go::Position& position) {
-    auto boardDimension = GomokuTraits::BOARD_DIMENSION;    
+    constexpr static auto boardDimension = GomokuTraits::BOARD_DIMENSION;    
     unsigned row = position.row;
     unsigned column = position.column;
     std::vector<StoneGroup*> groups = {
@@ -209,10 +178,6 @@ BoardAnalyzer::findSequences(const StoneGroup& group, const go::Position& delta)
             size_t size = seq.stones.size();
             if (size > 1 && seq.freeEnds.first + seq.freeEnds.second > 0) {
                 foundQuintuple = foundQuintuple || (size >= 5);
-                // if (size == 4) {
-                //     decltype(quadruplets)::value_type pair{&group, result.size()};
-                //     quadruplets.push_back(std::move(pair));
-                // }
                 seq.delta = delta;
                 result.push_back(std::move(seq));
             }

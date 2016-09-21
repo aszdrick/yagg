@@ -14,12 +14,6 @@
 #include <unordered_set>
 #include <vector>
 
-struct StoneComparator {
-    bool operator()(const go::Stone& lhs, const go::Stone& rhs) const {
-        return lhs.position < rhs.position;
-    }
-};
-
 class BoardAnalyzer {
  private:
     struct Sequence;
@@ -50,7 +44,6 @@ class BoardAnalyzer {
     using SequenceGroup = std::unordered_map<unsigned, StoneGroup>;
 
     std::vector<go::Stone> stoneContainer;
-    // std::set<go::Stone, StoneComparator> stoneContainer;
     SequenceGroup rows;
     SequenceGroup columns;
     SequenceGroup mainDiagonals;
@@ -58,7 +51,6 @@ class BoardAnalyzer {
     std::unordered_map<StoneGroup*, std::vector<Sequence>> sequences;
     bool hasQuintuple = false;
     std::stack<go::Position> history;
-    // std::set<go::Position, PositionComparator> freeSquares;
     SearchSpace searchSpace;
 
     void recalculate(const go::Position&);

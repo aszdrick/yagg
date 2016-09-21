@@ -75,6 +75,7 @@ class RangeBoard {
     bool ended = false;
     std::stack<unsigned short> merge_keys;
     std::stack<bool> ended_values;
+    std::stack<std::string> sanity;
 
     void classify(unsigned short, const Sequence&, const Interval&);
     void unclassify(unsigned short, const Sequence&, const Interval&);
