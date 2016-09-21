@@ -113,130 +113,22 @@ namespace ai_utils {
     template<unsigned id>
     inline auto utility(const go::State& state, unsigned level, short player);
 
-    // ------------------------ First AI ------------------------ //
+    // ------------------------ AI ------------------------ //
 
     template<>
-    inline auto heuristic<1>(const go::State& state, unsigned, short player) {
+    inline auto heuristic<1>(const go::State& state, unsigned level, short player) {
         constexpr auto weights = {
-            10., 20., 100., 200., 1e4, 2e4, 1e8, 2e8
+            1, 3, 3, 7, 1, 1000, 0, 0
         };
-        return applyWeights(state, weights, player);
+        return applyWeights(state, weights, player, 1.5, 1) * (1 + 1.0/level);
     };
 
     template<>
     inline auto utility<1>(const go::State& state, unsigned level, short player) {
-        return heuristic<1>(state, level, player) * (1 + 1.0/level);
-    }
-
-    // ------------------------ Second AI ------------------------ //
-
-    template<>
-    inline auto heuristic<2>(const go::State& state, unsigned, short player) {
-        constexpr auto weights = {
-            1, 3, 5, 8, 6, 100, 9999, 10000
-        };
-        return applyWeights(state, weights, player, 1.5, 1);
-    };
-
-    template<>
-    inline auto utility<2>(const go::State& state, unsigned level, short player) {
-        return heuristic<2>(state, level, player) * (1 + 1.0/level);
-    }
-
-    // ------------------------ Third AI ------------------------ //
-
-    template<>
-    inline auto heuristic<3>(const go::State& state, unsigned, short player) {
-        constexpr auto weights = {
-            1, 7, 2, 10, 3, 1000, 99999, 100000
-        };
-        return applyWeights(state, weights, player, 1.5, 1);
-    };
-
-    template<>
-    inline auto utility<3>(const go::State& state, unsigned level, short player) {
-        return heuristic<3>(state, level, player) * (1 + 1.0/level);
-    }
-
-    // ------------------------ Fourth AI ------------------------ //
-
-    template<>
-    inline auto heuristic<4>(const go::State& state, unsigned, short player) {
-        constexpr auto weights = {
-            1, 3, 3, 7, 0, 1000, 9999, 10000
-        };
-        return applyWeights(state, weights, player, 1.5, 1);
-    };
-
-    template<>
-    inline auto utility<4>(const go::State& state, unsigned level, short player) {
-        return heuristic<4>(state, level, player) * (1 + 1.0/level);
-    }
-
-    // ------------------------ Fifth AI ------------------------ //
-
-    template<>
-    inline auto heuristic<5>(const go::State& state, unsigned, short player) {
-        constexpr auto weights = {
-            0, 5, 0, 10, 0, 1000, 9999, 10000
-        };
-        return applyWeights(state, weights, player, 1.5, 1);
-    };
-
-    template<>
-    inline auto utility<5>(const go::State& state, unsigned level, short player) {
-        return heuristic<5>(state, level, player) * (1 + 1.0/level);
-    }
-
-    // ------------------------ Sixth AI ------------------------ //
-
-    template<>
-    inline auto heuristic<6>(const go::State& state, unsigned, short player) {
-        constexpr auto weights = {
-            2, 5, 4, 11, 1, 100, 9999, 10000
-        };
-        return applyWeights(state, weights, player, 1.2, 1);
-    };
-
-    template<>
-    inline auto utility<6>(const go::State& state, unsigned level, short player) {
-        return heuristic<6>(state, level, player) * (1 + 1.0/level);
-    }
-
-    // ------------------------ Seventh AI ------------------------ //
-
-    template<>
-    inline auto heuristic<7>(const go::State& state, unsigned level, short player) {
-        constexpr auto weights = {
-            1, 3, 3, 7, 1, 1000, 0, 0
-        };
-        return applyWeights(state, weights, player, 1.5, 1) * (1 + 1.0/level);
-    };
-
-    template<>
-    inline auto utility<7>(const go::State& state, unsigned level, short player) {
         constexpr auto weights = {
             1, 3, 3, 7, 1, 1000, 9999, 10000
         };
         return applyWeights(state, weights, player, 1.5, 1) * (1 + 1.0/level);
-    }
-
-    // ------------------------ Eighth AI ------------------------ //
-
-    template<>
-    inline auto heuristic<8>(const go::State& state, unsigned level, short player) {
-        constexpr auto weights = {
-            1, 3, 3, 7, 1, 1000, 0, 0
-        };
-        return applyWeights(state, weights, player, 1, 1) * (1 + 1.0/level);
-    };
-
-    template<>
-    inline auto utility<8>(const go::State& state, unsigned level, short player) {
-        constexpr auto weights = {
-            1, 3, 3, 7, 1, 1000, 9999, 10000
-        };
-        return applyWeights(state, weights, player, 1, 1) * (1 + 1.0/level);
     }
 }
 

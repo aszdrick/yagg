@@ -75,7 +75,7 @@ Match::Response Match::onProcessInput(InputProcessor& processor, Input& list) {
                 updatePlayers(request.position);
                 return {Response::Type::SELF, 0, nullptr};
             case Request::Type::UNDO:
-                state.undo();
+                // state.undo();
                 return {Response::Type::SELF, 0, nullptr};
         }
     }
