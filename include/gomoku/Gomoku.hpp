@@ -13,6 +13,7 @@ class Gomoku : public mbe::Game {
  public:
     using Menu = mbe::Menu<Gomoku, 2>;
     using NewGameMenu = mbe::Menu<Gomoku, 4>;
+    using PauseMenu = mbe::Menu<Gomoku, 3>;
     template<unsigned>
     class AIHandler;
 
@@ -24,19 +25,24 @@ class Gomoku : public mbe::Game {
         pushState(new Match(Player(new BH()), Player(new WH())));
     }
 
-    void newGameMenu();
     void quit();
 
  private:
-    static const std::array<Menu::Option, 2> options;
-    static const std::array<NewGameMenu::Option, 4> subOptions;
+    static const std::array<Menu::Option, 2> menuOptions;
+    static const std::array<NewGameMenu::Option, 4> newGameOptions;
+    static const std::array<PauseMenu::Option, 3> pauseOptions;
 
     const auto desiredOptions();
     const auto desiredSubOptions();
 
+    void newGameMenu();
+    void returnToGame();
+    void returnToMainMenu();
+
     void switchScreenMode(Renderer&);
     void keyPressed(const sf::Event&);
 
+    void onPauseGame() override;
     void onProcessInput(InputProcessor&, Input&) override;
 };
 

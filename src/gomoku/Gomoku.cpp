@@ -6,7 +6,7 @@
 #include "AI/AIHandler.hpp"
 #include "AI/RandomHandler.hpp"
 
-const std::array<Gomoku::Menu::Option, 2> Gomoku::options = {
+const std::array<Gomoku::Menu::Option, 2> Gomoku::menuOptions = {
     Gomoku::Menu::Option{
         sf::Text("New Game", sf::Font()),
         sf::Color::Black,
@@ -19,7 +19,25 @@ const std::array<Gomoku::Menu::Option, 2> Gomoku::options = {
     }
 };
 
-const std::array<Gomoku::NewGameMenu::Option, 4> Gomoku::subOptions = {
+const std::array<Gomoku::PauseMenu::Option, 3> Gomoku::pauseOptions = {
+    Gomoku::PauseMenu::Option{
+        sf::Text("Return to Game", sf::Font()),
+        sf::Color::Black,
+        [](Gomoku& gomoku) { gomoku.returnToGame(); }
+    },
+    Gomoku::PauseMenu::Option{
+        sf::Text("Return to Main Menu", sf::Font()),
+        sf::Color::Black,
+        [](Gomoku& gomoku) { gomoku.returnToMainMenu(); }
+    },
+    Gomoku::PauseMenu::Option{
+        sf::Text("Quit", sf::Font()),
+        sf::Color::Black,
+        [](Gomoku& gomoku) { gomoku.quit(); }
+    }
+};
+
+const std::array<Gomoku::NewGameMenu::Option, 4> Gomoku::newGameOptions = {
     Gomoku::NewGameMenu::Option{
         sf::Text("Player vs Player", sf::Font()),
         sf::Color::Black,
@@ -51,7 +69,7 @@ const std::array<Gomoku::NewGameMenu::Option, 4> Gomoku::subOptions = {
 };
 
 Gomoku::Gomoku()
- : Game(new Menu(*this, options)) {
+ : Game(new Menu(*this, menuOptions)) {
 
 }
 
@@ -70,7 +88,19 @@ void Gomoku::keyPressed(const sf::Event& event) {
 }
 
 void Gomoku::newGameMenu() {
-    pushState(new NewGameMenu(*this, subOptions));
+    pushState(new NewGameMenu(*this, newGameOptions));
+}
+
+void Gomoku::onPauseGame() {
+    pushState(new PauseMenu(*this, pauseOptions));
+}
+
+void Gomoku::returnToGame() {
+    popState();
+}
+
+void Gomoku::returnToMainMenu() {
+    pop({State::Response::Type::POP, 2, nullptr});
 }
 
 void Gomoku::quit() {

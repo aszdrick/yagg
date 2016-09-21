@@ -33,7 +33,8 @@ namespace base {
             POP,
             PUSH,
             REPLACE,
-            SELF
+            SELF,
+            PAUSE
         };
 
         Type type;

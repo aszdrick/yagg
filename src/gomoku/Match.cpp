@@ -69,8 +69,8 @@ Match::Response Match::onProcessInput(InputProcessor& processor, Input& list) {
             case Request::Type::NONE:
                 break;
             case Request::Type::PAUSE:
-                restart();
-                return {Response::Type::SELF, 0, nullptr};
+                // restart();
+                return {Response::Type::PAUSE, 0, nullptr};
             case Request::Type::PLAY:
                 updatePlayers(request.position);
                 return {Response::Type::SELF, 0, nullptr};
