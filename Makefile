@@ -21,17 +21,20 @@ SRC       :=$(shell find $(SRCDIR) -name '*.cpp')
 DEP       :=$(patsubst %.cpp,$(DEPDIR)/%.d,$(SRC))
 OBJ       :=$(patsubst %.cpp,$(BUILDIR)/%.o,$(SRC))
 MAIN      :=main
-EXEC      :=$(BINDIR)/execute_me
+EXEC      :=$(BINDIR)/yagg
 PUREOBJ   :=$(filter-out $(BUILDIR)/$(SRCDIR)/$(MAIN).o,$(OBJ))
 TSTFILE   :=$(shell find $(TESTDIR) -name '*.cpp' 2> /dev/null)
 TSTDEP    :=$(patsubst %.cpp,$(DEPDIR)/%.d,$(TSTFILE))
 TSTOBJ    :=$(patsubst %.cpp,$(BUILDIR)/%.o,$(TSTFILE))
 TSTEXEC   :=$(patsubst $(TESTDIR)/%.cpp,$(BINDIR)/%,$(TSTFILE))
 
-.PHONY: all makedir clean clean_deps clean_all tests
+.PHONY: all makedir clean clean_deps clean_all tests run
 
 ################################# MAIN RULES ##################################
 all: makedir $(EXEC)
+
+run: all
+	@./$(EXEC)
 
 $(EXEC): $(OBJ)
 	@echo "[linking] $@"
